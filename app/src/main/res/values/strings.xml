@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">IMU-Logger</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_imu_live_screen">imuLiveScreen</string>
+    <string name="open_live_logging">Start Live Logging</string>
+
+    <string name="live_sensor_title">Live Sensor View</string>
+    <string name="live_sensor_acceleration">Beschleunigung</string>
+    <string name="live_sensor_gyro">Gyroskop</string>
+    <string name="live_sensor_magn">Magnetometer</string>
+    <string name="live_sensor_prox">Näherungssensor</string>
+    <string name="live_sensor_light">Umgebungslicht</string>
+
+</resources>

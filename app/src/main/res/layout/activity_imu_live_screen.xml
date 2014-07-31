@@ -1,0 +1,240 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/scrollView"
+    layout_width="fill_parent"
+    layout_height="fill_parent"
+    android:background="#000">
+
+
+<GridLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+
+    android:columnCount="30"
+    android:rowCount="60"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/live_sensor_title"
+        android:id="@+id/title"
+        android:layout_row="0"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:padding="10dp"
+        android:textColor="#eee"
+        android:layout_rowSpan="3"
+        android:textSize="30dp"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/live_sensor_acceleration"
+        android:id="@+id/title_acc"
+        android:layout_row="10"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="x, y, z"
+        android:id="@+id/acc_value"
+        android:layout_row="12"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 Hz"
+        android:id="@+id/acc_hz"
+        android:layout_row="14"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/live_sensor_gyro"
+        android:id="@+id/title_gyro"
+        android:layout_row="20"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="x, y, z"
+        android:id="@+id/gyro_value"
+        android:layout_row="22"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 Hz"
+        android:id="@+id/gyro_hz"
+        android:layout_row="24"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/live_sensor_magn"
+        android:id="@+id/title_mag"
+        android:layout_row="30"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="x, y, z"
+        android:id="@+id/mag_value"
+        android:layout_row="32"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp"
+        android:textIsSelectable="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 Hz"
+        android:id="@+id/mag_hz"
+        android:layout_row="34"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp" />
+
+
+    <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/live_sensor_light"
+    android:id="@+id/title_light"
+    android:layout_row="40"
+    android:layout_column="0"
+    android:layout_columnSpan="30"
+    android:textColor="#eee"
+    android:layout_rowSpan="2"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginTop="20dp"
+    android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="x, y, z"
+        android:id="@+id/light_value"
+        android:layout_row="42"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp"
+        android:textIsSelectable="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 Hz"
+        android:id="@+id/light_hz"
+        android:layout_row="44"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/live_sensor_prox"
+        android:id="@+id/title_prox"
+        android:layout_row="50"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="x, y, z"
+        android:id="@+id/prox_value"
+        android:layout_row="52"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp"
+        android:textIsSelectable="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 Hz"
+        android:id="@+id/prox_hz"
+        android:layout_row="54"
+        android:layout_column="0"
+        android:layout_columnSpan="30"
+        android:textColor="#eee"
+        android:layout_rowSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp" />
+
+
+
+</GridLayout>
+</ScrollView>
