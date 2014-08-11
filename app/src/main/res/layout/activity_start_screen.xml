@@ -18,12 +18,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/open_live_logging"
-        android:id="@+id/button"
-        android:layout_marginTop="42dp"
+        android:id="@+id/startLiveLogging"
+        android:layout_marginTop="47dp"
+        android:clickable="true"
+        android:onClick="onStartLiveScreen"
         android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Background Logging"
+        android:id="@+id/startLoggingService"
+        android:layout_below="@+id/startLiveLogging"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:clickable="true"
-        android:onClick="onStartLiveScreen" />
+        android:layout_marginTop="32dp"
+        android:onClick="onStartBackgroundLogging" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop Background Logging"
+        android:id="@+id/stopLoggingService"
+        android:layout_below="@+id/startLoggingService"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="onStopBackgroundLogging" />
 
 </RelativeLayout>

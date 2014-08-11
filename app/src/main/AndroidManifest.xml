@@ -24,6 +24,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="StartScreen" />
         </activity>
+
+        <service
+            android:name=".LoggingService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
