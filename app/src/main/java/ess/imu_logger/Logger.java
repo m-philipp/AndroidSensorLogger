@@ -11,7 +11,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.app.Service;
+import android.os.SystemClock;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -20,18 +23,22 @@ import java.util.LinkedList;
 public class Logger extends Handler implements SensorEventListener{
 
     // ?? private static final String TAG = "BasicLogger";
+	private static final int QUEUE_MAX = 1000;
     public static final int MESSAGE_START = 1;
     public static final int MESSAGE_STOP = 0;
 
     private SensorManager mSensorManager;
-    private Sensor gyroscopeSensor, accelerometerSensor, magneticFieldSensor, rotationSensor, linearAccelerometerSensor, gravitySensor, ambientLightSensor, proximitySensor, temperatureSensor, humiditySensor, pressureSensor;
+	private Sensor gyroscopeSensor, accelerometerSensor, magneticFieldSensor, rotationSensor, linearAccelerometerSensor, gravitySensor, ambientLightSensor, proximitySensor, temperatureSensor, humiditySensor, pressureSensor;
+	private ArrayList<String> sensorValueQueue = new ArrayList<String>();
+	private Integer sensorQueueLength = 0;
 
-    private int logging_frequency; //SensorManager.SENSOR_DELAY_FASTEST;
+
+	private int logging_frequency; //SensorManager.SENSOR_DELAY_FASTEST;
 
     public Logger(Looper looper, Service context) {
         super(looper);
 
-        logging_frequency = mSensorManager.SENSOR_DELAY_NORMAL;
+        logging_frequency = mSensorManager.SENSOR_DELAY_FASTEST;
 
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         gyroscopeSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -78,20 +85,29 @@ public class Logger extends Handler implements SensorEventListener{
         if(humiditySensor != null && i.getBooleanExtra("humidity", false)) mSensorManager.registerListener(this, humiditySensor, logging_frequency);
         if(pressureSensor != null && i.getBooleanExtra("pressure", false)) mSensorManager.registerListener(this, pressureSensor, logging_frequency);
 
+
+
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
     public void onSensorChanged(SensorEvent event) {
 
+	    if(sensorQueueLength > QUEUE_MAX){
+		    new AsyncWriteFile().execute(this.sensorValueQueue);
+		    this.sensorQueueLength = 0;
+	    }
+	    this.sensorQueueLength++;
+
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
-            printSensor(event, "acc");
+	        this.sensorValueQueue.add(getString(event));
 
         } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
 
-            printSensor(event, "gyrp");
+            printSensor(event, "gyro");
 
         }  else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
 
@@ -99,7 +115,7 @@ public class Logger extends Handler implements SensorEventListener{
 
         } else if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
 
-            printSensor(event, "porx");
+            printSensor(event, "prox");
 
         } else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
@@ -117,4 +133,36 @@ public class Logger extends Handler implements SensorEventListener{
                 + (float) Math.round(event.values[2] * 100) / 100 + " ");
     }
 
+
+	private String getString(SensorEvent event) {
+
+		StringBuilder dataString = new StringBuilder();
+
+		dataString.append(System.currentTimeMillis());
+		dataString.append(" ");
+		dataString.append(SystemClock.elapsedRealtime());
+		dataString.append(" ");
+		dataString.append(event.timestamp);
+		dataString.append(" ");
+
+		switch (event.sensor.getType()){
+			case Sensor.TYPE_ACCELEROMETER:
+				dataString.append(Sensor.TYPE_ACCELEROMETER);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
+				dataString.append(" ");
+				dataString.append(event.values[1]);
+				dataString.append(" ");
+				dataString.append(event.values[2]);
+				dataString.append(" ");
+				break;
+			default:
+				dataString.append("unrecognized Sensorevent ");
+		}
+
+
+		return dataString.toString();
+
+
+	}
 }
