@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 public class StartScreen extends Activity {
@@ -22,10 +22,12 @@ public class StartScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
-        sharedPrefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
-        if (!sharedPrefs.getBoolean("initialized", false)) {
-            setDefaultPreferences();
-        }
+	    PreferenceManager.setDefaultValues(this, R.xml.pref_general, false); // false ensures this is only executed once
+	    PreferenceManager.setDefaultValues(this, R.xml.pref_sensor, false); // false ensures this is only executed once
+	    PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false); // false ensures this is only executed once
+
+	    sharedPrefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+
     }
 
 
@@ -43,7 +45,8 @@ public class StartScreen extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+	        Intent intent = new Intent(this, ApplicationSettings.class);
+	        startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -58,10 +61,6 @@ public class StartScreen extends Activity {
         Intent mServiceIntent = new Intent(this, LoggingService.class);
 
         mServiceIntent.setAction("ess.imu_logger.action.startLogging");
-        mServiceIntent.putExtra("ess.imu_logger.extra.GYRO", true);
-        mServiceIntent.putExtra("ess.imu_logger.extra.ACC", true);
-        mServiceIntent.putExtra("ess.imu_logger.extra.MAG", true);
-
 
         this.startService(mServiceIntent);
     }
@@ -74,14 +73,4 @@ public class StartScreen extends Activity {
         this.startService(mServiceIntent);
     }
 
-    private void setDefaultPreferences() {
-        Editor editor = sharedPrefs.edit();
-
-        // set default sensors
-        editor.putBoolean("accelerometer", true);
-        editor.putBoolean("ambientLight", true);
-        editor.putBoolean("proximity", true);
-
-        editor.commit();
-    }
 }

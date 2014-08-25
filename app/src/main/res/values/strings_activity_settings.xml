@@ -1,0 +1,103 @@
+<resources>
+	<string name="title_activity_test">Settings</string>
+
+	<!-- Strings related to Settings -->
+
+	<!-- Example General settings -->
+	<string name="pref_header_general">General</string>
+
+
+	<string name="pref_title_name">Name</string>
+	<string name="pref_default_name">Max Mustermann</string>
+
+	<string name="pref_title_anonymize">Anonymisierung</string>
+	<string name="pref_description_ananymize">Name anonymisieren</string>
+
+
+
+
+
+	<!-- Example settings for Data & Sync -->
+	<string name="pref_header_data_sync">Daten Upload &amp; Synchronisation</string>
+	<string name="pref_header_data_sync_data_upload">Daten Upload</string>
+	<string name="pref_header_data_sync_settings_sync">Einstellungs Synchronisation</string>
+
+
+	<string name="pref_server_url">URL</string>
+	<string name="pref_default_server_url">http://google.de</string>
+
+
+	<string name="pref_sync_wlan_only">Synchronisiere nur über WLAN</string>
+
+	<string name="pref_title_upload_frequency">Upload Frequenz</string>
+	<string-array name="pref_upload_frequency_titles">
+		<item>5 Minuten</item>
+		<item>1 Stunde</item>
+		<item>5 Stunden</item>
+		<item>12 Stunden</item>
+		<item>1 Tag</item>
+		<item>2 Tage</item>
+		<item>manuell</item>
+	</string-array>
+	<string-array name="pref_upload_frequency_values">
+		<item>5</item>
+		<item>60</item>
+		<item>300</item>
+		<item>720</item>
+		<item>1480</item>
+		<item>2960</item>
+		<item>9999999</item>
+	</string-array>
+
+	<string name="pref_server_port">Server Port</string>
+	<string-array name="pref_server_port_titles">
+		<item>HTTP (80)</item>
+		<item>alt. HTTP (8080)</item>
+		<item>SSL (443)</item>
+		<item>unregistriert (50080)</item>
+	</string-array>
+	<string-array name="pref_server_port_values">
+		<item>80</item>
+		<item>8080</item>
+		<item>443</item>
+		<item>50080</item>
+	</string-array>
+
+	<string name="pref_title_system_sync_settings">Einstellungen synchronisieren</string>
+
+
+	<!-- Example settings for Sensors -->
+	<string name="pref_header_sensor">Aufzeichnung</string>
+
+	<string name="pref_header_sensor_sensors">Sensoren</string>
+	<string name="pref_header_sensor_general">Allgemein</string>
+
+	<string name="pref_sensor_activate">Aufzeichnung aktivieren</string>
+
+	<string name="pref_sampling_rate">Sampling Rate</string>
+	<string-array name="pref_sampling_rate_titles">
+		<item>Fastest</item>
+		<item>Game</item>
+		<item>Normal</item>
+		<item>UI</item>
+	</string-array>
+	<string-array name="pref_sampling_rate_values">
+		<item>0</item>
+		<item>1</item>
+		<item>3</item>
+		<item>2</item>
+	</string-array>
+
+	<string name="pref_sensor_accelerometer">Beschleunigung</string>
+	<string name="pref_sensor_gyroscope">Gyroskop</string>
+	<string name="pref_sensor_magneticField">Magnetfeld</string>
+	<string name="pref_sensor_rotation">Rotation</string>
+	<string name="pref_sensor_linearAccelerometer">lineare Beschleunigung</string>
+	<string name="pref_sensor_gravity">Gravitation</string>
+	<string name="pref_sensor_ambientLight">Umgebungslicht</string>
+	<string name="pref_sensor_proximity">Abstand</string>
+	<string name="pref_sensor_temperature">Temperatur</string>
+	<string name="pref_sensor_humidity">Luftfeuchte</string>
+	<string name="pref_sensor_pressure">Luftdruck</string>
+
+</resources>

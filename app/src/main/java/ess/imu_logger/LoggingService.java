@@ -11,9 +11,6 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.os.Process;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-
 /**
  * An {@link Service} subclass for handling asynchronous task requests.
  * <p>
@@ -25,7 +22,7 @@ public class LoggingService extends Service {
     private Logger serviceHandler;
     private HandlerThread thread;
     private Looper serviceLooper;
-    private boolean collectionStarted = false;
+    private boolean loggingStarted = false;
     SharedPreferences sharedPrefs;
 
 
@@ -38,12 +35,8 @@ public class LoggingService extends Service {
     private static final String ACTION_UPLOAD_DATA = "ess.imu_logger.action.uploadData";
 
     // TODO: Rename parameters
-    private static final String EXTRA_GYRO = "ess.imu_logger.extra.GYRO";
-    private static final String EXTRA_ACC = "ess.imu_logger.extra.ACC";;
-    private static final String EXTRA_MAG = "ess.imu_logger.extra.MAG";
+    // private static final String EXTRA_GYRO = "ess.imu_logger.extra.GYRO";
 
-    private static final String EXTRA_URL = "ess.imu_logger.extra.URL";
-    private static final String EXTRA_USER = "ess.imu_logger.extra.USER";
 
 
     public LoggingService(){
@@ -55,7 +48,7 @@ public class LoggingService extends Service {
      * the service is already performing a task this action will be queued.
      *
      * @see Service
-     */
+
     // TODO: Customize helper method
     public static void startActionStartLogging(Context context, Boolean acc, Boolean gyro, Boolean mag) {
         Intent intent = new Intent(context, LoggingService.class);
@@ -64,36 +57,7 @@ public class LoggingService extends Service {
         intent.putExtra(EXTRA_GYRO, gyro);
         intent.putExtra(EXTRA_MAG, mag);
         context.startService(intent);
-    }
-
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see Service
-     */
-    // TODO: Customize helper method
-    public static void startActionStopLogging(Context context) {
-        Intent intent = new Intent(context, LoggingService.class);
-        intent.setAction(ACTION_STOP_LOGGING);
-        context.startService(intent);
-    }
-
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see Service
-     */
-    // TODO: Customize helper method
-    public static void startActionUpload(Context context, String url, String user) {
-        Intent intent = new Intent(context, LoggingService.class);
-        intent.setAction(ACTION_UPLOAD_DATA);
-        intent.putExtra(EXTRA_URL, url);
-        intent.putExtra(EXTRA_USER, user);
-        context.startService(intent);
-    }
-
+    }*/
 
     @Override
     public int onStartCommand (Intent intent, int flags, int startId){
@@ -110,8 +74,6 @@ public class LoggingService extends Service {
                 stopRecording();
 
             } else if (ACTION_UPLOAD_DATA.equals(action)) {
-                final String url = intent.getStringExtra(EXTRA_URL);
-                final String user = intent.getStringExtra(EXTRA_USER);
                 //return handleUploadData(url, user);
             }
         }
@@ -140,10 +102,11 @@ public class LoggingService extends Service {
 
     private synchronized void startRecording(){
 
-        Intent intent = new Intent();
+        if(!loggingStarted){
 
-        if(!collectionStarted){
             // add sensor preferences
+	        Intent intent = new Intent();
+
             intent.putExtra("gyroscope", sharedPrefs.getBoolean("gyroscope", false));
             intent.putExtra("accelerometer", sharedPrefs.getBoolean("accelerometer", true));
             intent.putExtra("magneticField", sharedPrefs.getBoolean("magneticField", false));
@@ -163,13 +126,15 @@ public class LoggingService extends Service {
             msg.obj = intent;
             serviceHandler.sendMessage(msg);
 
-            collectionStarted = true;
+            loggingStarted = true;
         }
 
     }
+
+
     private synchronized void stopRecording() {
         serviceHandler.sendEmptyMessage(Logger.MESSAGE_STOP);
-        collectionStarted = false;
+        loggingStarted = false;
     }
 
 }

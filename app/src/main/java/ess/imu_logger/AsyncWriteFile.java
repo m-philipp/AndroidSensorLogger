@@ -51,7 +51,7 @@ public class AsyncWriteFile extends AsyncTask<ArrayList<String>, Integer, Boolea
 			File file;
 			FileOutputStream out = null;
 			try {
-				file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + dirname, getFilename() + fileExtension);
+				file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + dirname, getFilename());
 				out = new FileOutputStream(file, true);
 
 				for(int o = 0; o < sensorValueQueue[i].size(); o ++) {
@@ -115,11 +115,16 @@ public class AsyncWriteFile extends AsyncTask<ArrayList<String>, Integer, Boolea
 			}
 		});
 
+		if(listOfFiles.length < 1){
+			return String.valueOf(System.currentTimeMillis())  + fileExtension;
+		}
+
 		Arrays.sort(listOfFiles);
+
 
 		File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + dirname, listOfFiles[listOfFiles.length-1]);
 		if(file.length() > MAX_FILE_SIZE){
-			return String.valueOf(System.currentTimeMillis());
+			return String.valueOf(System.currentTimeMillis()) + fileExtension;
 		}
 
 		return listOfFiles[listOfFiles.length-1];

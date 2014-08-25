@@ -1,0 +1,96 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory
+		android:key="pref_key_sensor_general"
+		android:title="@string/pref_header_sensor_general">
+
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="sensor_activate"
+			android:title="@string/pref_sensor_activate"/>
+
+		<ListPreference
+			android:key="sampling_rate"
+			android:title="@string/pref_sampling_rate"
+			android:dependency="sensor_activate"
+			android:entries="@array/pref_sampling_rate_titles"
+			android:entryValues="@array/pref_sampling_rate_values"
+			android:defaultValue="8080"
+			android:negativeButtonText="@null"
+			android:positiveButtonText="@null" />
+	</PreferenceCategory>
+
+	<PreferenceCategory
+		android:key="pref_key_sensor_sensors"
+		android:title="@string/pref_header_sensor_sensors">
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="accelerometer"
+			android:title="@string/pref_sensor_accelerometer"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="gyroscope"
+			android:title="@string/pref_sensor_gyroscope"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="magneticField"
+			android:title="@string/pref_sensor_magneticField"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="rotation"
+			android:title="@string/pref_sensor_rotation"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="linearAccelerometer"
+			android:title="@string/pref_sensor_linearAccelerometer"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="gravity"
+			android:title="@string/pref_sensor_gravity"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="ambientLight"
+			android:title="@string/pref_sensor_ambientLight"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="proximity"
+			android:title="@string/pref_sensor_proximity"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="temperature"
+			android:title="@string/pref_sensor_temperature"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="humidity"
+			android:title="@string/pref_sensor_humidity"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:dependency="sensor_activate"
+			android:key="pressure"
+			android:title="@string/pref_sensor_pressure"/>
+
+
+
+	</PreferenceCategory>
+</PreferenceScreen>

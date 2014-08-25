@@ -29,7 +29,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Background Logging"
+        android:text="@string/startLoggingService"
         android:id="@+id/startLoggingService"
         android:layout_below="@+id/startLiveLogging"
         android:layout_alignParentLeft="true"
@@ -40,7 +40,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Stop Background Logging"
+        android:text="@string/stopLoggingService"
         android:id="@+id/stopLoggingService"
         android:layout_below="@+id/startLoggingService"
         android:layout_alignParentLeft="true"

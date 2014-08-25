@@ -1,0 +1,54 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory
+		android:key="pref_key_data_sync_general"
+		android:title="@string/pref_header_data_sync_data_upload">
+
+		<EditTextPreference
+			android:defaultValue="@string/pref_default_server_url"
+			android:ellipsize="end"
+			android:key="server_url"
+			android:maxLines="1"
+			android:selectAllOnFocus="true"
+			android:singleLine="true"
+			android:title="@string/pref_server_url"/>
+
+
+		<ListPreference
+			android:defaultValue="8080"
+			android:entries="@array/pref_server_port_titles"
+			android:entryValues="@array/pref_server_port_values"
+			android:key="server_port"
+			android:negativeButtonText="@null"
+			android:positiveButtonText="@null"
+			android:title="@string/pref_server_port"/>
+
+		<SwitchPreference
+			android:defaultValue="true"
+			android:key="wlan_only"
+			android:title="@string/pref_sync_wlan_only"/>
+
+
+		<ListPreference
+			android:defaultValue="180"
+			android:entries="@array/pref_upload_frequency_titles"
+			android:entryValues="@array/pref_upload_frequency_values"
+			android:key="upload_frequency"
+			android:negativeButtonText="@null"
+			android:positiveButtonText="@null"
+			android:title="@string/pref_title_upload_frequency"/>
+	</PreferenceCategory>
+
+	<PreferenceCategory
+		android:key="pref_key_data_sync_settings_sync"
+		android:title="@string/pref_header_data_sync_settings_sync">
+		<!-- This preference simply launches an intent when selected. Use this UI sparingly, per
+			 design guidelines.
+			 TODO: check this sync shit...
+			 -->
+
+		<Preference android:title="@string/pref_title_system_sync_settings">
+			<intent android:action="android.settings.SYNC_SETTINGS"/>
+		</Preference>
+	</PreferenceCategory>
+</PreferenceScreen>
