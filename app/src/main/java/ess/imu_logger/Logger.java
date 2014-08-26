@@ -25,7 +25,7 @@ import java.util.LinkedList;
 public class Logger extends Handler implements SensorEventListener{
 
     // ?? private static final String TAG = "BasicLogger";
-	private static final int QUEUE_MAX = 1000;
+	private static final int QUEUE_MAX = 3000;
     public static final int MESSAGE_START = 1;
     public static final int MESSAGE_STOP = 0;
 
@@ -98,8 +98,9 @@ public class Logger extends Handler implements SensorEventListener{
     public void onSensorChanged(SensorEvent event) {
 
 	    if(sensorQueueLength > QUEUE_MAX){
-		    new AsyncWriteFile().execute(this.sensorValueQueue);
+		    new AsyncWriteFile().execute((ArrayList<String>) new ArrayList<String>(this.sensorValueQueue));
 		    this.sensorQueueLength = 0;
+		    this.sensorValueQueue = new ArrayList<String>();
 	    }
 	    this.sensorQueueLength++;
 
@@ -109,19 +110,19 @@ public class Logger extends Handler implements SensorEventListener{
 
         } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
 
-            printSensor(event, "gyro");
+            // printSensor(event, "gyro");
 
         }  else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
 
-            printSensor(event, "mag");
+            // printSensor(event, "mag");
 
         } else if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
 
-            printSensor(event, "prox");
+            // printSensor(event, "prox");
 
         } else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
 
-            printSensor(event, "light");
+            // printSensor(event, "light");
 
         }
 

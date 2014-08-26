@@ -46,6 +46,7 @@ public class AsyncWriteFile extends AsyncTask<ArrayList<String>, Integer, Boolea
 
 		if(!isExternalStorageWritable()) return false;
 
+
 		for(int i = 0; i < sensorValueQueue.length; i++) {
 
 			File file;

@@ -47,7 +47,7 @@ public class StartScreen extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		super.onPause();
+		super.onDestroy();
 		System.out.println("destroying");
 		//sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener);
 	}
