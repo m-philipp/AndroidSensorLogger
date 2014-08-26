@@ -2,6 +2,7 @@ package ess.imu_logger;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -12,6 +13,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.app.Service;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,11 +34,11 @@ public class Logger extends Handler implements SensorEventListener{
 	private ArrayList<String> sensorValueQueue = new ArrayList<String>();
 	private Integer sensorQueueLength = 0;
 
-
 	private int logging_frequency; //SensorManager.SENSOR_DELAY_FASTEST;
 
     public Logger(Looper looper, Service context) {
         super(looper);
+
 
         logging_frequency = mSensorManager.SENSOR_DELAY_FASTEST;
 

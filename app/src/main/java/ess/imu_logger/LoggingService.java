@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.os.Process;
+import android.preference.PreferenceManager;
 
 /**
  * An {@link Service} subclass for handling asynchronous task requests.
@@ -89,7 +90,7 @@ public class LoggingService extends Service {
     public void onCreate() {
         System.out.println("service created...");
 
-        sharedPrefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_FOREGROUND);
         thread.start();

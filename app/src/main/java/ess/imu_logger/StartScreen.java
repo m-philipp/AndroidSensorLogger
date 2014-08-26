@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.content.SharedPreferences.Editor;
+import android.widget.TextView;
 
 public class StartScreen extends Activity {
 
@@ -22,13 +25,32 @@ public class StartScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
-	    PreferenceManager.setDefaultValues(this, R.xml.pref_general, false); // false ensures this is only executed once
-	    PreferenceManager.setDefaultValues(this, R.xml.pref_sensor, false); // false ensures this is only executed once
-	    PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false); // false ensures this is only executed once
+	    PreferenceManager.setDefaultValues(this, R.xml.preferences, false); // false ensures this is only executed once
 
-	    sharedPrefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+	    //sharedPrefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+	    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+	    sharedPrefs.registerOnSharedPreferenceChangeListener(listener);
 
     }
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		System.out.println("resuming");
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		System.out.println("pausing");
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onPause();
+		System.out.println("destroying");
+		//sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener);
+	}
 
 
     @Override
@@ -72,5 +94,19 @@ public class StartScreen extends Activity {
 
         this.startService(mServiceIntent);
     }
+
+
+	SharedPreferences.OnSharedPreferenceChangeListener listener =
+			new SharedPreferences.OnSharedPreferenceChangeListener() {
+				public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+					System.out.println("----------------- PREFS CHANGED !! ------------");
+
+					if(key.equals("name")){
+						TextView t = (TextView) findViewById(R.id.textView);
+						t.setText(sharedPrefs.getString("name", ""));
+					}
+
+				}
+			};
 
 }

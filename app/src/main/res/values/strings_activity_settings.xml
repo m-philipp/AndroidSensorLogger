@@ -1,14 +1,14 @@
 <resources>
-	<string name="title_activity_test">Settings</string>
+	<string name="title_activity_test">Einstellungen</string> <!-- TODO is this used ?? -->
 
 	<!-- Strings related to Settings -->
 
 	<!-- Example General settings -->
-	<string name="pref_header_general">General</string>
+	<string name="pref_header_general">Allgemein</string>
 
 
 	<string name="pref_title_name">Name</string>
-	<string name="pref_default_name">Max Mustermann</string>
+	<string name="pref_default_name">Eva Musterfrau</string>
 
 	<string name="pref_title_anonymize">Anonymisierung</string>
 	<string name="pref_description_ananymize">Name anonymisieren</string>
@@ -27,7 +27,7 @@
 	<string name="pref_default_server_url">http://google.de</string>
 
 
-	<string name="pref_sync_wlan_only">Synchronisiere nur über WLAN</string>
+	<string name="pref_sync_wlan_only">Nur über WLAN</string>
 
 	<string name="pref_title_upload_frequency">Upload Frequenz</string>
 	<string-array name="pref_upload_frequency_titles">
@@ -70,6 +70,8 @@
 	<string name="pref_header_sensor">Aufzeichnung</string>
 
 	<string name="pref_header_sensor_sensors">Sensoren</string>
+	<string name="pref_header_sensor_sensors_secondary">virtuelle Sensoren</string>
+
 	<string name="pref_header_sensor_general">Allgemein</string>
 
 	<string name="pref_sensor_activate">Aufzeichnung aktivieren</string>
@@ -99,5 +101,6 @@
 	<string name="pref_sensor_temperature">Temperatur</string>
 	<string name="pref_sensor_humidity">Luftfeuchte</string>
 	<string name="pref_sensor_pressure">Luftdruck</string>
+	<string name="pref_sensor_stepCounter">Schrittzähler</string>
 
 </resources>

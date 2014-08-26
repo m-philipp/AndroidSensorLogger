@@ -1,21 +1,23 @@
 package ess.imu_logger;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
+
+import android.app.Dialog;
+import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
+import android.preference.PreferenceScreen;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import java.util.List;
 
@@ -42,32 +44,24 @@ public class ApplicationSettings extends PreferenceActivity {
 	final static String ACTION_PREFS_DATA_SYNC = "ess.imu_logger.action.prefs_data_sync";
 	final static String ACTION_PREFS_SENSOR = "ess.imu_logger.action.prefs_sensor";
 
+	private static List<Sensor> sensors;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		String action = getIntent().getAction();
-		if (action != null && action.equals(ACTION_PREFS_GENERAL)) {
-			addPreferencesFromResource(R.xml.pref_general);
-		} else if (action != null && action.equals(ACTION_PREFS_DATA_SYNC)) {
-			addPreferencesFromResource(R.xml.pref_data_sync);
-		} else if (action != null && action.equals(ACTION_PREFS_SENSOR)) {
-			addPreferencesFromResource(R.xml.pref_sensor);
-		} else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-			// Load the legacy preferences headers
-			addPreferencesFromResource(R.xml.pref_headers_legacy);
-		}
-	}
+		/*
+		SensorManager mgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+		sensors = mgr.getSensorList(Sensor.TYPE_ALL);
+		*/
 
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onBuildHeaders(List<Header> target) {
-		loadHeadersFromResource(R.xml.pref_headers, target);
+		// Display the fragment as the main content.
+		getFragmentManager().beginTransaction()
+				.replace(android.R.id.content, new SettingsFragment())
+				.commit();
 	}
+
 
 	protected boolean isValidFragment (String fragmentName)
 	{
@@ -81,39 +75,84 @@ public class ApplicationSettings extends PreferenceActivity {
 	 * This fragment shows data and sync preferences only. It is used when the
 	 * activity is showing a two-pane settings UI.
 	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static class SettingsFragment extends PreferenceFragment {
 
+		@Override
+		public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+			super.onPreferenceTreeClick(preferenceScreen, preference);
 
+			// If the user has clicked on a preference screen, set up the action bar
+			if (preference instanceof PreferenceScreen) {
+				initializeActionBar((PreferenceScreen) preference);
+			}
+
+			return false;
+		}
+
+
+
+		/** Sets up the action bar for an {@link PreferenceScreen} */
+		public static void initializeActionBar(PreferenceScreen preferenceScreen) {
+			final Dialog dialog = preferenceScreen.getDialog();
+
+			if (dialog != null) {
+				// Inialize the action bar
+				dialog.getActionBar().setDisplayHomeAsUpEnabled(true);
+
+				// Apply custom home button area click listener to close the PreferenceScreen because PreferenceScreens are dialogs which swallow
+				// events instead of passing to the activity
+				// Related Issue: https://code.google.com/p/android/issues/detail?id=4611
+				View homeBtn = dialog.findViewById(android.R.id.home);
+
+				if (homeBtn != null) {
+					View.OnClickListener dismissDialogClickListener = new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							dialog.dismiss();
+						}
+					};
+
+					// Prepare yourselves for some hacky programming
+					ViewParent homeBtnContainer = homeBtn.getParent();
+
+					// The home button is an ImageView inside a FrameLayout
+					if (homeBtnContainer instanceof FrameLayout) {
+						ViewGroup containerParent = (ViewGroup) homeBtnContainer.getParent();
+
+						if (containerParent instanceof LinearLayout) {
+							// This view also contains the title text, set the whole view as clickable
+							((LinearLayout) containerParent).setOnClickListener(dismissDialogClickListener);
+						} else {
+							// Just set it on the home button
+							((FrameLayout) homeBtnContainer).setOnClickListener(dismissDialogClickListener);
+						}
+					} else {
+						// The 'If all else fails' default case
+						homeBtn.setOnClickListener(dismissDialogClickListener);
+					}
+				}
+			}
+		}
 
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 
+			addPreferencesFromResource(R.xml.preferences);
 
-			String settings = getArguments().getString("settings");
-
-			if (ACTION_PREFS_GENERAL.equals(settings)) {
-
-				addPreferencesFromResource(R.xml.pref_general);
-				bindPreferenceSummaryToValue(findPreference("name"));
-
-			} else if (ACTION_PREFS_SENSOR.equals(settings)) {
-
-				addPreferencesFromResource(R.xml.pref_sensor);
-				bindPreferenceSummaryToValue(findPreference("sampling_rate"));
-
-			} else if (ACTION_PREFS_DATA_SYNC.equals(settings)) {
-
-				addPreferencesFromResource(R.xml.pref_data_sync);
-				bindPreferenceSummaryToValue(findPreference("server_url"));
-				bindPreferenceSummaryToValue(findPreference("server_port"));
-				bindPreferenceSummaryToValue(findPreference("upload_frequency"));
-
-			} else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-				// Load the legacy preferences headers
-				addPreferencesFromResource(R.xml.pref_headers_legacy);
+			/*
+			for (Sensor sensor : sensors) {
+				Log.d("Sensors", "" + sensor.getName());
 			}
+			*/
+
+			//findPreference("accelerometer").setEnabled(false);//Disabling
+
+			bindPreferenceSummaryToValue(findPreference("name"));
+			bindPreferenceSummaryToValue(findPreference("sampling_rate"));
+			bindPreferenceSummaryToValue(findPreference("server_url"));
+			bindPreferenceSummaryToValue(findPreference("server_port"));
+			bindPreferenceSummaryToValue(findPreference("upload_frequency"));
 
 		}
 	}
