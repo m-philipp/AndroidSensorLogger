@@ -33,14 +33,17 @@ public class Logger extends Handler implements SensorEventListener{
 	private Sensor gyroscopeSensor, accelerometerSensor, magneticFieldSensor, rotationSensor, linearAccelerometerSensor, gravitySensor, ambientLightSensor, proximitySensor, temperatureSensor, humiditySensor, pressureSensor;
 	private ArrayList<String> sensorValueQueue = new ArrayList<String>();
 	private Integer sensorQueueLength = 0;
+	private SharedPreferences sharedPrefs;
 
 	private int logging_frequency; //SensorManager.SENSOR_DELAY_FASTEST;
 
     public Logger(Looper looper, Service context) {
         super(looper);
 
+	    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        logging_frequency = mSensorManager.SENSOR_DELAY_FASTEST;
+
+	    logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
 
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         gyroscopeSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -51,8 +54,7 @@ public class Logger extends Handler implements SensorEventListener{
         gravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         ambientLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         proximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) temperatureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-        else temperatureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
+        temperatureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         humiditySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
         pressureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
 
@@ -98,6 +100,13 @@ public class Logger extends Handler implements SensorEventListener{
     public void onSensorChanged(SensorEvent event) {
 
 	    if(sensorQueueLength > QUEUE_MAX){
+
+		    // Todo change this to some more intelligent code
+		    // maybe handle a bunch of queues an get an Broadcast Notification when to drop a specific queue
+		    // hashmap queues
+		    // String actualQueue
+
+
 		    new AsyncWriteFile().execute((ArrayList<String>) new ArrayList<String>(this.sensorValueQueue));
 		    this.sensorQueueLength = 0;
 		    this.sensorValueQueue = new ArrayList<String>();
@@ -162,7 +171,7 @@ public class Logger extends Handler implements SensorEventListener{
 			default:
 				dataString.append("unrecognized Sensorevent ");
 		}
-
+		dataString.append("\n");
 
 		return dataString.toString();
 

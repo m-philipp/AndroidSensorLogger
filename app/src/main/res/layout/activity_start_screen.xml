@@ -47,4 +47,14 @@
         android:layout_alignParentStart="true"
         android:onClick="onStopBackgroundLogging" />
 
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Crunch"
+		android:id="@+id/crunch"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
+		android:onClick="crunchSomeData"/>
+
 </RelativeLayout>

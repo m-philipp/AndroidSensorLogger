@@ -11,7 +11,13 @@
 	<string name="pref_default_name">Eva Musterfrau</string>
 
 	<string name="pref_title_anonymize">Anonymisierung</string>
-	<string name="pref_description_ananymize">Name anonymisieren</string>
+	<string name="pref_description_anonymize">Name anonymisieren</string>
+
+	<string name="pref_start_on_close">Auto Restart</string>
+	<string name="pref_description_start_on_close">Beim schließen der App automatisch neustarten</string>
+
+	<string name="pref_start_on_boot">Autostart</string>
+	<string name="pref_description_start_on_boot">Nach dem Booten von Android Logging App starten.</string>
 
 
 

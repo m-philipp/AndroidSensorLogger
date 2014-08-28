@@ -24,7 +24,7 @@ public class LoggingService extends Service {
     private HandlerThread thread;
     private Looper serviceLooper;
     private boolean loggingStarted = false;
-    SharedPreferences sharedPrefs;
+    private SharedPreferences sharedPrefs;
 
 
 

@@ -29,8 +29,22 @@
 		<CustomSwitchPreference
 			android:defaultValue="true"
 			android:key="anonymize"
-			android:summary="@string/pref_description_ananymize"
+			android:summary="@string/pref_description_anonymize"
 			android:title="@string/pref_title_anonymize"/>
+
+
+		<CustomSwitchPreference
+			android:defaultValue="true"
+			android:key="auto_start"
+			android:summary="@string/pref_description_start_on_close"
+			android:title="@string/pref_start_on_close"/>
+
+		<CustomSwitchPreference
+			android:defaultValue="true"
+			android:key="start_on_boot"
+			android:summary="@string/pref_description_start_on_boot"
+			android:title="@string/pref_start_on_boot"/>
+
 
 		<!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
 			 dismiss it. -->

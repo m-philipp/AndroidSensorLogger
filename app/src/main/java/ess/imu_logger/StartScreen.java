@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -13,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.content.SharedPreferences.Editor;
 import android.widget.TextView;
+
+import ess.imu_logger.data_export.SensorDataSavingService;
 
 public class StartScreen extends Activity {
 
@@ -94,6 +97,17 @@ public class StartScreen extends Activity {
 
         this.startService(mServiceIntent);
     }
+
+	public void crunchSomeData(View v){
+		((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(100);
+
+
+		Intent mServiceIntent = new Intent(this, SensorDataSavingService.class);
+
+		mServiceIntent.setAction(SensorDataSavingService.ACTION_SAVE_DATA);
+
+		this.startService(mServiceIntent);
+	}
 
 
 	SharedPreferences.OnSharedPreferenceChangeListener listener =
