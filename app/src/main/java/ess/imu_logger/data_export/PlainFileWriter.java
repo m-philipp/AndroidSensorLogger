@@ -1,10 +1,19 @@
 package ess.imu_logger.data_export;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by martin on 28.08.2014.
@@ -23,6 +32,17 @@ public class PlainFileWriter extends Thread {
 
 	private Handler outHandler;
 	private Handler inHandler;
+
+
+
+
+	private String fileExtension = ".log";
+	private String dirname = "smokingStudy";
+	private static final Integer MAX_FILE_SIZE = 655360;
+
+
+	FileOutputStream outputStream;
+
 
 	public PlainFileWriter(Handler handler) {
 
@@ -46,7 +66,36 @@ public class PlainFileWriter extends Thread {
 
 					if(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_SAVE){
 
+						String data = msg.getData().getString(MESSAGE_DATA);
+
 						Log.i("SensorDataSavingService", "saving some Data");
+
+
+						if(!isExternalStorageWritable()) return; // TODO cry for some help...
+
+						checkDirs();
+						File file;
+						FileOutputStream out = null;
+
+						try {
+							file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + dirname, getFilename());
+							out = new FileOutputStream(file, true);
+							out.write(data.getBytes(), 0,data.length());
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						} finally {
+							try {
+								if (out != null) {
+									out.close();
+								}
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+
+
 
 					} else if(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_UPLOAD){
 
@@ -106,6 +155,62 @@ public class PlainFileWriter extends Thread {
 
 		// could be a runnable when calling post instead of sendMessage
 		inHandler.sendMessage(msg);
+	}
+
+	private void checkDirs() {
+		File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+		if (!dir.isDirectory()) {
+			// mkdir Environment.DIRECTORY_DOCUMENTS
+			dir.mkdir();
+		}
+
+		dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + dirname);
+		if (!dir.isDirectory()) {
+			// mkdir Environment.DIRECTORY_DOCUMENTS + File.separator + dirname
+			dir.mkdir();
+		}
+	}
+
+	private String getFilename(){
+		File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + dirname);
+		String[] listOfFiles = dir.list(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String filename) {
+				return filename.endsWith(".log") ? true : false;
+			}
+		});
+
+		if(listOfFiles.length < 1){
+			return String.valueOf(System.currentTimeMillis())  + fileExtension;
+		}
+
+		Arrays.sort(listOfFiles);
+
+
+		File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + dirname, listOfFiles[listOfFiles.length-1]);
+		if(file.length() > MAX_FILE_SIZE){
+			return String.valueOf(System.currentTimeMillis()) + fileExtension;
+		}
+
+		return listOfFiles[listOfFiles.length-1];
+
+	}
+
+	private boolean isExternalStorageWritable() {
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isExternalStorageReadable() {
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state) ||
+				Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+			return true;
+		}
+		return false;
 	}
 
 

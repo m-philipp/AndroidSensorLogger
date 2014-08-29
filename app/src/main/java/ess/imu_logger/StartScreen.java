@@ -3,6 +3,7 @@ package ess.imu_logger;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -14,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.content.SharedPreferences.Editor;
 import android.widget.TextView;
+
+import org.apache.http.protocol.HTTP;
 
 import ess.imu_logger.data_export.SensorDataSavingService;
 
@@ -33,6 +36,17 @@ public class StartScreen extends Activity {
 	    //sharedPrefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
 	    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 	    sharedPrefs.registerOnSharedPreferenceChangeListener(listener);
+
+
+
+	    Intent mServiceIntent = new Intent(this, SensorDataSavingService.class);
+	    mServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
+	    this.startService(mServiceIntent);
+
+	    //Intent mServiceIntent = new Intent(this, SensorDataSavingService.class);
+	    //this.startService(mServiceIntent);
+
+	    // register broadcast receiver
 
     }
 
@@ -99,16 +113,27 @@ public class StartScreen extends Activity {
     }
 
 	public void crunchSomeData(View v){
-		((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(100);
+		((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(500);
 
 
-		Intent mServiceIntent = new Intent(this, SensorDataSavingService.class);
+		Intent sendIntent = new Intent();
+		sendIntent.setAction(SensorDataSavingService.ACTION_SAVE_DATA);
+		sendIntent.putExtra(SensorDataSavingService.EXTRA_SENSOR_DATA, "magic miracle\n");
+		//sendIntent.setType(HTTP.PLAIN_TEXT_TYPE); // "text/plain" MIME type
+		sendBroadcast(sendIntent);
 
-		mServiceIntent.setAction(SensorDataSavingService.ACTION_SAVE_DATA);
+		// Verify that the intent will resolve to an activity
+		//if (sendIntent.resolveActivity(getPackageManager()) != null) {
+		//	startActivity(sendIntent);
+		//}
 
-		this.startService(mServiceIntent);
 	}
 
+	public void foobar(View v){
+		Intent sendIntent = new Intent();
+		sendIntent.setAction("ess.imu_logger.foobar");
+		sendBroadcast(sendIntent);
+	}
 
 	SharedPreferences.OnSharedPreferenceChangeListener listener =
 			new SharedPreferences.OnSharedPreferenceChangeListener() {

@@ -32,7 +32,7 @@ public class LoggingService extends Service {
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_START_LOGGING = "ess.imu_logger.action.startLogging";
-    private static final String ACTION_STOP_LOGGING = "ess.imu_logger.action.stopLogging";
+	private static final String ACTION_STOP_LOGGING = "ess.imu_logger.action.stopLogging";
     private static final String ACTION_UPLOAD_DATA = "ess.imu_logger.action.uploadData";
 
     // TODO: Rename parameters
@@ -72,10 +72,10 @@ public class LoggingService extends Service {
                 //return handleStartLogging(acc, gyro, mag);
             } else if (ACTION_STOP_LOGGING.equals(action)) {
 
-                stopRecording();
+	            stopRecording();
 
             } else if (ACTION_UPLOAD_DATA.equals(action)) {
-                //return handleUploadData(url, user);
+	            System.out.println("Called onStartCommand. Given Action: " + intent.getAction());
             }
         }
         return START_STICKY;

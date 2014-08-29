@@ -4,6 +4,11 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -16,10 +21,10 @@
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ImuLiveScreen"
             android:label="@string/title_activity_imu_live_screen"
@@ -42,6 +47,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ess.imu_logger.StartScreen" />
         </activity>
+
         <activity
             android:name=".ApplicationSettings"
             android:label="@string/title_activity_test"
@@ -52,7 +58,32 @@
             android:name=".data_export.SensorDataSavingService"
             android:enabled="true"
             android:exported="true" >
+            <intent-filter>
+                <action android:name="ess.imu_logger.data_export.action.saveData" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="ess.imu_logger.data_export.action.uploadData" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="ess.imu_logger.data_export.action.compressData" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </service>
+
+        <receiver
+            android:name="ess.imu_logger.testReceiver"
+            android:enabled="true"
+            android:exported="true" >
+	        <intent-filter>
+		        <action android:name="ess.imu_logger.foobar" />
+		        <action android:name="android.intent.action.TIME_SET" />
+	        </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
