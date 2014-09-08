@@ -1,13 +1,14 @@
+//apply plugin: 'com.android.library'
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 20
+    buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "ess.imu_logger"
-        minSdkVersion 19
-        targetSdkVersion 19
+        applicationId "ess.imu_logger.wear"
+        minSdkVersion 20
+        targetSdkVersion 20
         versionCode 1
         versionName "1.0"
     }
@@ -21,8 +22,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:19.+'
-
-    wearApp project(':wear')
+    compile 'com.google.android.support:wearable:+'
     compile 'com.google.android.gms:play-services-wearable:+'
 }

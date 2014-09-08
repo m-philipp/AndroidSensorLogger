@@ -50,6 +50,9 @@ public class SensorDataSavingService extends Service {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
+
+			// TODO check is the extra is really there
+
 			if (intent != null) {
 				if (action.equals(ACTION_SAVE_DATA)) {
 					saveData(intent);

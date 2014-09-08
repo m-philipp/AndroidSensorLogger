@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="ess.imu_logger.wear.ImuLiveScreen"
+    tools:deviceIds="wear_square"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_activity_imu_live_screen"
+        android:layout_marginTop="10px"
+        android:layout_marginBottom="10px"
+        android:textColor="@color/orange"
+        android:layout_gravity="center_horizontal"/>
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_gravity="center_horizontal"
+		>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:text="@string/live_sensor_acceleration"
+			android:id="@+id/accTitle"
+			android:layout_gravity="center_horizontal"/>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal">
+
+			<TextView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:text="0.0 0.0 0.0"
+				android:id="@+id/acc_value"
+				android:paddingLeft="10px"
+				android:layout_weight="1"/>
+
+			<TextView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:text="0.0 Hz"
+				android:id="@+id/acc_hz"
+				android:paddingRight="10px"
+				android:layout_weight="1"
+				android:textAlignment="viewEnd"/>
+		</LinearLayout>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:text="@string/live_sensor_gyro"
+			android:id="@+id/gyroTitle"
+			android:layout_gravity="center_horizontal"/>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal">
+
+			<TextView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:text="0.0 0.0 0.0"
+				android:id="@+id/gyro_value"
+				android:paddingLeft="10px"
+				android:layout_weight="1"/>
+
+			<TextView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:text="0.0 Hz"
+				android:id="@+id/gyro_hz"
+				android:paddingRight="10px"
+				android:layout_weight="1"
+				android:textAlignment="viewEnd"/>
+		</LinearLayout>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:text="@string/live_sensor_magn"
+			android:id="@+id/magTitle"
+			android:layout_gravity="center_horizontal"/>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal">
+
+			<TextView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:text="0.0 0.0 0.0"
+				android:id="@+id/mag_value"
+				android:paddingLeft="10px"
+				android:layout_weight="1"/>
+
+			<TextView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:text="0.0 Hz"
+				android:id="@+id/mag_hz"
+				android:paddingRight="10px"
+				android:layout_weight="1"
+				android:textAlignment="viewEnd"/>
+		</LinearLayout>
+	</LinearLayout>
+
+</LinearLayout>
