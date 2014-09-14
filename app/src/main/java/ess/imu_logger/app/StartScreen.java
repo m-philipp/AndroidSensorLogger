@@ -1,24 +1,18 @@
-package ess.imu_logger;
+package ess.imu_logger.app;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.content.SharedPreferences.Editor;
 import android.widget.TextView;
 
-import org.apache.http.protocol.HTTP;
-
-import ess.imu_logger.data_export.SensorDataSavingService;
+import ess.imu_logger.R;
+import ess.imu_logger.app.data_export.SensorDataSavingService;
 
 public class StartScreen extends Activity {
 

@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".StartScreen"
+            android:name=".app.StartScreen"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
             <intent-filter>
@@ -27,36 +27,38 @@
         </activity>
 
         <activity
-            android:name=".ImuLiveScreen"
+            android:name=".app.ImuLiveScreen"
             android:label="@string/title_activity_imu_live_screen"
-            android:parentActivityName=".StartScreen" >
+            android:parentActivityName=".app.StartScreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="StartScreen" />
         </activity>
 
         <service
-            android:name=".LoggingService"
-            android:exported="false" >
+            android:name=".app.LoggingService"
+            android:enabled="true"
+	        android:exported="false"
+	        android:process=":process_logger"> /* Colons define that its private to this APP */
         </service>
 
         <activity
-            android:name=".HelpScreen"
+            android:name=".app.HelpScreen"
             android:label="@string/title_activity_settings_screen"
-            android:parentActivityName=".StartScreen" >
+            android:parentActivityName=".app.StartScreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ess.imu_logger.StartScreen" />
         </activity>
 
         <activity
-            android:name=".ApplicationSettings"
+            android:name=".app.ApplicationSettings"
             android:label="@string/title_activity_test"
-            android:parentActivityName=".StartScreen" >
+            android:parentActivityName=".app.StartScreen" >
         </activity>
 
         <service
-            android:name=".data_export.SensorDataSavingService"
+            android:name=".app.data_export.SensorDataSavingService"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
@@ -77,7 +79,7 @@
         </service>
 
         <receiver
-            android:name="ess.imu_logger.testReceiver"
+            android:name=".app.testReceiver"
             android:enabled="true"
             android:exported="true" >
 	        <intent-filter>

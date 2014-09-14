@@ -1,9 +1,11 @@
-package ess.imu_logger;
+package ess.imu_logger.app;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import ess.imu_logger.R;
 
 public class HelpScreen extends Activity {
 

@@ -1,4 +1,4 @@
-package ess.imu_logger;
+package ess.imu_logger.app;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

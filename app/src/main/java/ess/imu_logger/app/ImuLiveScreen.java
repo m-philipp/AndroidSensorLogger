@@ -1,4 +1,4 @@
-package ess.imu_logger;
+package ess.imu_logger.app;
 
 import android.app.Activity;
 import android.hardware.Sensor;
@@ -6,18 +6,11 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import ess.imu_logger.R;
 

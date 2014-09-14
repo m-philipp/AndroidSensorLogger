@@ -1,10 +1,8 @@
-package ess.imu_logger;
+package ess.imu_logger.app;
 
 
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -12,7 +10,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -20,6 +17,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import java.util.List;
+
+import ess.imu_logger.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

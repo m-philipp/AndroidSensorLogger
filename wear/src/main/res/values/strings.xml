@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Rauchen</string>
+    <string name="app_name">IMU-Logger</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
-	<string name="title_activity_imu_live_screen">ImuLiveScreen</string>
-
-	<string name="open_live_logging">Start Live Logging</string>
-	<string name="title_start_screen">IMU-Logger</string>
-
-
-	<string name="live_sensor_title">Live Sensor View</string>
-	<string name="live_sensor_acceleration">Beschleunigung</string>
-	<string name="live_sensor_gyro">Gyroskop</string>
-	<string name="live_sensor_magn">Magnetometer</string>
+    <string name="title_activity_imu_live_screen">ImuLiveScreen</string>
+    <string name="open_live_logging">Start Live Logging</string>
+    <string name="title_start_screen">IMU-Logger</string>
+    <string name="live_sensor_title">Live Sensor View</string>
+    <string name="live_sensor_acceleration">Beschleunigung</string>
+    <string name="live_sensor_gyro">Gyroskop</string>
+    <string name="live_sensor_magn">Magnetometer</string>
 
 
 
+	<string name="title_activity_annotate_smoking">Rauchen</string>
 
+	<string name="start_timer">Start Timer (5 seconds)</string>
+
+	<string name="notification_title">DelayedConfirmation</string>
+	<string name="notification_timer_selected">Timer Selected</string>
+	<string name="notification_timer_finished">Timer Finished</string>
 
 </resources>

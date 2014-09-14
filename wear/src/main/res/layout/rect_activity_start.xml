@@ -24,4 +24,11 @@
 		android:text="@string/open_live_logging"
 		android:id="@+id/startLiveScreen"
 		android:onClick="onStartLiveScreen"/>
+
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="Annotate Smoking"
+		android:id="@+id/startAnnotateSmoking"
+		android:onClick="onStartAnnotateSmoking"/>
 </LinearLayout>

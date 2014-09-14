@@ -42,4 +42,9 @@ public class StartActivity extends Activity {
 		Intent intent = new Intent(this, ImuLiveScreen.class);
 		startActivity(intent);
 	}
+
+	public void onStartAnnotateSmoking(View v){
+		Intent intent = new Intent(this, AnnotateSmoking.class);
+		startActivity(intent);
+	}
 }

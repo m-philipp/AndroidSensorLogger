@@ -1,8 +1,7 @@
-package ess.imu_logger;
+package ess.imu_logger.app;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -11,6 +10,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.os.Process;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * An {@link Service} subclass for handling asynchronous task requests.
@@ -33,9 +33,11 @@ public class LoggingService extends Service {
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_START_LOGGING = "ess.imu_logger.action.startLogging";
 	private static final String ACTION_STOP_LOGGING = "ess.imu_logger.action.stopLogging";
-    private static final String ACTION_UPLOAD_DATA = "ess.imu_logger.action.uploadData";
+	private static final String ACTION_UPLOAD_DATA = "ess.imu_logger.action.uploadData";
 
-    // TODO: Rename parameters
+	private static final String TAG = "ess.imu_logger.app.LoggingService";
+
+	// TODO: Rename parameters
     // private static final String EXTRA_GYRO = "ess.imu_logger.extra.GYRO";
 
 
@@ -63,6 +65,8 @@ public class LoggingService extends Service {
     @Override
     public int onStartCommand (Intent intent, int flags, int startId){
 
+	    Log.d(TAG, "on onStartCommand called.");
+
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_START_LOGGING.equals(action)) {
@@ -77,6 +81,8 @@ public class LoggingService extends Service {
             } else if (ACTION_UPLOAD_DATA.equals(action)) {
 	            System.out.println("Called onStartCommand. Given Action: " + intent.getAction());
             }
+        }else {
+	        startRecording();
         }
         return START_STICKY;
     }
@@ -85,10 +91,12 @@ public class LoggingService extends Service {
         return null;
     }
 
-    public void onDestroy() { }
+    public void onDestroy() {
+        Log.d(TAG, "on Destroy called.");
+    }
 
     public void onCreate() {
-        System.out.println("service created...");
+	    Log.d(TAG, "on onCreate called.");
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 

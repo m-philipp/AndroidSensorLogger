@@ -1,4 +1,4 @@
-package ess.imu_logger;
+package ess.imu_logger.app;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -16,8 +15,6 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 
 /**
  * Created by martin on 11.08.14.
@@ -116,6 +113,7 @@ public class Logger extends Handler implements SensorEventListener{
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
 	        this.sensorValueQueue.add(getString(event));
+	        printSensor(event, "acc");
 
         } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
 

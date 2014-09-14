@@ -1,4 +1,4 @@
-package ess.imu_logger.data_export;
+package ess.imu_logger.app.data_export;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -6,12 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.HandlerThread;
+import android.os.Binder;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Message;
-import android.os.Process;
 import android.preference.PreferenceManager;
 
 import android.os.Handler;
@@ -27,6 +24,7 @@ public class SensorDataSavingService extends Service {
 
 	public static final String EXTRA_SENSOR_DATA = "ess.imu_logger.data_export.extra.sensorData";
 
+	private static final String TAG = "ess.imu_logger.data_export.SensorDataSavingService";
 
 	private SharedPreferences sharedPrefs;
 	private PlainFileWriter background;
@@ -36,13 +34,22 @@ public class SensorDataSavingService extends Service {
 		public void handleMessage(Message msg) {
 
 			if(msg.getData().getString("action").equals("save finished")){
-				Log.i("SensorDataSavingService", "finished some Data saving");
+				Log.i(TAG, "finished some Data saving");
 			} else if(msg.getData().getString("action").equals("upload finished")){
-				Log.i("SensorDataSavingService", "finished some Data Upload");
+				Log.i(TAG, "finished some Data Upload");
 			}
 			//txt.setText(txt.getText() + "Item " + key +System.getProperty("line.separator"));
 		}
 	};
+
+
+	private final IBinder mBinder = new LocalBinder();
+	public class LocalBinder extends Binder {
+		SensorDataSavingService getService() {
+			// Return this instance of LocalService so clients can call public methods
+			return SensorDataSavingService.this;
+		}
+	}
 
 
 
@@ -50,6 +57,8 @@ public class SensorDataSavingService extends Service {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
+
+			Log.i(TAG, "Broaccast Reciever recieved a Broadcast");
 
 			// TODO check is the extra is really there
 
@@ -70,35 +79,35 @@ public class SensorDataSavingService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+	public IBinder onBind(Intent intent) {
+		return mBinder;
+	}
+
 
 	public int onStartCommand (Intent intent, int flags, int startId){
-		System.out.println("onStartCommand called in SensorDataSavingService ...");
+		Log.i(TAG, "onStartCommand called in SensorDataSavingService ...");
 		if (intent != null) {
 			final String action = intent.getAction();
 			if (ACTION_SAVE_DATA.equals(action)) {
-				Log.d("INFO","ACTION_SAVE_DATA");
+				Log.d(TAG,"ACTION_SAVE_DATA");
 				saveData(intent);
 				// send message to the handler with the current message handler
 
 			} else if (ACTION_UPLOAD_DATA.equals(action)) {
-				Log.d("INFO","ACTION_UPLOAD_DATA");
+				Log.d(TAG,"ACTION_UPLOAD_DATA");
 				uploadData();
 			} else if (ACTION_COMPRESS_DATA.equals(action)) {
-				Log.d("INFO","ACTION_COMPRESS_DATA");
+				Log.d(TAG,"ACTION_COMPRESS_DATA");
 				compressData();
 			} else if (ACTION_START_SERVICE.equals(action)) {
-				System.out.println("Called onStartCommand. Given Action: " + intent.getAction());
+				Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
 			}
 		}
 		return START_STICKY;
 	}
 
 	public void onCreate() {
-		System.out.println("SensorDataSavingService created...");
+		Log.d(TAG, "SensorDataSavingService onCreate ...");
 
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -118,6 +127,7 @@ public class SensorDataSavingService extends Service {
 
 
 	private void saveData(Intent intent) {
+		Log.d(TAG, "saveData called");
 		System.out.println("Saving Data: " + intent.getExtras().getString(EXTRA_SENSOR_DATA));
 		background.saveString(intent.getExtras().getString(EXTRA_SENSOR_DATA));
 	}
