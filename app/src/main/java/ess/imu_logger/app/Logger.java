@@ -1,20 +1,25 @@
 package ess.imu_logger.app;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.app.Service;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
-import java.util.ArrayList;
+import ess.imu_logger.app.data_save.SensorDataSavingService;
+import ess.imu_logger.app.data_save.SensorDataSavingService.LocalBinder;
 
 /**
  * Created by martin on 11.08.14.
@@ -22,22 +27,28 @@ import java.util.ArrayList;
 public class Logger extends Handler implements SensorEventListener{
 
     // ?? private static final String TAG = "BasicLogger";
-	private static final int QUEUE_MAX = 3000;
-    public static final int MESSAGE_START = 1;
+	public static final int MESSAGE_START = 1;
     public static final int MESSAGE_STOP = 0;
 
     private SensorManager mSensorManager;
 	private Sensor gyroscopeSensor, accelerometerSensor, magneticFieldSensor, rotationSensor, linearAccelerometerSensor, gravitySensor, ambientLightSensor, proximitySensor, temperatureSensor, humiditySensor, pressureSensor;
-	private ArrayList<String> sensorValueQueue = new ArrayList<String>();
-	private Integer sensorQueueLength = 0;
+
 	private SharedPreferences sharedPrefs;
 
+	private static final String TAG = "ess.imu_logger.app.logger";
+
 	private int logging_frequency; //SensorManager.SENSOR_DELAY_FASTEST;
+
+	private SensorDataSavingService mSaver;
+	private boolean mBound = false;
+	private Context context;
+
 
     public Logger(Looper looper, Service context) {
         super(looper);
 
 	    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+	    this.context = context;
 
 
 	    logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
@@ -55,36 +66,69 @@ public class Logger extends Handler implements SensorEventListener{
         humiditySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
         pressureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
 
+
+
+
+
     }
 
 
     @Override
     public void handleMessage(Message msg) {
         if (msg.what == MESSAGE_START) {
-            System.out.println("Logger started");
+	        Log.i(TAG, "Logger started");
+
+	        // Bind to LocalService
+	        Intent intent = new Intent(context, SensorDataSavingService.class);
+	        this.context.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
             registerListeners(msg);
         }
         else if(msg.what == MESSAGE_STOP){
+	        Log.i(TAG, "Logger stopped");
             this.removeMessages(0);
             mSensorManager.unregisterListener(this);
+
+	        // UnBind from LocalService
+	        if (mBound) {
+		        this.context.unbindService(mConnection);
+		        mBound = false;
+	        }
+
         }
     }
 
     private void registerListeners(Message msg){
-        // evtl. check if getDefaultSensor() == null
-        Intent i = (Intent) msg.obj;
 
-        if(gyroscopeSensor != null && i.getBooleanExtra("gyroscope", false)) mSensorManager.registerListener(this, gyroscopeSensor, logging_frequency);
-        if(accelerometerSensor != null && i.getBooleanExtra("accelerometer", false)) mSensorManager.registerListener(this, accelerometerSensor, logging_frequency);
-        if(magneticFieldSensor != null && i.getBooleanExtra("magneticField", false)) mSensorManager.registerListener(this, magneticFieldSensor, logging_frequency);
-        if(rotationSensor != null && i.getBooleanExtra("rotation", false)) mSensorManager.registerListener(this, rotationSensor, logging_frequency);
-        if(linearAccelerometerSensor != null && i.getBooleanExtra("linearAccelerometer", false)) mSensorManager.registerListener(this, linearAccelerometerSensor, logging_frequency);
-        if(gravitySensor != null && i.getBooleanExtra("gravity", false)) mSensorManager.registerListener(this, gravitySensor, logging_frequency);
-        if(ambientLightSensor != null && i.getBooleanExtra("ambientLight", false)) mSensorManager.registerListener(this, ambientLightSensor, logging_frequency);
-        if(proximitySensor != null && i.getBooleanExtra("proximity", false)) mSensorManager.registerListener(this, proximitySensor, logging_frequency);
-        if(temperatureSensor != null && i.getBooleanExtra("temperature", false)) mSensorManager.registerListener(this, temperatureSensor, logging_frequency);
-        if(humiditySensor != null && i.getBooleanExtra("humidity", false)) mSensorManager.registerListener(this, humiditySensor, logging_frequency);
-        if(pressureSensor != null && i.getBooleanExtra("pressure", false)) mSensorManager.registerListener(this, pressureSensor, logging_frequency);
+	    Log.i(TAG, "registerListeners");
+
+	    // evtl. check if getDefaultSensor() == null
+        Intent i = (Intent) msg.obj;
+	    logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
+
+
+        if(gyroscopeSensor != null && sharedPrefs.getBoolean("gyroscope", false))
+	        mSensorManager.registerListener(this, gyroscopeSensor, logging_frequency);
+        if(accelerometerSensor != null && sharedPrefs.getBoolean("accelerometer", false))
+	        mSensorManager.registerListener(this, accelerometerSensor, logging_frequency);
+        if(magneticFieldSensor != null && sharedPrefs.getBoolean("magneticField", false))
+	        mSensorManager.registerListener(this, magneticFieldSensor, logging_frequency);
+        if(rotationSensor != null && sharedPrefs.getBoolean("rotation", false))
+	        mSensorManager.registerListener(this, rotationSensor, logging_frequency);
+        if(linearAccelerometerSensor != null && sharedPrefs.getBoolean("linearAccelerometer", false))
+	        mSensorManager.registerListener(this, linearAccelerometerSensor, logging_frequency);
+        if(gravitySensor != null && sharedPrefs.getBoolean("gravity", false))
+	        mSensorManager.registerListener(this, gravitySensor, logging_frequency);
+        if(ambientLightSensor != null && sharedPrefs.getBoolean("ambientLight", false))
+	        mSensorManager.registerListener(this, ambientLightSensor, logging_frequency);
+        if(proximitySensor != null && sharedPrefs.getBoolean("proximity", false))
+	        mSensorManager.registerListener(this, proximitySensor, logging_frequency);
+        if(temperatureSensor != null && sharedPrefs.getBoolean("temperature", false))
+	        mSensorManager.registerListener(this, temperatureSensor, logging_frequency);
+        if(humiditySensor != null && sharedPrefs.getBoolean("humidity", false))
+	        mSensorManager.registerListener(this, humiditySensor, logging_frequency);
+        if(pressureSensor != null && sharedPrefs.getBoolean("pressure", false))
+	        mSensorManager.registerListener(this, pressureSensor, logging_frequency);
 
 
 
@@ -96,52 +140,15 @@ public class Logger extends Handler implements SensorEventListener{
 
     public void onSensorChanged(SensorEvent event) {
 
-	    if(sensorQueueLength > QUEUE_MAX){
 
-		    // Todo change this to some more intelligent code
-		    // maybe handle a bunch of queues an get an Broadcast Notification when to drop a specific queue
-		    // hashmap queues
-		    // String actualQueue
+	    if(event == null || !mBound) return;
 
+		//Log.i(TAG, getString(event));
 
-		    new AsyncWriteFile().execute((ArrayList<String>) new ArrayList<String>(this.sensorValueQueue));
-		    this.sensorQueueLength = 0;
-		    this.sensorValueQueue = new ArrayList<String>();
-	    }
-	    this.sensorQueueLength++;
-
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-
-	        this.sensorValueQueue.add(getString(event));
-	        printSensor(event, "acc");
-
-        } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-
-            // printSensor(event, "gyro");
-
-        }  else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-
-            // printSensor(event, "mag");
-
-        } else if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
-
-            // printSensor(event, "prox");
-
-        } else if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-
-            // printSensor(event, "light");
-
-        }
+	    mSaver.saveData(getString(event));
 
     }
 
-    private void printSensor(SensorEvent event, String sensorName) {
-        // System.nanoTime(); // time since last boot (use timemillies for UTC)
-
-        System.out.println(sensorName + " " + (float) Math.round(event.values[0] * 100) / 100 + " "
-                + (float) Math.round(event.values[1] * 100) / 100 + " "
-                + (float) Math.round(event.values[2] * 100) / 100 + " ");
-    }
 
 
 	private String getString(SensorEvent event) {
@@ -175,4 +182,21 @@ public class Logger extends Handler implements SensorEventListener{
 
 
 	}
+
+	/** Defines callbacks for service binding, passed to bindService() */
+	private ServiceConnection mConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			// We've bound to LocalService, cast the IBinder and get LocalService instance
+			LocalBinder binder = (LocalBinder) service;
+			mSaver = binder.getService();
+			mBound = true;
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mBound = false;
+		}
+	};
 }

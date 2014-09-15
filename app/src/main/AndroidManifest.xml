@@ -8,8 +8,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.BODY_SENSORS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
 
     <application
         android:allowBackup="true"
@@ -22,10 +22,10 @@
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".app.ImuLiveScreen"
             android:label="@string/title_activity_imu_live_screen"
@@ -38,8 +38,8 @@
         <service
             android:name=".app.LoggingService"
             android:enabled="true"
-	        android:exported="false"
-	        android:process=":process_logger"> /* Colons define that its private to this APP */
+            android:exported="false"
+            android:process=":background_logging_process" >
         </service>
 
         <activity
@@ -50,7 +50,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ess.imu_logger.StartScreen" />
         </activity>
-
         <activity
             android:name=".app.ApplicationSettings"
             android:label="@string/title_activity_test"
@@ -58,9 +57,10 @@
         </activity>
 
         <service
-            android:name=".app.data_export.SensorDataSavingService"
+            android:name=".app.data_save.SensorDataSavingService"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true"
+            android:process=":background_logging_process" >
             <intent-filter>
                 <action android:name="ess.imu_logger.data_export.action.saveData" />
 
@@ -82,12 +82,20 @@
             android:name=".app.testReceiver"
             android:enabled="true"
             android:exported="true" >
-	        <intent-filter>
-		        <action android:name="ess.imu_logger.foobar" />
-		        <action android:name="android.intent.action.TIME_SET" />
-		        <category android:name="android.intent.category.DEFAULT" />
-	        </intent-filter>
+            <intent-filter>
+                <action android:name="ess.imu_logger.foobar" />
+                <action android:name="android.intent.action.TIME_SET" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </receiver>
+
+        <service
+            android:name=".app.data_zip_upload.ZipUploadService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":background_logging_process" >
+        </service>
     </application>
 
 </manifest>

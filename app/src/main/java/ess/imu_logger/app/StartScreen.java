@@ -6,22 +6,29 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import ess.imu_logger.R;
-import ess.imu_logger.app.data_export.SensorDataSavingService;
+import ess.imu_logger.app.data_save.SensorDataSavingService;
+import ess.imu_logger.app.data_zip_upload.ZipUploadService;
 
 public class StartScreen extends Activity {
 
 
     SharedPreferences sharedPrefs;
 
+	private static final String TAG = "ess.imu_logger.app.StartScreen";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+	    Log.d(TAG, "onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
@@ -33,9 +40,12 @@ public class StartScreen extends Activity {
 
 
 
-	    Intent mServiceIntent = new Intent(this, SensorDataSavingService.class);
+
+
+
+	   /* Intent mServiceIntent = new Intent(this, SensorDataSavingService.class);
 	    mServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
-	    this.startService(mServiceIntent);
+	    this.startService(mServiceIntent);*/
 
 	    //Intent mServiceIntent = new Intent(this, SensorDataSavingService.class);
 	    //this.startService(mServiceIntent);
@@ -107,6 +117,12 @@ public class StartScreen extends Activity {
     }
 
 	public void crunchSomeData(View v){
+
+
+		Intent mServiceIntent = new Intent(this, ZipUploadService.class);
+		mServiceIntent.setAction(ZipUploadService.ACTION_START_SERVICE);
+		this.startService(mServiceIntent);
+		/*
 		((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(500);
 
 
@@ -120,10 +136,14 @@ public class StartScreen extends Activity {
 		//if (sendIntent.resolveActivity(getPackageManager()) != null) {
 		//	startActivity(sendIntent);
 		//}
+		*/
 
 	}
 
 	public void foobar(View v){
+
+		Log.i(TAG, "foobar called");
+
 		Intent sendIntent = new Intent();
 		sendIntent.setAction("ess.imu_logger.foobar");
 		sendBroadcast(sendIntent);

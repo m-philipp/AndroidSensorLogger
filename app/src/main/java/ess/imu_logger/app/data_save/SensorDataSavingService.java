@@ -1,4 +1,4 @@
-package ess.imu_logger.app.data_export;
+package ess.imu_logger.app.data_save;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -17,14 +17,12 @@ import android.util.Log;
 public class SensorDataSavingService extends Service {
 
 
-	public static final String ACTION_SAVE_DATA = "ess.imu_logger.data_export.action.saveData";
-	public static final String ACTION_UPLOAD_DATA = "ess.imu_logger.data_export.action.uploadData";
-	public static final String ACTION_COMPRESS_DATA = "ess.imu_logger.data_export.action.compressData";
-	public static final String ACTION_START_SERVICE = "ess.imu_logger.data_export.action.startLogging";
+	public static final String ACTION_SAVE_DATA = "ess.imu_logger.data_save.action.saveData";
+	public static final String ACTION_START_SERVICE = "ess.imu_logger.data_save.action.startLogging";
 
-	public static final String EXTRA_SENSOR_DATA = "ess.imu_logger.data_export.extra.sensorData";
+	public static final String EXTRA_SENSOR_DATA = "ess.imu_logger.data_save.extra.sensorData";
 
-	private static final String TAG = "ess.imu_logger.data_export.SensorDataSavingService";
+	private static final String TAG = "ess.imu_logger.data_save.SensorDataSavingService";
 
 	private SharedPreferences sharedPrefs;
 	private PlainFileWriter background;
@@ -45,7 +43,7 @@ public class SensorDataSavingService extends Service {
 
 	private final IBinder mBinder = new LocalBinder();
 	public class LocalBinder extends Binder {
-		SensorDataSavingService getService() {
+		public SensorDataSavingService getService() {
 			// Return this instance of LocalService so clients can call public methods
 			return SensorDataSavingService.this;
 		}
@@ -65,10 +63,6 @@ public class SensorDataSavingService extends Service {
 			if (intent != null) {
 				if (action.equals(ACTION_SAVE_DATA)) {
 					saveData(intent);
-				} else if (action.equals(ACTION_UPLOAD_DATA)) {
-					uploadData();
-				} else if (action.equals(ACTION_COMPRESS_DATA)) {
-					compressData();
 				}
 			}
 		}
@@ -93,12 +87,6 @@ public class SensorDataSavingService extends Service {
 				saveData(intent);
 				// send message to the handler with the current message handler
 
-			} else if (ACTION_UPLOAD_DATA.equals(action)) {
-				Log.d(TAG,"ACTION_UPLOAD_DATA");
-				uploadData();
-			} else if (ACTION_COMPRESS_DATA.equals(action)) {
-				Log.d(TAG,"ACTION_COMPRESS_DATA");
-				compressData();
 			} else if (ACTION_START_SERVICE.equals(action)) {
 				Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
 			}
@@ -114,8 +102,6 @@ public class SensorDataSavingService extends Service {
 		// register broadcast receiver
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(ACTION_SAVE_DATA);
-		filter.addAction(ACTION_UPLOAD_DATA);
-		filter.addAction(ACTION_COMPRESS_DATA);
 
 		registerReceiver(receiver, filter);
 
@@ -124,19 +110,23 @@ public class SensorDataSavingService extends Service {
 
 	}
 
+	public void onDestroy() {
+		unregisterReceiver(receiver);
+	}
+
 
 
 	private void saveData(Intent intent) {
-		Log.d(TAG, "saveData called");
-		System.out.println("Saving Data: " + intent.getExtras().getString(EXTRA_SENSOR_DATA));
+		//Log.v(TAG, "Saving Data: " + intent.getExtras().getString(EXTRA_SENSOR_DATA));
 		background.saveString(intent.getExtras().getString(EXTRA_SENSOR_DATA));
 	}
 
-	private void uploadData() {
+	public void saveData(String save){
+		//Log.v(TAG, "Saving Data: " + save);
+		background.saveString(save);
 	}
 
-	private void compressData() {
-	}
+
 
 
 }
