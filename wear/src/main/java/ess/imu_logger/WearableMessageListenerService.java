@@ -1,4 +1,4 @@
-package ess.imu_logger.wear;
+package ess.imu_logger;
 
 /**
  * Created by martin on 09.09.2014.

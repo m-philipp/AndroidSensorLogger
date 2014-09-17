@@ -6,7 +6,7 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "ess.imu_logger.wear"
+        applicationId "ess.imu_logger"
         minSdkVersion 20
         targetSdkVersion 20
         versionCode 1

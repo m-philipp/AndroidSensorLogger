@@ -1,4 +1,4 @@
-package ess.imu_logger.app.data_save;
+package ess.imu_logger.data_save;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ess.imu_logger.app.Util;
+import ess.imu_logger.Util;
 
 /**
  * Created by martin on 28.08.2014.
@@ -23,7 +23,7 @@ import ess.imu_logger.app.Util;
 public class PlainFileWriter extends Thread {
 
 	// private static final String TAG = PlainFileWriter.class.getSimpleName();
-	private static final String TAG = "ess.imu_logger.app.data_save.PlainFileWriter";
+	private static final String TAG = "ess.imu_logger.data_save.PlainFileWriter";
 
 	public static final int MESSAGE_WRITE = 0;
 

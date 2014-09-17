@@ -1,0 +1,263 @@
+package ess.imu_logger.data_zip_upload;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.util.Log;
+
+
+import java.io.File;
+
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.Arrays;
+
+import ess.imu_logger.Util;
+
+/**
+ * Created by martin on 15.09.2014.
+ */
+public class Uploader extends Thread {
+
+
+	private static final String TAG = "ess.imu_logger.data_zip_upload.Uploader";
+
+	public static final String MESSAGE_TYPE_ACTION = "ess.imu_logger.data_zip_upload.MESSAGE_TYPE_ACTION";
+
+	public static final int MESSAGE_ACTION_UPLOAD = 0;
+	public static final int MESSAGE_ACTION_RETURNING_UPLOAD = 1;
+
+
+	private boolean messageInQueue = false;
+	private SharedPreferences sharedPrefs;
+
+	private Handler inHandler;
+
+	public Uploader(Context context) {
+		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+	}
+
+	public void run() {
+		try {
+			// preparing a looper on current thread
+			// the current thread is being detected implicitly
+			Looper.prepare();
+
+			synchronized (this) {
+				// now, the handler will automatically bind to the
+				// Looper that is attached to the current thread
+				// You don't need to specify the Looper explicitly
+				inHandler = new Handler() {
+					public void handleMessage(Message msg) {
+						// Act on the message received from my UI thread doing my stuff
+
+
+						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_UPLOAD) {
+
+							// TODO Magic
+							//getFilenameToUpload();
+							try {
+								File sourceFile = new File(getFilenameToUpload());
+
+								// open a URL connection to the Servlet
+								FileInputStream fileInputStream = new FileInputStream(sourceFile);
+								DataOutputStream dos = null;
+								URL url = new URL("http://192.168.2.50:8080/upload");
+								String fileName = getFilenameToUpload(false);
+								HttpURLConnection conn = null;
+								String twoHyphens = "--";
+								String boundary = "*****";
+								String lineEnd = "\r\n";
+								int maxBufferSize = 1 * 1024 * 1024;
+								int bytesRead, bytesAvailable, bufferSize;
+								byte[] buffer;
+								int serverResponseCode = 0;
+
+								// Open a HTTP  connection to  the URL
+								conn = (HttpURLConnection) url.openConnection();
+								conn.setDoInput(true); // Allow Inputs
+								conn.setDoOutput(true); // Allow Outputs
+								conn.setUseCaches(false); // Don't use a Cached Copy
+								conn.setRequestMethod("POST");
+								conn.setRequestProperty("Connection", "Keep-Alive");
+								conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+								conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+								conn.setRequestProperty("source", fileName);
+
+								dos = new DataOutputStream(conn.getOutputStream());
+
+								dos.writeBytes(twoHyphens + boundary + lineEnd);
+								dos.writeBytes("Content-Disposition: form-data; name=\"source\";filename=\""
+										+ fileName + "\"" + lineEnd);
+
+								dos.writeBytes(lineEnd);
+
+								// create a buffer of  maximum size
+								bytesAvailable = fileInputStream.available();
+
+								bufferSize = Math.min(bytesAvailable, maxBufferSize);
+								buffer = new byte[bufferSize];
+
+								// read file and write it into form...
+								bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+								while (bytesRead > 0) {
+
+									dos.write(buffer, 0, bufferSize);
+									bytesAvailable = fileInputStream.available();
+									bufferSize = Math.min(bytesAvailable, maxBufferSize);
+									bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+								}
+
+								// send multipart form data necesssary after file data...
+								dos.writeBytes(lineEnd);
+								dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+								// Responses from the server (code and message)
+								serverResponseCode = conn.getResponseCode();
+								String serverResponseMessage = conn.getResponseMessage();
+
+								Log.i("uploadFile", "HTTP Response is : "
+										+ serverResponseMessage + ": " + serverResponseCode);
+
+								if (serverResponseCode == 200) {
+									Log.d(TAG, "UPLOAD OK");
+								}
+
+								//close the streams //
+								fileInputStream.close();
+								dos.flush();
+								dos.close();
+
+							} catch (MalformedURLException ex) {
+
+								ex.printStackTrace();
+
+								Log.e(TAG, "error: " + ex.getMessage(), ex);
+							} catch (Exception e) {
+
+								Log.e(TAG, "Exception : " + e.getMessage(), e);
+							}
+
+
+						}
+
+						// TODO remove the file uploaded if StatusCode == 200
+
+
+					if(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_UPLOAD ||
+							(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_UPLOAD && !messageInQueue)) {
+
+						Message m = new Message();
+						Bundle b = new Bundle();
+						b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_RETURNING_UPLOAD);
+						m.setData(b);
+
+						// could be a runnable when calling post instead of sendMessage
+						inHandler.sendMessageDelayed(m, 2000);
+						messageInQueue = true;
+					}
+					}
+				};
+				notifyAll();}
+
+
+			// After the following line the thread will start
+			// running the message loop and will not normally
+			// exit the loop unless a problem happens or you
+			// quit() the looper (see below)
+			Looper.loop();
+
+			Log.i(TAG, "Upload Thread exiting gracefully");
+		} catch (Throwable t) {
+			Log.e(TAG, "Upload Thread halted due to an error", t);
+		}
+	}
+
+	private String getFilenameToUpload() {
+		return getFilenameToUpload(true);
+	}
+	private String getFilenameToUpload(Boolean full) {
+		File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + Util.fileDir);
+		String[] listOfFiles = dir.list(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String filename) {
+				return filename.endsWith(".zip") ? true : false;
+			}
+		});
+
+		Arrays.sort(listOfFiles);
+
+		if (listOfFiles.length > 1) {
+			if(full)
+				return dir.getAbsolutePath() + File.separator + listOfFiles[0]; // TODO check if we didn't take the newest file.
+			return listOfFiles[0];
+		}
+
+		return null;
+
+	}
+
+
+	// This method is allowed to be called from any thread
+	public synchronized void requestStop() {
+		// using the handler, post a Runnable that will quit()
+		// the Looper attached to our DownloadThread
+		// obviously, all previously queued tasks will be executed
+		// before the loop gets the quit Runnable
+		inHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				// This is guaranteed to run on the DownloadThread
+				// so we can use myLooper() to get its looper
+				Log.i(TAG, "Upload Thread loop quitting by request");
+
+				Looper.myLooper().quit();
+			}
+		});
+	}
+
+	public synchronized void up() {
+		Message msg = new Message();
+		Bundle b = new Bundle();
+		b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_UPLOAD);
+		msg.setData(b);
+
+		// could be a runnable when calling post instead of sendMessage
+		getHandler().sendMessage(msg);
+	}
+
+	private Handler getHandler() {
+		while (inHandler == null) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				//Ignore and try again.
+			}
+		}
+		return inHandler;
+	}
+
+}

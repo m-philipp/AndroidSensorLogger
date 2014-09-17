@@ -1,4 +1,4 @@
-package ess.imu_logger.app;
+package ess.imu_logger;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,8 +18,8 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import ess.imu_logger.app.data_save.SensorDataSavingService;
-import ess.imu_logger.app.data_save.SensorDataSavingService.LocalBinder;
+import ess.imu_logger.data_save.SensorDataSavingService;
+import ess.imu_logger.data_save.SensorDataSavingService.LocalBinder;
 
 /**
  * Created by martin on 11.08.14.

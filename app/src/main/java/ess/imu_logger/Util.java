@@ -1,4 +1,4 @@
-package ess.imu_logger.app;
+package ess.imu_logger;
 
 import android.os.Environment;
 

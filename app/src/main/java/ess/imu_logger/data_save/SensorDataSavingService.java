@@ -1,4 +1,4 @@
-package ess.imu_logger.app.data_save;
+package ess.imu_logger.data_save;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;

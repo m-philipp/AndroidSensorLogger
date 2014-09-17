@@ -1,4 +1,4 @@
-package ess.imu_logger.wear;
+package ess.imu_logger;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -17,6 +17,8 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
+
+import ess.imu_logger.wear.R;
 
 public class AnnotateSmoking extends Activity implements
 		DelayedConfirmationView.DelayedConfirmationListener,

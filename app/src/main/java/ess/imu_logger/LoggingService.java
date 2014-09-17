@@ -1,4 +1,4 @@
-package ess.imu_logger.app;
+package ess.imu_logger;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.os.SystemClock;
 import android.os.Process;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -34,7 +33,7 @@ public class LoggingService extends Service {
 	private static final String ACTION_START_LOGGING = "ess.imu_logger.action.startLogging";
 	private static final String ACTION_STOP_LOGGING = "ess.imu_logger.action.stopLogging";
 
-	private static final String TAG = "ess.imu_logger.app.LoggingService";
+	private static final String TAG = "ess.imu_logger.LoggingService";
 
 	// TODO: Rename parameters
 	// private static final String EXTRA_GYRO = "ess.imu_logger.extra.GYRO";

@@ -1,10 +1,9 @@
-package ess.imu_logger.app;
+package ess.imu_logger;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -12,16 +11,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import ess.imu_logger.R;
-import ess.imu_logger.app.data_save.SensorDataSavingService;
-import ess.imu_logger.app.data_zip_upload.ZipUploadService;
+import ess.imu_logger.data_zip_upload.ZipUploadService;
 
 public class StartScreen extends Activity {
 
 
     SharedPreferences sharedPrefs;
 
-	private static final String TAG = "ess.imu_logger.app.StartScreen";
+	private static final String TAG = "ess.imu_logger.StartScreen";
 
 
     @Override

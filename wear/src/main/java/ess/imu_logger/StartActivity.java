@@ -1,4 +1,4 @@
-package ess.imu_logger.wear;
+package ess.imu_logger;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
+
+import ess.imu_logger.wear.R;
 
 public class StartActivity extends Activity {
 

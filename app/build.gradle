@@ -22,7 +22,8 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:19.+'
-
     wearApp project(':wear')
     compile 'com.google.android.gms:play-services-wearable:+'
+
+
 }

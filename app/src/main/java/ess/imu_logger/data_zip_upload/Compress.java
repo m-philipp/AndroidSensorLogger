@@ -1,4 +1,4 @@
-package ess.imu_logger.app.data_zip_upload;
+package ess.imu_logger.data_zip_upload;
 
 /**
  * Created by martin on 15.09.2014.

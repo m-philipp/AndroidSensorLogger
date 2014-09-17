@@ -1,4 +1,4 @@
-package ess.imu_logger.app.data_zip_upload;
+package ess.imu_logger.data_zip_upload;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -11,17 +11,17 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 
-import ess.imu_logger.app.Util;
-import ess.imu_logger.app.data_save.PlainFileWriter;
+import ess.imu_logger.Util;
+import ess.imu_logger.data_save.PlainFileWriter;
 
 /**
  * Created by martin on 15.09.2014.
  */
 public class Zipper extends Thread {
 
-	private static final String TAG = "ess.imu_logger.app.data_zip_upload.Zipper";
+	private static final String TAG = "ess.imu_logger.data_zip_upload.Zipper";
 
-	public static final String MESSAGE_TYPE_ACTION = "ess.imu_logger.app.data_zip_upload.MESSAGE_TYPE_ACTION";
+	public static final String MESSAGE_TYPE_ACTION = "ess.imu_logger.data_zip_upload.MESSAGE_TYPE_ACTION";
 
 	public static final int MESSAGE_ACTION_ZIP = 0;
 	public static final int MESSAGE_ACTION_RETURNING_ZIP = 1;
@@ -36,64 +36,67 @@ public class Zipper extends Thread {
 			// the current thread is being detected implicitly
 			Looper.prepare();
 
-			// now, the handler will automatically bind to the
-			// Looper that is attached to the current thread
-			// You don't need to specify the Looper explicitly
-			inHandler = new Handler() {
-				public void handleMessage(Message msg) {
-					// Act on the message received from my UI thread doing my stuff
+			synchronized (this) {
+				// now, the handler will automatically bind to the
+				// Looper that is attached to the current thread
+				// You don't need to specify the Looper explicitly
+				inHandler = new Handler() {
+					public void handleMessage(Message msg) {
+						// Act on the message received from my UI thread doing my stuff
 
 
-					if(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_ZIP ||
-							msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_ZIP){
+						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_ZIP) {
 
 
-						if(!Util.isExternalStorageWritable()) return; // TODO cry for some help...
-						Util.checkDirs();
+							if (!Util.isExternalStorageWritable())
+								return; // TODO cry for some help...
+							Util.checkDirs();
 
-						Log.i(TAG, "ZIPPPPING some Data!!");
+							Log.i(TAG, "ZIPPPPING some Data!!");
 
-						// zip DB
-						String sourceFile = getFilenameToZip();
+							// zip DB
+							String sourceFile = getFilenameToZip();
 
-						while(sourceFile != null) {
+							while (sourceFile != null) {
 
-							String exportFilePath = sourceFile.substring(0, sourceFile.length()-PlainFileWriter.fileExtension.length()) + ".zip";
+								String exportFilePath = sourceFile.substring(0, sourceFile.length() - PlainFileWriter.fileExtension.length()) + ".zip";
 
-							Log.d(TAG, "exportFilePath: " + exportFilePath);
-							Log.d(TAG, "sourceFile: " + sourceFile);
+								Log.d(TAG, "exportFilePath: " + exportFilePath);
+								Log.d(TAG, "sourceFile: " + sourceFile);
 
-							Compress zipper = new Compress(sourceFile, exportFilePath);
-							if (zipper.zip()) {
-								Log.d(TAG, "Zip file size: " + (new File(exportFilePath)).length() + " Bytes");
+								Compress zipper = new Compress(sourceFile, exportFilePath);
+								if (zipper.zip()) {
+									Log.d(TAG, "Zip file size: " + (new File(exportFilePath)).length() + " Bytes");
 
-								File file = new File(sourceFile);
-								boolean deleted = file.delete();
+									File file = new File(sourceFile);
+									boolean deleted = file.delete();
 
+								}
+
+
+								sourceFile = getFilenameToZip();
+								//break;
 							}
 
 
-							sourceFile = getFilenameToZip();
-							//break;
 						}
 
+						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_ZIP ||
+								(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_ZIP && !messageInQueue)) {
 
+							Message m = new Message();
+							Bundle b = new Bundle();
+							b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_RETURNING_ZIP);
+							m.setData(b);
+
+							// could be a runnable when calling post instead of sendMessage
+							inHandler.sendMessageDelayed(m, 2000);
+							messageInQueue = true;
+						}
 					}
+				};
+				notifyAll();}
 
-					if(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_ZIP ||
-							(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_ZIP && !messageInQueue)) {
-
-						Message m = new Message();
-						Bundle b = new Bundle();
-						b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_RETURNING_ZIP);
-						m.setData(b);
-
-						// could be a runnable when calling post instead of sendMessage
-						inHandler.sendMessageDelayed(m, 2000);
-						messageInQueue = true;
-					}
-				}
-			};
 
 			// After the following line the thread will start
 			// running the message loop and will not normally
@@ -154,7 +157,19 @@ public class Zipper extends Thread {
 		msg.setData(b);
 
 		// could be a runnable when calling post instead of sendMessage
-		inHandler.sendMessage(msg);
+		getHandler().sendMessage(msg);
+	}
+
+
+	private Handler getHandler() {
+		while (inHandler == null) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				//Ignore and try again.
+			}
+		}
+		return inHandler;
 	}
 
 }
