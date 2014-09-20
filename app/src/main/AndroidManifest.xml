@@ -73,12 +73,13 @@
         </service>
 
         <receiver
-            android:name=".testReceiver"
+            android:name=".myReceiver"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
-                <action android:name="ess.imu_logger.foobar" />
+                <action android:name="ess.imu_logger.smokeAnnotation" />
                 <action android:name="android.intent.action.TIME_SET" />
+	            <action android:name="android.intent.action.BOOT_COMPLETED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

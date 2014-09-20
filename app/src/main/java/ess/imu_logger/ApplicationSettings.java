@@ -2,23 +2,25 @@ package ess.imu_logger;
 
 
 import android.app.Dialog;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.preference.CustomSwitchPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import java.util.List;
-
-import ess.imu_logger.R;
+import java.util.HashMap;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -43,16 +45,91 @@ public class ApplicationSettings extends PreferenceActivity {
 	final static String ACTION_PREFS_DATA_SYNC = "ess.imu_logger.action.prefs_data_sync";
 	final static String ACTION_PREFS_SENSOR = "ess.imu_logger.action.prefs_sensor";
 
-	private static List<Sensor> sensors;
+	private static HashMap<String, Boolean> activeSensors = new HashMap<String, Boolean>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+
+		SensorManager mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+		Sensor s = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		if (s == null)
+			activeSensors.put("accelerometer", false);
+		else
+			activeSensors.put("accelerometer", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		if (s == null)
+			activeSensors.put("gyroscope", false);
+		else
+			activeSensors.put("gyroscope", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+		if (s == null)
+			activeSensors.put("magneticField", false);
+		else
+			activeSensors.put("magneticField", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+		if (s == null)
+			activeSensors.put("ambientLight", false);
+		else
+			activeSensors.put("ambientLight", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+		if (s == null)
+			activeSensors.put("proximity", false);
+		else
+			activeSensors.put("proximity", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+		if (s == null)
+			activeSensors.put("temperature", false);
+		else
+			activeSensors.put("temperature", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+		if (s == null)
+			activeSensors.put("humidity", false);
+		else
+			activeSensors.put("humidity", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+		if (s == null)
+			activeSensors.put("pressure", false);
+		else
+			activeSensors.put("pressure", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+		if (s == null)
+			activeSensors.put("rotation", false);
+		else
+			activeSensors.put("rotation", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+		if (s == null)
+			activeSensors.put("gravity", false);
+		else
+			activeSensors.put("gravity", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+		if (s == null)
+			activeSensors.put("linearAccelerometer", false);
+		else
+			activeSensors.put("linearAccelerometer", true);
+
+		s = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+		if (s == null)
+			activeSensors.put("steps", false);
+		else
+			activeSensors.put("steps", true);
+
+
 		/*
 		SensorManager mgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 		sensors = mgr.getSensorList(Sensor.TYPE_ALL);
-		*/
+*/
 
 
 		// Display the fragment as the main content.
@@ -62,9 +139,8 @@ public class ApplicationSettings extends PreferenceActivity {
 	}
 
 
-	protected boolean isValidFragment (String fragmentName)
-	{
-		if(SettingsFragment.class.getName().equals(fragmentName))
+	protected boolean isValidFragment(String fragmentName) {
+		if (SettingsFragment.class.getName().equals(fragmentName))
 			return true;
 		return false;
 
@@ -89,8 +165,9 @@ public class ApplicationSettings extends PreferenceActivity {
 		}
 
 
-
-		/** Sets up the action bar for an {@link PreferenceScreen} */
+		/**
+		 * Sets up the action bar for an {@link PreferenceScreen}
+		 */
 		public static void initializeActionBar(PreferenceScreen preferenceScreen) {
 			final Dialog dialog = preferenceScreen.getDialog();
 
@@ -139,25 +216,94 @@ public class ApplicationSettings extends PreferenceActivity {
 
 			addPreferencesFromResource(R.xml.preferences);
 
-			/*
-			for (Sensor sensor : sensors) {
-				Log.d("Sensors", "" + sensor.getName());
+
+			if (!activeSensors.get("accelerometer")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("accelerometer");
+				csp.setEnabled(false);
+				csp.setChecked(false);
 			}
-			*/
+			if (!activeSensors.get("gyroscope")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("gyroscope");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
+			if (!activeSensors.get("magneticField")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("magneticField");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
+			if (!activeSensors.get("ambientLight")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("ambientLight");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
+			if (!activeSensors.get("proximity")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("proximity");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
+			if (!activeSensors.get("temperature")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("temperature");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
+			if (!activeSensors.get("humidity")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("humidity");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
+			if (!activeSensors.get("pressure")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("pressure");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
+			if (!activeSensors.get("rotation")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("rotation");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
+			if (!activeSensors.get("gravity")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("gravity");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
+			if (!activeSensors.get("linearAccelerometer")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("linearAccelerometer");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
+			if (!activeSensors.get("steps")) {
+				CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("steps");
+				csp.setEnabled(false);
+				csp.setChecked(false);
+			}
+
 
 			//findPreference("accelerometer").setEnabled(false);//Disabling
 
 			bindPreferenceSummaryToValue(findPreference("name"));
+
 			bindPreferenceSummaryToValue(findPreference("sampling_rate"));
+
 			bindPreferenceSummaryToValue(findPreference("server_url"));
+
 			bindPreferenceSummaryToValue(findPreference("server_port"));
+
 			bindPreferenceSummaryToValue(findPreference("upload_frequency"));
 
 		}
+
 	}
-
-
-
 
 
 	/**
@@ -200,7 +346,8 @@ public class ApplicationSettings extends PreferenceActivity {
 	 *
 	 * @see #sBindPreferenceSummaryToValueListener
 	 */
-	private static void bindPreferenceSummaryToValue(Preference preference) {
+	private static void bindPreferenceSummaryToValue(Preference
+			                                                 preference) {
 		// Set the listener to watch for value changes.
 		preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 

@@ -37,6 +37,7 @@
 
 	<string name="pref_title_upload_frequency">Upload Frequenz</string>
 	<string-array name="pref_upload_frequency_titles">
+		<item>10 Seconds</item>
 		<item>5 Minuten</item>
 		<item>1 Stunde</item>
 		<item>5 Stunden</item>
@@ -46,13 +47,14 @@
 		<item>manuell</item>
 	</string-array>
 	<string-array name="pref_upload_frequency_values">
-		<item>5</item>
-		<item>60</item>
+		<item>10</item>
 		<item>300</item>
-		<item>720</item>
-		<item>1480</item>
-		<item>2960</item>
-		<item>9999999</item>
+		<item>3600</item>
+		<item>18000</item>
+		<item>43200</item>
+		<item>88800</item>
+		<item>177600</item>
+		<item>0</item>
 	</string-array>
 
 	<string name="pref_server_port">Server Port</string>

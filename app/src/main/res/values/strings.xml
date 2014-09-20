@@ -2,18 +2,39 @@
 <resources>
 
     <string name="app_name">IMU-Logger</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Einstellungen</string>
-    <string name="title_activity_imu_live_screen">imuLiveScreen</string>
-    <string name="open_live_logging">Start Live Logging</string>
-    <string name="live_sensor_title">Live Sensor View</string>
+	<string name="action_settings">Einstellungen</string>
+
+	<string name="welcome_placeholer">Hi, Kunibert</string>
+
+
+
+	<string name="open_live_logging">Anzeigen</string>
+	<string name="live_view">Echtzeit Daten</string>
+
+	<string name="title_activity_imu_live_screen">Echtzeit Daten</string>
+	<string name="live_sensor_title">Live Sensor View</string>
     <string name="live_sensor_acceleration">Beschleunigung</string>
     <string name="live_sensor_gyro">Gyroskop</string>
     <string name="live_sensor_magn">Magnetometer</string>
     <string name="live_sensor_prox">Näherungssensor</string>
     <string name="live_sensor_light">Umgebungslicht</string>
-    <string name="title_activity_settings_screen">Einstellungen</string>
-	<string name="startLoggingService">Start Background Logging</string>
-	<string name="stopLoggingService">Stop Background Logging</string>
+
+
+	<string name="title_activity_settings_screen">Einstellungen</string>
+
+
+	<string name="logging_service">Aufzeichnung:</string>
+	<string name="logging_service_running">läuft</string>
+	<string name="logging_service_stopped">angehalten</string>
+
+
+	<item name="my_red" type="color">#ff6000</item>
+	<item name="my_green" type="color">#ff00c600</item>
+
+	<string name="manual_data_upload">Manuell Sensor Daten hochladen</string>
+	<string name="trigger_manual_data_upload">jetzt hochladen</string>
+	<string name="data_to_upload">hochzuladen</string>
+
+	<string name="annotateSmoking">Rauchen annotieren</string>
 
 </resources>

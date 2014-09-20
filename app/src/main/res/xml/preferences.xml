@@ -199,12 +199,12 @@
 
 			<CustomSwitchPreference
 				android:defaultValue="true"
-				android:key="wlan_only"
+				android:key="wifi_only"
 				android:title="@string/pref_sync_wlan_only"/>
 
 
 			<ListPreference
-				android:defaultValue="180"
+				android:defaultValue="18000"
 				android:entries="@array/pref_upload_frequency_titles"
 				android:entryValues="@array/pref_upload_frequency_values"
 				android:key="upload_frequency"

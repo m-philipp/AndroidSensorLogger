@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import java.io.File;
 
 import ess.imu_logger.data_zip_upload.ZipUploadService;
 
@@ -35,38 +39,31 @@ public class StartScreen extends Activity {
 	    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 	    sharedPrefs.registerOnSharedPreferenceChangeListener(listener);
 
+		Intent mServiceIntent = new Intent(this, ZipUploadService.class);
+		mServiceIntent.setAction(ZipUploadService.ACTION_START_SERVICE);
+		this.startService(mServiceIntent);
 
-
-
-
-
-	   /* Intent mServiceIntent = new Intent(this, SensorDataSavingService.class);
-	    mServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
-	    this.startService(mServiceIntent);*/
-
-	    //Intent mServiceIntent = new Intent(this, SensorDataSavingService.class);
-	    //this.startService(mServiceIntent);
-
-	    // register broadcast receiver
+	    updateSettingsOnStartScreen();
 
     }
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		System.out.println("resuming");
+		updateSettingsOnStartScreen();
+		Log.d(TAG, "resuming");
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		System.out.println("pausing");
+		Log.d(TAG, "pausing");
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		System.out.println("destroying");
+		Log.d(TAG, "destroying");
 		//sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener);
 	}
 
@@ -91,72 +88,112 @@ public class StartScreen extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onStartLiveScreen(View v){
+	public void onStartLiveScreen(View v){
         Intent intent = new Intent(this, ImuLiveScreen.class);
         startActivity(intent);
     }
 
-    public void onStartBackgroundLogging(View v){
-
+	private void startBackgroundLogging(){
         Intent mServiceIntent = new Intent(this, LoggingService.class);
-
         mServiceIntent.setAction("ess.imu_logger.action.startLogging");
-
         this.startService(mServiceIntent);
     }
 
-    public void onStopBackgroundLogging(View v) {
+    public void stopBackgroundLogging() {
         Intent mServiceIntent = new Intent(this, LoggingService.class);
-
         mServiceIntent.setAction("ess.imu_logger.action.stopLogging");
-
         this.startService(mServiceIntent);
     }
 
-	public void crunchSomeData(View v){
-
+	public void triggerManualDataUpload(View v){
 
 		Intent mServiceIntent = new Intent(this, ZipUploadService.class);
-		mServiceIntent.setAction(ZipUploadService.ACTION_START_SERVICE);
+		mServiceIntent.setAction(ZipUploadService.ACTION_MANUAL_UPLOAD_DATA);
 		this.startService(mServiceIntent);
+
 		/*
 		((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(500);
-
-
-		Intent sendIntent = new Intent();
-		sendIntent.setAction(SensorDataSavingService.ACTION_SAVE_DATA);
-		sendIntent.putExtra(SensorDataSavingService.EXTRA_SENSOR_DATA, "magic miracle\n");
-		//sendIntent.setType(HTTP.PLAIN_TEXT_TYPE); // "text/plain" MIME type
-		sendBroadcast(sendIntent);
-
-		// Verify that the intent will resolve to an activity
-		//if (sendIntent.resolveActivity(getPackageManager()) != null) {
-		//	startActivity(sendIntent);
-		//}
 		*/
 
 	}
 
-	public void foobar(View v){
+	public void annotateSmoking(View v){
 
-		Log.i(TAG, "foobar called");
+		Log.i(TAG, "annotateSmoking called");
 
 		Intent sendIntent = new Intent();
-		sendIntent.setAction("ess.imu_logger.foobar");
+		sendIntent.setAction("ess.imu_logger.annotateSmoking");
 		sendBroadcast(sendIntent);
+
 	}
 
 	SharedPreferences.OnSharedPreferenceChangeListener listener =
 			new SharedPreferences.OnSharedPreferenceChangeListener() {
 				public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-					System.out.println("----------------- PREFS CHANGED !! ------------");
+					Log.d(TAG, "----------------- PREFS CHANGED !! ------------");
 
-					if(key.equals("name")){
-						TextView t = (TextView) findViewById(R.id.textView);
-						t.setText(sharedPrefs.getString("name", ""));
-					}
+
+					updateSettingsOnStartScreen();
+
 
 				}
 			};
+
+	private void updateSettingsOnStartScreen() {
+			// update Name
+			TextView t = (TextView) findViewById(R.id.welcome_name);
+			t.setText("Hi, " + sharedPrefs.getString("name", "Kunibert"));
+
+			// update logging status
+			t = (TextView) findViewById(R.id.logging_service_state);
+			if( sharedPrefs.getBoolean("sensor_activate", false)){
+				t.setText(getResources().getText(R.string.logging_service_running));
+				t.setTextColor(getResources().getColor(R.color.my_green));
+			}
+			else{
+				t.setText(getResources().getText(R.string.logging_service_stopped));
+				t.setTextColor(getResources().getColor(R.color.my_red));
+			}
+
+			// start/stop the Logging Service
+			if( sharedPrefs.getBoolean("sensor_activate", false)){
+				startBackgroundLogging();
+			}
+			else{
+				stopBackgroundLogging();
+			}
+
+			Long l = getFolderSize();
+			Float f = Util.round( (l.floatValue() / (1024 * 1024)), 2);
+			Log.d(TAG, "-------->> " + f.toString());
+			t = (TextView) findViewById(R.id.amaount_of_data_to_upload);
+			t.setText(f.toString() + " MB");
+
+	}
+
+
+
+	public static long getFolderSize(){
+		File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + Util.fileDir);
+		return getFolderSize(dir);
+	}
+
+	public static long getFolderSize(File dir) {
+
+		if (Util.isExternalStorageReadable()) {
+			long size = 0;
+			for (File file : dir.listFiles()) {
+				if (file.isFile()) {
+					// System.out.println(file.getName() + " " + file.length());
+					size += file.length();
+				} else
+					size += getFolderSize(file);
+			}
+			return size;
+		} else {
+			return 0L;
+		}
+	}
+
 
 }

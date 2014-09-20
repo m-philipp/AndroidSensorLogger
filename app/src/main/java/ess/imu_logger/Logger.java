@@ -162,6 +162,8 @@ public class Logger extends Handler implements SensorEventListener{
 		dataString.append(event.timestamp);
 		dataString.append(" ");
 
+		// TODO Save Sensor Data....
+
 		switch (event.sensor.getType()){
 			case Sensor.TYPE_ACCELEROMETER:
 				dataString.append(Sensor.TYPE_ACCELEROMETER);

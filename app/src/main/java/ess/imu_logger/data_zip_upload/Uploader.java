@@ -2,6 +2,8 @@ package ess.imu_logger.data_zip_upload;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -19,6 +21,7 @@ import java.io.FileInputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -51,11 +54,15 @@ public class Uploader extends Thread {
 
 	private boolean messageInQueue = false;
 	private SharedPreferences sharedPrefs;
+	private ConnectivityManager connManager;
+	private static String sID = null;
 
 	private Handler inHandler;
 
 	public Uploader(Context context) {
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+		connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		sID = Util.id(context);
 	}
 
 	public void run() {
@@ -72,116 +79,153 @@ public class Uploader extends Thread {
 					public void handleMessage(Message msg) {
 						// Act on the message received from my UI thread doing my stuff
 
+						Log.d(TAG, "handle Message");
 
-						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_UPLOAD) {
 
-							// TODO Magic
-							//getFilenameToUpload();
-							try {
-								File sourceFile = new File(getFilenameToUpload());
+						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_UPLOAD ||
+								msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_UPLOAD) {
 
-								// open a URL connection to the Servlet
-								FileInputStream fileInputStream = new FileInputStream(sourceFile);
-								DataOutputStream dos = null;
-								URL url = new URL("http://192.168.2.50:8080/upload");
-								String fileName = getFilenameToUpload(false);
-								HttpURLConnection conn = null;
-								String twoHyphens = "--";
-								String boundary = "*****";
-								String lineEnd = "\r\n";
-								int maxBufferSize = 1 * 1024 * 1024;
-								int bytesRead, bytesAvailable, bufferSize;
-								byte[] buffer;
-								int serverResponseCode = 0;
+							Log.d(TAG, "received message to upload data");
 
-								// Open a HTTP  connection to  the URL
-								conn = (HttpURLConnection) url.openConnection();
-								conn.setDoInput(true); // Allow Inputs
-								conn.setDoOutput(true); // Allow Outputs
-								conn.setUseCaches(false); // Don't use a Cached Copy
-								conn.setRequestMethod("POST");
-								conn.setRequestProperty("Connection", "Keep-Alive");
-								conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-								conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-								conn.setRequestProperty("source", fileName);
+							NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-								dos = new DataOutputStream(conn.getOutputStream());
+							if (mWifi.isConnected() || !sharedPrefs.getBoolean("wifi_only", true)) {
 
-								dos.writeBytes(twoHyphens + boundary + lineEnd);
-								dos.writeBytes("Content-Disposition: form-data; name=\"source\";filename=\""
-										+ fileName + "\"" + lineEnd);
+								Log.d(TAG, "now trying to upload date while concerning settings and WIFI State");
 
-								dos.writeBytes(lineEnd);
+								// TODO Magic
+								//getFilenameToUpload();
+								try {
+									File sourceFile = new File(getFilenameToUpload());
 
-								// create a buffer of  maximum size
-								bytesAvailable = fileInputStream.available();
+									// open a URL connection to the Servlet
+									FileInputStream fileInputStream = new FileInputStream(sourceFile);
+									DataOutputStream dos = null;
+									//URL url = new URL("http://192.168.2.50:8080/upload");
+									String name = "default";
+									if(!sharedPrefs.getBoolean("anonymize", true))
+										name = sharedPrefs.getString("name", "default");
 
-								bufferSize = Math.min(bytesAvailable, maxBufferSize);
-								buffer = new byte[bufferSize];
+									String u = sharedPrefs.getString("pref_server_url", "http://192.168.2.50") + ":" +
+											sharedPrefs.getString("pref_server_port", "8080") +
+											"/upload/" + sID + "/" + name;
+									Log.i(TAG, "URL: " + u);
+									URL url = new URL(u);
 
-								// read file and write it into form...
-								bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
-								while (bytesRead > 0) {
+									String fileName = getFilenameToUpload(false);
+									HttpURLConnection conn = null;
+									String twoHyphens = "--";
+									String boundary = "*****";
+									String lineEnd = "\r\n";
+									int maxBufferSize = 1 * 1024 * 1024;
+									int bytesRead, bytesAvailable, bufferSize;
+									byte[] buffer;
+									int serverResponseCode = 0;
 
-									dos.write(buffer, 0, bufferSize);
+									// Open a HTTP  connection to  the URL
+									conn = (HttpURLConnection) url.openConnection();
+									conn.setDoInput(true); // Allow Inputs
+									conn.setDoOutput(true); // Allow Outputs
+									conn.setUseCaches(false); // Don't use a Cached Copy
+									conn.setRequestMethod("POST");
+									conn.setRequestProperty("Connection", "Keep-Alive");
+									conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+									conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+									conn.setRequestProperty("source", fileName);
+
+									dos = new DataOutputStream(conn.getOutputStream());
+
+									dos.writeBytes(twoHyphens + boundary + lineEnd);
+									dos.writeBytes("Content-Disposition: form-data; name=\"source\";filename=\""
+											+ fileName + "\"" + lineEnd);
+
+									dos.writeBytes(lineEnd);
+
+									// create a buffer of  maximum size
 									bytesAvailable = fileInputStream.available();
+
 									bufferSize = Math.min(bytesAvailable, maxBufferSize);
+									buffer = new byte[bufferSize];
+
+									// read file and write it into form...
 									bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
+									while (bytesRead > 0) {
+
+										dos.write(buffer, 0, bufferSize);
+										bytesAvailable = fileInputStream.available();
+										bufferSize = Math.min(bytesAvailable, maxBufferSize);
+										bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+									}
+
+									// send multipart form data necesssary after file data...
+									dos.writeBytes(lineEnd);
+									dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+									// Responses from the server (code and message)
+									serverResponseCode = conn.getResponseCode();
+									String serverResponseMessage = conn.getResponseMessage();
+
+									Log.i("uploadFile", "HTTP Response is : "
+											+ serverResponseMessage + ": " + serverResponseCode);
+
+									if (serverResponseCode == 200) {
+										Log.d(TAG, "UPLOAD OK");
+
+										// TODO check remove
+										File f = new File(fileName);
+										f.delete();
+
+									}
+
+									//close the streams //
+									fileInputStream.close();
+									dos.flush();
+									dos.close();
+
+								} catch (MalformedURLException ex) {
+
+									ex.printStackTrace();
+									Log.e(TAG, "error: " + ex.getMessage(), ex);
+								} catch (Exception e) {
+									e.printStackTrace();
+									Log.e(TAG, "Exception : " + e.getMessage(), e);
 								}
 
-								// send multipart form data necesssary after file data...
-								dos.writeBytes(lineEnd);
-								dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
-								// Responses from the server (code and message)
-								serverResponseCode = conn.getResponseCode();
-								String serverResponseMessage = conn.getResponseMessage();
-
-								Log.i("uploadFile", "HTTP Response is : "
-										+ serverResponseMessage + ": " + serverResponseCode);
-
-								if (serverResponseCode == 200) {
-									Log.d(TAG, "UPLOAD OK");
-								}
-
-								//close the streams //
-								fileInputStream.close();
-								dos.flush();
-								dos.close();
-
-							} catch (MalformedURLException ex) {
-
-								ex.printStackTrace();
-
-								Log.e(TAG, "error: " + ex.getMessage(), ex);
-							} catch (Exception e) {
-
-								Log.e(TAG, "Exception : " + e.getMessage(), e);
 							}
-
-
 						}
 
-						// TODO remove the file uploaded if StatusCode == 200
 
 
-					if(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_UPLOAD ||
-							(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_UPLOAD && !messageInQueue)) {
+						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_UPLOAD ||
+								(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_UPLOAD && !messageInQueue)) {
 
-						Message m = new Message();
-						Bundle b = new Bundle();
-						b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_RETURNING_UPLOAD);
-						m.setData(b);
+							Message m = new Message();
+							Bundle b = new Bundle();
+							b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_RETURNING_UPLOAD);
+							m.setData(b);
 
-						// could be a runnable when calling post instead of sendMessage
-						inHandler.sendMessageDelayed(m, 2000);
-						messageInQueue = true;
-					}
+							// could be a runnable when calling post instead of sendMessage
+							Long delay = Long.parseLong(sharedPrefs.getString("upload_frequency", "0")) * 1000;
+							Log.d(TAG, "setting new TimedMessage with: " + delay);
+
+
+							if(delay > 0L) {
+								inHandler.sendMessageDelayed(m, delay);
+								// TODO set AlarmManager
+								messageInQueue = true;
+							}
+							else{
+								messageInQueue = false;
+							}
+						}
 					}
 				};
-				notifyAll();}
+				notifyAll();
+			}
 
 
 			// After the following line the thread will start
@@ -199,6 +243,7 @@ public class Uploader extends Thread {
 	private String getFilenameToUpload() {
 		return getFilenameToUpload(true);
 	}
+
 	private String getFilenameToUpload(Boolean full) {
 		File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + Util.fileDir);
 		String[] listOfFiles = dir.list(new FilenameFilter() {
@@ -211,7 +256,7 @@ public class Uploader extends Thread {
 		Arrays.sort(listOfFiles);
 
 		if (listOfFiles.length > 1) {
-			if(full)
+			if (full)
 				return dir.getAbsolutePath() + File.separator + listOfFiles[0]; // TODO check if we didn't take the newest file.
 			return listOfFiles[0];
 		}

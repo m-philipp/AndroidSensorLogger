@@ -10,8 +10,7 @@ import android.util.Log;
 public class ZipUploadService extends Service {
 
 
-	public static final String ACTION_UPLOAD_DATA = "ess.imu_logger.data_zip_upload.action.uploadData";
-	public static final String ACTION_COMPRESS_DATA = "ess.imu_logger.data_zip_upload.action.compressData";
+	public static final String ACTION_MANUAL_UPLOAD_DATA = "ess.imu_logger.data_zip_upload.action.manUploadData";
 	public static final String ACTION_START_SERVICE = "ess.imu_logger.data_zip_upload.action.startService";
 
 	// public static final String EXTRA_SENSOR_DATA = "ess.imu_logger.data_zip_upload.extra.sensorData";
@@ -53,6 +52,10 @@ public class ZipUploadService extends Service {
 
 	public int onStartCommand (Intent intent, int flags, int startId){
 		Log.i(TAG, "onStartCommand called ...");
+
+		if(intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)){
+			uploader.up();
+		}
 
 		return START_STICKY;
 	}

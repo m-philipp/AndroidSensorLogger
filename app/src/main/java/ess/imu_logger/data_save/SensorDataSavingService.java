@@ -32,7 +32,7 @@ public class SensorDataSavingService extends Service {
 		public void handleMessage(Message msg) {
 
 			if(msg.getData().getString("action").equals("save finished")){
-				Log.i(TAG, "finished some Data saving");
+				Log.i(TAG, "finished some Data Saving");
 			} else if(msg.getData().getString("action").equals("upload finished")){
 				Log.i(TAG, "finished some Data Upload");
 			}
