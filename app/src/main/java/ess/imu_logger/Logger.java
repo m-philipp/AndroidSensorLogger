@@ -173,10 +173,89 @@ public class Logger extends Handler implements SensorEventListener{
 				dataString.append(event.values[1]);
 				dataString.append(" ");
 				dataString.append(event.values[2]);
+				break;
+			case Sensor.TYPE_GYROSCOPE:
+				dataString.append(Sensor.TYPE_GYROSCOPE);
 				dataString.append(" ");
+				dataString.append(event.values[0]);
+				dataString.append(" ");
+				dataString.append(event.values[1]);
+				dataString.append(" ");
+				dataString.append(event.values[2]);
+				break;
+			case Sensor.TYPE_MAGNETIC_FIELD:
+				dataString.append(Sensor.TYPE_MAGNETIC_FIELD);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
+				dataString.append(" ");
+				dataString.append(event.values[1]);
+				dataString.append(" ");
+				dataString.append(event.values[2]);
+				break;
+			case Sensor.TYPE_LIGHT:
+				dataString.append(Sensor.TYPE_LIGHT);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
+				break;
+			case Sensor.TYPE_PROXIMITY:
+				dataString.append(Sensor.TYPE_PROXIMITY);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
+				break;
+			case Sensor.TYPE_AMBIENT_TEMPERATURE:
+				dataString.append(Sensor.TYPE_AMBIENT_TEMPERATURE);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
+				break;
+			case Sensor.TYPE_RELATIVE_HUMIDITY:
+				dataString.append(Sensor.TYPE_RELATIVE_HUMIDITY);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
+				break;
+			case Sensor.TYPE_PRESSURE:
+				dataString.append(Sensor.TYPE_PRESSURE);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
+				break;
+
+			// Virtual Sensors
+			case Sensor.TYPE_ROTATION_VECTOR:
+				dataString.append(Sensor.TYPE_ROTATION_VECTOR);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
+				dataString.append(" ");
+				dataString.append(event.values[1]);
+				dataString.append(" ");
+				dataString.append(event.values[2]);
+				break;
+			case Sensor.TYPE_GRAVITY:
+				dataString.append(Sensor.TYPE_GRAVITY);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
+				dataString.append(" ");
+				dataString.append(event.values[1]);
+				dataString.append(" ");
+				dataString.append(event.values[2]);
+				break;
+			case Sensor.TYPE_LINEAR_ACCELERATION:
+				dataString.append(Sensor.TYPE_LINEAR_ACCELERATION);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
+				dataString.append(" ");
+				dataString.append(event.values[1]);
+				dataString.append(" ");
+				dataString.append(event.values[2]);
+				break;
+			case Sensor.TYPE_STEP_COUNTER:
+				dataString.append(Sensor.TYPE_STEP_COUNTER);
+				dataString.append(" ");
+				dataString.append(event.values[0]);
 				break;
 			default:
-				dataString.append("unrecognized Sensorevent ");
+				dataString.append("unrecognized Sensorevent! Type: ");
+				dataString.append(event.sensor.getType());
+				dataString.append(" Name: ");
+				dataString.append(event.sensor.getName());
 		}
 		dataString.append("\n");
 
