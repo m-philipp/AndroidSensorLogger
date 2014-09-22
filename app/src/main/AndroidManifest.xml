@@ -38,23 +38,24 @@
         <service
             android:name=".LoggingService"
             android:enabled="true"
+		    android:process=":background_logging_process"
             android:exported="false">
-	        <!-- android:process=":background_logging_process" -->
+
         </service>
 
 	    <service
 		    android:name=".data_zip_upload.ZipUploadService"
 		    android:enabled="true"
 		    android:exported="false">
-		    <!-- android:process=":background_logging_process" -->
+		    android:process=":background_logging_process
 	    </service>
 
 
         <service
             android:name=".data_save.SensorDataSavingService"
             android:enabled="true"
-            android:exported="true">
-	        <!-- android:process=":background_logging_process" -->
+            android:exported="true"
+		    android:process=":background_logging_process">
             <intent-filter>
                 <action android:name="ess.imu_logger.data_export.action.saveData" />
 

@@ -18,8 +18,9 @@ public class myReceiver extends BroadcastReceiver {
 
         String action = intent.getAction();
 	    if (intent != null) {
-		    if(action.equals("ess.imu_logger.smokeAnnotation")){
-			    Toast.makeText(context, "smokeAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
+		    if(action.equals("ess.imu_logger.annotateSmoking")) {
+
+			    // Toast.makeText(context, "smokeAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
 
 
 

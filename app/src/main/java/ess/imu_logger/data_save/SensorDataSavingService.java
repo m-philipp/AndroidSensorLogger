@@ -9,10 +9,14 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
+
+import ess.imu_logger.Logger;
 
 public class SensorDataSavingService extends Service {
 
@@ -31,9 +35,9 @@ public class SensorDataSavingService extends Service {
 		@Override
 		public void handleMessage(Message msg) {
 
-			if(msg.getData().getString("action").equals("save finished")){
+			if (msg.getData().getString("action").equals("save finished")) {
 				Log.i(TAG, "finished some Data Saving");
-			} else if(msg.getData().getString("action").equals("upload finished")){
+			} else if (msg.getData().getString("action").equals("upload finished")) {
 				Log.i(TAG, "finished some Data Upload");
 			}
 			//txt.setText(txt.getText() + "Item " + key +System.getProperty("line.separator"));
@@ -42,13 +46,13 @@ public class SensorDataSavingService extends Service {
 
 
 	private final IBinder mBinder = new LocalBinder();
+
 	public class LocalBinder extends Binder {
 		public SensorDataSavingService getService() {
 			// Return this instance of LocalService so clients can call public methods
 			return SensorDataSavingService.this;
 		}
 	}
-
 
 
 	private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -63,6 +67,18 @@ public class SensorDataSavingService extends Service {
 			if (intent != null) {
 				if (action.equals(ACTION_SAVE_DATA)) {
 					saveData(intent);
+				} else if (action.equals("ess.imu_logger.annotateSmoking")) {
+					Toast.makeText(context, "smokeAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
+
+					StringBuilder dataString = new StringBuilder();
+					dataString.append(System.currentTimeMillis());
+					dataString.append(" ");
+					dataString.append(SystemClock.elapsedRealtime());
+					dataString.append(" 0 ");
+					dataString.append("ess.imu_logger.annotateSmoking");
+					dataString.append("\n");
+
+					background.saveString(dataString.toString());
 				}
 			}
 		}
@@ -70,20 +86,20 @@ public class SensorDataSavingService extends Service {
 
 
 	public SensorDataSavingService() {
-    }
+	}
 
-    @Override
+	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
 	}
 
 
-	public int onStartCommand (Intent intent, int flags, int startId){
+	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.i(TAG, "onStartCommand called in SensorDataSavingService ...");
 		if (intent != null) {
 			final String action = intent.getAction();
 			if (ACTION_SAVE_DATA.equals(action)) {
-				Log.d(TAG,"ACTION_SAVE_DATA");
+				Log.d(TAG, "ACTION_SAVE_DATA");
 				saveData(intent);
 				// send message to the handler with the current message handler
 
@@ -115,18 +131,15 @@ public class SensorDataSavingService extends Service {
 	}
 
 
-
 	private void saveData(Intent intent) {
 		//Log.v(TAG, "Saving Data: " + intent.getExtras().getString(EXTRA_SENSOR_DATA));
 		background.saveString(intent.getExtras().getString(EXTRA_SENSOR_DATA));
 	}
 
-	public void saveData(String save){
+	public void saveData(String save) {
 		//Log.v(TAG, "Saving Data: " + save);
 		background.saveString(save);
 	}
-
-
 
 
 }

@@ -44,10 +44,11 @@ public class PlainFileWriter extends Thread {
 
 	// about 640,04 KB
 	// private static final Integer MAX_FILE_SIZE = 655360;
-	//private static final Integer MAX_FILE_SIZE = 25000;
+	// private static final Integer MAX_FILE_SIZE = 25000;
+	// private static final Integer MAX_BUFFER_SIZE = 10000;
 
-	private static final Integer MAX_FILE_SIZE = 655360;
-	private static final Integer MAX_BUFFER_SIZE = 10000;
+	private static final Integer MAX_FILE_SIZE = 25000;
+	private static final Integer MAX_BUFFER_SIZE = 2000;
 
 
 	FileOutputStream outputStream;
@@ -114,7 +115,7 @@ public class PlainFileWriter extends Thread {
 								data = new ArrayList<String>(MAX_BUFFER_SIZE);
 							}
 
-
+							Log.d(TAG, "saving Sensor Values");
 						} else {
 							data.add(sensorValue);
 						}
