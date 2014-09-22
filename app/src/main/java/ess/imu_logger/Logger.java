@@ -31,7 +31,7 @@ public class Logger extends Handler implements SensorEventListener{
     public static final int MESSAGE_STOP = 0;
 
     private SensorManager mSensorManager;
-	private Sensor gyroscopeSensor, accelerometerSensor, magneticFieldSensor, rotationSensor, linearAccelerometerSensor, gravitySensor, ambientLightSensor, proximitySensor, temperatureSensor, humiditySensor, pressureSensor;
+	private Sensor gyroscopeSensor,stepCountSensor, accelerometerSensor, magneticFieldSensor, rotationSensor, linearAccelerometerSensor, gravitySensor, ambientLightSensor, proximitySensor, temperatureSensor, humiditySensor, pressureSensor;
 
 	private SharedPreferences sharedPrefs;
 
@@ -53,18 +53,23 @@ public class Logger extends Handler implements SensorEventListener{
 
 	    logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
 
-        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        gyroscopeSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        accelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        magneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        rotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        linearAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        gravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+
+	    mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+
+	    accelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+	    gyroscopeSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+	    magneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
         ambientLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         proximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         temperatureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         humiditySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
         pressureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+
+	    rotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+	    gravitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+	    linearAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+	    stepCountSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
 
 
 
@@ -107,30 +112,31 @@ public class Logger extends Handler implements SensorEventListener{
 	    logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
 
 
+	    if(accelerometerSensor != null && sharedPrefs.getBoolean("accelerometer", false))
+		    mSensorManager.registerListener(this, accelerometerSensor, logging_frequency);
         if(gyroscopeSensor != null && sharedPrefs.getBoolean("gyroscope", false))
 	        mSensorManager.registerListener(this, gyroscopeSensor, logging_frequency);
-        if(accelerometerSensor != null && sharedPrefs.getBoolean("accelerometer", false))
-	        mSensorManager.registerListener(this, accelerometerSensor, logging_frequency);
         if(magneticFieldSensor != null && sharedPrefs.getBoolean("magneticField", false))
 	        mSensorManager.registerListener(this, magneticFieldSensor, logging_frequency);
+	    if(ambientLightSensor != null && sharedPrefs.getBoolean("ambientLight", false))
+		    mSensorManager.registerListener(this, ambientLightSensor, logging_frequency);
+	    if(proximitySensor != null && sharedPrefs.getBoolean("proximity", false))
+		    mSensorManager.registerListener(this, proximitySensor, logging_frequency);
+	    if(temperatureSensor != null && sharedPrefs.getBoolean("temperature", false))
+		    mSensorManager.registerListener(this, temperatureSensor, logging_frequency);
+	    if(humiditySensor != null && sharedPrefs.getBoolean("humidity", false))
+		    mSensorManager.registerListener(this, humiditySensor, logging_frequency);
+	    if(pressureSensor != null && sharedPrefs.getBoolean("pressure", false))
+		    mSensorManager.registerListener(this, pressureSensor, logging_frequency);
+
         if(rotationSensor != null && sharedPrefs.getBoolean("rotation", false))
 	        mSensorManager.registerListener(this, rotationSensor, logging_frequency);
-        if(linearAccelerometerSensor != null && sharedPrefs.getBoolean("linearAccelerometer", false))
-	        mSensorManager.registerListener(this, linearAccelerometerSensor, logging_frequency);
-        if(gravitySensor != null && sharedPrefs.getBoolean("gravity", false))
-	        mSensorManager.registerListener(this, gravitySensor, logging_frequency);
-        if(ambientLightSensor != null && sharedPrefs.getBoolean("ambientLight", false))
-	        mSensorManager.registerListener(this, ambientLightSensor, logging_frequency);
-        if(proximitySensor != null && sharedPrefs.getBoolean("proximity", false))
-	        mSensorManager.registerListener(this, proximitySensor, logging_frequency);
-        if(temperatureSensor != null && sharedPrefs.getBoolean("temperature", false))
-	        mSensorManager.registerListener(this, temperatureSensor, logging_frequency);
-        if(humiditySensor != null && sharedPrefs.getBoolean("humidity", false))
-	        mSensorManager.registerListener(this, humiditySensor, logging_frequency);
-        if(pressureSensor != null && sharedPrefs.getBoolean("pressure", false))
-	        mSensorManager.registerListener(this, pressureSensor, logging_frequency);
-
-
+	    if(gravitySensor != null && sharedPrefs.getBoolean("gravity", false))
+		    mSensorManager.registerListener(this, gravitySensor, logging_frequency);
+	    if(linearAccelerometerSensor != null && sharedPrefs.getBoolean("linearAccelerometer", false))
+		    mSensorManager.registerListener(this, linearAccelerometerSensor, logging_frequency);
+	    if(stepCountSensor != null && sharedPrefs.getBoolean("steps", false))
+		    mSensorManager.registerListener(this, stepCountSensor, logging_frequency);
 
     }
 

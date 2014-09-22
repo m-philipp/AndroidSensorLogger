@@ -52,6 +52,10 @@ public class ZipUploadService extends Service {
 
 	public int onStartCommand (Intent intent, int flags, int startId){
 		Log.i(TAG, "onStartCommand called ...");
+		// Todo null check
+		if(intent == null){
+			return START_STICKY;
+		}
 
 		if(intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)){
 			uploader.up();

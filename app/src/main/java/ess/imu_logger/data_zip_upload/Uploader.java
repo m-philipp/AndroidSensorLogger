@@ -96,94 +96,120 @@ public class Uploader extends Thread {
 								// TODO Magic
 								//getFilenameToUpload();
 								try {
-									File sourceFile = new File(getFilenameToUpload());
+									String sourceFileName = getFilenameToUpload();
+									if(sourceFileName != null){
 
-									// open a URL connection to the Servlet
-									FileInputStream fileInputStream = new FileInputStream(sourceFile);
-									DataOutputStream dos = null;
-									//URL url = new URL("http://192.168.2.50:8080/upload");
-									String name = "default";
-									if(!sharedPrefs.getBoolean("anonymize", true))
-										name = sharedPrefs.getString("name", "default");
+										File sourceFile = new File(sourceFileName);
 
-									String u = sharedPrefs.getString("pref_server_url", "http://192.168.2.50") + ":" +
-											sharedPrefs.getString("pref_server_port", "8080") +
-											"/upload/" + sID + "/" + name;
-									Log.i(TAG, "URL: " + u);
-									URL url = new URL(u);
+										// open a URL connection to the Servlet
+										FileInputStream fileInputStream = new FileInputStream(sourceFile);
+										DataOutputStream dos = null;
+										//URL url = new URL("http://192.168.2.50:8080/upload");
+										String name = "default";
+										if (!sharedPrefs.getBoolean("anonymize", true))
+											name = sharedPrefs.getString("name", "default");
+
+										String u = sharedPrefs.getString("pref_server_url", "http://192.168.2.50") + ":" +
+												sharedPrefs.getString("pref_server_port", "8080") +
+												"/upload/" + sID + "/" + name;
+										Log.i(TAG, "URL: " + u);
+										URL url = new URL(u);
 
 
-									String fileName = getFilenameToUpload(false);
-									HttpURLConnection conn = null;
-									String twoHyphens = "--";
-									String boundary = "*****";
-									String lineEnd = "\r\n";
-									int maxBufferSize = 1 * 1024 * 1024;
-									int bytesRead, bytesAvailable, bufferSize;
-									byte[] buffer;
-									int serverResponseCode = 0;
+										String fileName = getFilenameToUpload(false);
+										HttpURLConnection conn = null;
+										String twoHyphens = "--";
+										String boundary = "*****";
+										String lineEnd = "\r\n";
+										int maxBufferSize = 1 * 1024 * 1024;
+										int bytesRead, bytesAvailable, bufferSize;
+										byte[] buffer;
+										int serverResponseCode = 0;
 
-									// Open a HTTP  connection to  the URL
-									conn = (HttpURLConnection) url.openConnection();
-									conn.setDoInput(true); // Allow Inputs
-									conn.setDoOutput(true); // Allow Outputs
-									conn.setUseCaches(false); // Don't use a Cached Copy
-									conn.setRequestMethod("POST");
-									conn.setRequestProperty("Connection", "Keep-Alive");
-									conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-									conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-									conn.setRequestProperty("source", fileName);
+										// Open a HTTP  connection to  the URL
+										conn = (HttpURLConnection) url.openConnection();
+										conn.setDoInput(true); // Allow Inputs
+										conn.setDoOutput(true); // Allow Outputs
+										conn.setUseCaches(false); // Don't use a Cached Copy
+										conn.setRequestMethod("POST");
+										conn.setRequestProperty("Connection", "Keep-Alive");
+										conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+										conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+										conn.setRequestProperty("source", fileName);
 
-									dos = new DataOutputStream(conn.getOutputStream());
+										dos = new DataOutputStream(conn.getOutputStream());
 
-									dos.writeBytes(twoHyphens + boundary + lineEnd);
-									dos.writeBytes("Content-Disposition: form-data; name=\"source\";filename=\""
-											+ fileName + "\"" + lineEnd);
+										dos.writeBytes(twoHyphens + boundary + lineEnd);
+										dos.writeBytes("Content-Disposition: form-data; name=\"source\";filename=\""
+												+ fileName + "\"" + lineEnd);
 
-									dos.writeBytes(lineEnd);
+										dos.writeBytes(lineEnd);
 
-									// create a buffer of  maximum size
-									bytesAvailable = fileInputStream.available();
-
-									bufferSize = Math.min(bytesAvailable, maxBufferSize);
-									buffer = new byte[bufferSize];
-
-									// read file and write it into form...
-									bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
-									while (bytesRead > 0) {
-
-										dos.write(buffer, 0, bufferSize);
+										// create a buffer of  maximum size
 										bytesAvailable = fileInputStream.available();
+
 										bufferSize = Math.min(bytesAvailable, maxBufferSize);
+										buffer = new byte[bufferSize];
+
+										// read file and write it into form...
 										bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
+										while (bytesRead > 0) {
+
+											dos.write(buffer, 0, bufferSize);
+											bytesAvailable = fileInputStream.available();
+											bufferSize = Math.min(bytesAvailable, maxBufferSize);
+											bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+										}
+
+										// send multipart form data necesssary after file data...
+										dos.writeBytes(lineEnd);
+										dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+										// Responses from the server (code and message)
+										serverResponseCode = conn.getResponseCode();
+										String serverResponseMessage = conn.getResponseMessage();
+
+										Log.i("uploadFile", "HTTP Response is : "
+												+ serverResponseMessage + ": " + serverResponseCode);
+
+
+										//close the streams //
+
+										fileInputStream.close();
+										fileInputStream = null;
+
+										dos.flush();
+										dos.close();
+
+										//System.gc();
+
+										if (serverResponseCode == 200) {
+											Log.d(TAG, "UPLOAD OK");
+
+
+											// TODO check remove
+											File f = new File(sourceFileName);
+											f.setWritable(true);
+											if (f.delete()) {
+												System.err.println(f.getName() + " is deleted!");
+											} else {
+												System.err.println(f.getName() + " Delete operation is failed.");
+											}
+
+
+											if(!(getFilenameToUpload() == null)){
+												Log.d(TAG, "calling reUp delay 0");
+												reUp(1L);
+												return;
+											}
+
+										}
+
+									} else {
+										Log.d(TAG, "There's no File to Upload.");
 									}
-
-									// send multipart form data necesssary after file data...
-									dos.writeBytes(lineEnd);
-									dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-
-									// Responses from the server (code and message)
-									serverResponseCode = conn.getResponseCode();
-									String serverResponseMessage = conn.getResponseMessage();
-
-									Log.i("uploadFile", "HTTP Response is : "
-											+ serverResponseMessage + ": " + serverResponseCode);
-
-									if (serverResponseCode == 200) {
-										Log.d(TAG, "UPLOAD OK");
-
-										// TODO check remove
-										File f = new File(fileName);
-										f.delete();
-
-									}
-
-									//close the streams //
-									fileInputStream.close();
-									dos.flush();
-									dos.close();
 
 								} catch (MalformedURLException ex) {
 
@@ -203,24 +229,7 @@ public class Uploader extends Thread {
 						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_UPLOAD ||
 								(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_UPLOAD && !messageInQueue)) {
 
-							Message m = new Message();
-							Bundle b = new Bundle();
-							b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_RETURNING_UPLOAD);
-							m.setData(b);
-
-							// could be a runnable when calling post instead of sendMessage
-							Long delay = Long.parseLong(sharedPrefs.getString("upload_frequency", "0")) * 1000;
-							Log.d(TAG, "setting new TimedMessage with: " + delay);
-
-
-							if(delay > 0L) {
-								inHandler.sendMessageDelayed(m, delay);
-								// TODO set AlarmManager
-								messageInQueue = true;
-							}
-							else{
-								messageInQueue = false;
-							}
+								reUp();
 						}
 					}
 				};
@@ -237,6 +246,30 @@ public class Uploader extends Thread {
 			Log.i(TAG, "Upload Thread exiting gracefully");
 		} catch (Throwable t) {
 			Log.e(TAG, "Upload Thread halted due to an error", t);
+		}
+	}
+
+	private void reUp() {
+		Long delay = Long.parseLong(sharedPrefs.getString("upload_frequency", "0")) * 1000;
+		reUp(delay);
+	}
+	private void reUp(Long delay){
+		Message m = new Message();
+		Bundle b = new Bundle();
+		b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_RETURNING_UPLOAD);
+		m.setData(b);
+
+		// could be a runnable when calling post instead of sendMessage
+		Log.d(TAG, "setting new TimedMessage with: " + delay);
+
+
+		if(delay > 0L) {
+			inHandler.sendMessageDelayed(m, delay);
+			// TODO set AlarmManager
+			messageInQueue = true;
+		}
+		else{
+			messageInQueue = false;
 		}
 	}
 

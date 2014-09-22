@@ -44,9 +44,10 @@ public class PlainFileWriter extends Thread {
 
 	// about 640,04 KB
 	// private static final Integer MAX_FILE_SIZE = 655360;
+	//private static final Integer MAX_FILE_SIZE = 25000;
 
-	private static final Integer MAX_FILE_SIZE = 25000;
-	private static final Integer MAX_BUFFER_SIZE = 1000;
+	private static final Integer MAX_FILE_SIZE = 655360;
+	private static final Integer MAX_BUFFER_SIZE = 10000;
 
 
 	FileOutputStream outputStream;
@@ -104,6 +105,7 @@ public class PlainFileWriter extends Thread {
 							} finally {
 								try {
 									if (out != null) {
+										out.flush();
 										out.close();
 									}
 								} catch (IOException e) {
