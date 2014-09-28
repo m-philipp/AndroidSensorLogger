@@ -79,6 +79,20 @@ public class SensorDataSavingService extends Service {
 					dataString.append("\n");
 
 					background.saveString(dataString.toString());
+
+				} else if (action.equals("ess.imu_logger.lighterAnnotation")) {
+					Toast.makeText(context, "lighterAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
+
+					StringBuilder dataString = new StringBuilder();
+					dataString.append(System.currentTimeMillis());
+					dataString.append(" ");
+					dataString.append(SystemClock.elapsedRealtime());
+					dataString.append(" 0 ");
+					dataString.append("ess.imu_logger.lighterAnnotation");
+					dataString.append("\n");
+
+					background.saveString(dataString.toString());
+
 				}
 			}
 		}

@@ -115,7 +115,7 @@ public class PlainFileWriter extends Thread {
 								data = new ArrayList<String>(MAX_BUFFER_SIZE);
 							}
 
-							Log.d(TAG, "saving Sensor Values");
+							Log.d(TAG, "saved Sensor Values");
 						} else {
 							data.add(sensorValue);
 						}
@@ -161,7 +161,8 @@ public class PlainFileWriter extends Thread {
 		msg.setData(b);
 
 		// could be a runnable when calling post instead of sendMessage
-		inHandler.sendMessage(msg);
+		if(inHandler != null)
+			inHandler.sendMessage(msg);
 	}
 
 

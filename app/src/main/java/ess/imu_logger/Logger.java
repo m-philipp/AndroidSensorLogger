@@ -17,6 +17,7 @@ import android.app.Service;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import ess.imu_logger.data_save.SensorDataSavingService;
 import ess.imu_logger.data_save.SensorDataSavingService.LocalBinder;
@@ -87,12 +88,18 @@ public class Logger extends Handler implements SensorEventListener{
 	        Intent intent = new Intent(context, SensorDataSavingService.class);
 	        this.context.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-            registerListeners(msg);
+	        Toast.makeText(context, "register Sensor Listener.", Toast.LENGTH_SHORT).show();
+
+	        logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
+	        registerListeners(msg);
         }
         else if(msg.what == MESSAGE_STOP){
 	        Log.i(TAG, "Logger stopped");
             this.removeMessages(0);
-            mSensorManager.unregisterListener(this);
+
+	         Toast.makeText(context, "unregister Sensor Listener.", Toast.LENGTH_SHORT).show();
+
+	        mSensorManager.unregisterListener(this);
 
 	        // UnBind from LocalService
 	        if (mBound) {
@@ -144,10 +151,21 @@ public class Logger extends Handler implements SensorEventListener{
 
     }
 
+	private int i = 0;
+
     public void onSensorChanged(SensorEvent event) {
 
+	    i++;
 
-	    if(event == null || !mBound) return;
+	    if(event == null || !mBound){
+		    if( i % 500 == 0)
+		        Toast.makeText(context, "SensorEvent without binding.", Toast.LENGTH_SHORT).show();
+		    return;
+
+	    }
+
+	    if( i % 500 == 0)
+	        Toast.makeText(context, "sensorEvent" + i, Toast.LENGTH_SHORT).show();
 
 		//Log.i(TAG, getString(event));
 

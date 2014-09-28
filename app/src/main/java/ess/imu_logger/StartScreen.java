@@ -95,13 +95,13 @@ public class StartScreen extends Activity {
 
 	private void startBackgroundLogging(){
         Intent mServiceIntent = new Intent(this, LoggingService.class);
-        mServiceIntent.setAction("ess.imu_logger.action.startLogging");
+        mServiceIntent.setAction(LoggingService.ACTION_START_LOGGING);
         this.startService(mServiceIntent);
     }
 
     public void stopBackgroundLogging() {
         Intent mServiceIntent = new Intent(this, LoggingService.class);
-        mServiceIntent.setAction("ess.imu_logger.action.stopLogging");
+        mServiceIntent.setAction(LoggingService.ACTION_STOP_LOGGING);
         this.startService(mServiceIntent);
     }
 

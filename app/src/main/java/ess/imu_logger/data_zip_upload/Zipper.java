@@ -90,6 +90,7 @@ public class Zipper extends Thread {
 							m.setData(b);
 
 							// could be a runnable when calling post instead of sendMessage
+							// TODO set AlarmManager
 							inHandler.sendMessageDelayed(m, 2000);
 							messageInQueue = true;
 						}
