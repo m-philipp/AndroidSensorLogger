@@ -240,6 +240,9 @@ public class StartScreen extends Activity {
 
     public static long getFolderSize(File dir) {
 
+        if(dir == null || !dir.isDirectory())
+            return 0;
+
         if (Util.isExternalStorageReadable()) {
             long size = 0;
             for (File file : dir.listFiles()) {
