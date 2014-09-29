@@ -67,7 +67,7 @@
 			android:title="@string/pref_header_sensor_general">
 
 			<CheckBoxPreference
-				android:defaultValue="true"
+				android:defaultValue="false"
 				android:key="sensor_activate"
 				android:title="@string/pref_sensor_activate"/>
 

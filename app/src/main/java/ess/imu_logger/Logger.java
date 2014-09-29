@@ -28,7 +28,7 @@ import ess.imu_logger.data_save.SensorDataSavingService.LocalBinder;
 public class Logger extends Handler implements SensorEventListener{
 
     // ?? private static final String TAG = "BasicLogger";
-	public static final int MESSAGE_START = 1;
+    public static final int MESSAGE_START = 1;
     public static final int MESSAGE_STOP = 0;
 
     private SensorManager mSensorManager;
@@ -97,7 +97,7 @@ public class Logger extends Handler implements SensorEventListener{
 	        Log.i(TAG, "Logger stopped");
             this.removeMessages(0);
 
-	         Toast.makeText(context, "unregister Sensor Listener.", Toast.LENGTH_SHORT).show();
+	        Toast.makeText(context, "unregister Sensor Listener.", Toast.LENGTH_SHORT).show();
 
 	        mSensorManager.unregisterListener(this);
 
@@ -159,13 +159,15 @@ public class Logger extends Handler implements SensorEventListener{
 
 	    if(event == null || !mBound){
 		    if( i % 500 == 0)
-		        Toast.makeText(context, "SensorEvent without binding.", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "SensorEvent without binding");
+		        // Toast.makeText(context, "SensorEvent without binding.", Toast.LENGTH_SHORT).show();
 		    return;
 
 	    }
 
 	    if( i % 500 == 0)
-	        Toast.makeText(context, "sensorEvent" + i, Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "sensorEvent " + i);
+	        // Toast.makeText(context, "sensorEvent" + i, Toast.LENGTH_SHORT).show();
 
 		//Log.i(TAG, getString(event));
 

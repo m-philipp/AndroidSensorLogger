@@ -40,9 +40,6 @@ public class LoggingService extends Service {
 	// private static final String EXTRA_GYRO = "ess.imu_logger.extra.GYRO";
 
 
-	public LoggingService() {
-
-	}
 
 
 	@Override
@@ -59,8 +56,6 @@ public class LoggingService extends Service {
 
 			} else if (ACTION_STOP_LOGGING.equals(action)) {
 
-
-
 				Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
 				stopRecording();
 
@@ -74,14 +69,23 @@ public class LoggingService extends Service {
 	}
 
 	public IBinder onBind(Intent i) {
-		return null;
+
+        return null;
+
 	}
 
 	public void onDestroy() {
-		Log.d(TAG, "on Destroy called.");
+
+        Log.d(TAG, "on Destroy called.");
+
+        stopRecording();
+
+        thread.quit();
 	}
 
+
 	public void onCreate() {
+
 		Log.d(TAG, "on onCreate called.");
 
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -96,6 +100,7 @@ public class LoggingService extends Service {
 
 	private synchronized void startRecording() {
 
+		/*
 		if (!loggingStarted) {
 			// send message to Logger
 			Message msg = serviceHandler.obtainMessage();
@@ -104,7 +109,10 @@ public class LoggingService extends Service {
 			serviceHandler.sendMessage(msg);
 			loggingStarted = true;
 		}
+        */
 
+        serviceHandler.sendEmptyMessage(Logger.MESSAGE_START);
+        loggingStarted = true;
 	}
 
 

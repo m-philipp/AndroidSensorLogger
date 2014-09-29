@@ -22,9 +22,10 @@ public class SensorDataSavingService extends Service {
 
 
 	public static final String ACTION_SAVE_DATA = "ess.imu_logger.data_save.action.saveData";
-	public static final String ACTION_START_SERVICE = "ess.imu_logger.data_save.action.startLogging";
+    public static final String ACTION_START_SERVICE = "ess.imu_logger.data_save.action.startLogging";
+    public static final String ACTION_STOP_SERVICE = "ess.imu_logger.data_save.action.stopLogging";
 
-	public static final String EXTRA_SENSOR_DATA = "ess.imu_logger.data_save.extra.sensorData";
+    public static final String EXTRA_SENSOR_DATA = "ess.imu_logger.data_save.extra.sensorData";
 
 	private static final String TAG = "ess.imu_logger.data_save.SensorDataSavingService";
 
@@ -81,26 +82,23 @@ public class SensorDataSavingService extends Service {
 					background.saveString(dataString.toString());
 
 				} else if (action.equals("ess.imu_logger.lighterAnnotation")) {
-					Toast.makeText(context, "lighterAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "lighterAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
 
-					StringBuilder dataString = new StringBuilder();
-					dataString.append(System.currentTimeMillis());
-					dataString.append(" ");
-					dataString.append(SystemClock.elapsedRealtime());
-					dataString.append(" 0 ");
-					dataString.append("ess.imu_logger.lighterAnnotation");
-					dataString.append("\n");
+                    StringBuilder dataString = new StringBuilder();
+                    dataString.append(System.currentTimeMillis());
+                    dataString.append(" ");
+                    dataString.append(SystemClock.elapsedRealtime());
+                    dataString.append(" 0 ");
+                    dataString.append("ess.imu_logger.lighterAnnotation");
+                    dataString.append("\n");
 
-					background.saveString(dataString.toString());
+                    background.saveString(dataString.toString());
 
-				}
+                }
 			}
 		}
 	};
 
-
-	public SensorDataSavingService() {
-	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -118,8 +116,12 @@ public class SensorDataSavingService extends Service {
 				// send message to the handler with the current message handler
 
 			} else if (ACTION_START_SERVICE.equals(action)) {
-				Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
-			}
+                Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
+                background.start();
+            } else if (ACTION_STOP_SERVICE.equals(action)) {
+                Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
+                background.requestStop();
+            }
 		}
 		return START_STICKY;
 	}
@@ -141,7 +143,9 @@ public class SensorDataSavingService extends Service {
 	}
 
 	public void onDestroy() {
-		unregisterReceiver(receiver);
+		background.requestStop();
+        unregisterReceiver(receiver);
+
 	}
 
 

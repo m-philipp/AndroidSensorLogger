@@ -64,6 +64,12 @@ public class ZipUploadService extends Service {
 		return START_STICKY;
 	}
 
+    public void onDestroy(){
+        Log.i(TAG, "onDestroy called ...");
+        uploader.requestStop();
+        zipper.requestStop();
+    }
+
 
 
 
