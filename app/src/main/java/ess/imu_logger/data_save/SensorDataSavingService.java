@@ -6,17 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.Binder;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
-
-import ess.imu_logger.Logger;
 
 public class SensorDataSavingService extends Service {
 
@@ -25,12 +23,18 @@ public class SensorDataSavingService extends Service {
     public static final String ACTION_START_SERVICE = "ess.imu_logger.data_save.action.startLogging";
     public static final String ACTION_STOP_SERVICE = "ess.imu_logger.data_save.action.stopLogging";
 
+
+    public static final String BROADCAST_LIGHTER = "ess.imu_logger.data_save.annotateLighter";
+    public static final String BROADCAST_ANNOTATION = "ess.imu_logger.data_save.annotateSmoking";
+    public static final String BROADCAST_SENSOR_DATA = "ess.imu_logger.data_save.sensorData";
+
+
     public static final String EXTRA_SENSOR_DATA = "ess.imu_logger.data_save.extra.sensorData";
 
 	private static final String TAG = "ess.imu_logger.data_save.SensorDataSavingService";
 
 	private SharedPreferences sharedPrefs;
-	private PlainFileWriter background;
+	private PlainFileWriter plainFileWriter;
 
 	Handler inHandler = new Handler() {
 		@Override
@@ -46,29 +50,32 @@ public class SensorDataSavingService extends Service {
 	};
 
 
-	private final IBinder mBinder = new LocalBinder();
-
-	public class LocalBinder extends Binder {
-		public SensorDataSavingService getService() {
-			// Return this instance of LocalService so clients can call public methods
-			return SensorDataSavingService.this;
-		}
-	}
-
 
 	private final BroadcastReceiver receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 
-			Log.i(TAG, "Broaccast Reciever recieved a Broadcast");
+			//Log.i(TAG, "Broaccast Reciever recieved a Broadcast");
 
 			// TODO check is the extra is really there
 
 			if (intent != null) {
-				if (action.equals(ACTION_SAVE_DATA)) {
+				if (action.equals(BROADCAST_SENSOR_DATA)) {
+
+
+
+                     /*
+                        * send (Local ?) broadcasts on SensorDataChanged
+                        * start Service from StartScreen
+                        * ...
+                     */
+
 					saveData(intent);
-				} else if (action.equals("ess.imu_logger.annotateSmoking")) {
+
+
+
+				} else if (action.equals(BROADCAST_ANNOTATION)) {
 					Toast.makeText(context, "smokeAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
 
 					StringBuilder dataString = new StringBuilder();
@@ -76,12 +83,12 @@ public class SensorDataSavingService extends Service {
 					dataString.append(" ");
 					dataString.append(SystemClock.elapsedRealtime());
 					dataString.append(" 0 ");
-					dataString.append("ess.imu_logger.annotateSmoking");
+					dataString.append(BROADCAST_ANNOTATION);
 					dataString.append("\n");
 
-					background.saveString(dataString.toString());
+					plainFileWriter.saveString(dataString.toString());
 
-				} else if (action.equals("ess.imu_logger.lighterAnnotation")) {
+				} else if (action.equals(BROADCAST_LIGHTER)) {
                     Toast.makeText(context, "lighterAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
 
                     StringBuilder dataString = new StringBuilder();
@@ -89,10 +96,10 @@ public class SensorDataSavingService extends Service {
                     dataString.append(" ");
                     dataString.append(SystemClock.elapsedRealtime());
                     dataString.append(" 0 ");
-                    dataString.append("ess.imu_logger.lighterAnnotation");
+                    dataString.append(BROADCAST_LIGHTER);
                     dataString.append("\n");
 
-                    background.saveString(dataString.toString());
+                    plainFileWriter.saveString(dataString.toString());
 
                 }
 			}
@@ -102,7 +109,7 @@ public class SensorDataSavingService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		return mBinder;
+		return null;
 	}
 
 
@@ -117,10 +124,12 @@ public class SensorDataSavingService extends Service {
 
 			} else if (ACTION_START_SERVICE.equals(action)) {
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
-                background.start();
+                if(!plainFileWriter.isAlive())
+                    plainFileWriter.start();
             } else if (ACTION_STOP_SERVICE.equals(action)) {
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
-                background.requestStop();
+                plainFileWriter.requestStop();
+                this.stopSelf();
             }
 		}
 		return START_STICKY;
@@ -133,30 +142,35 @@ public class SensorDataSavingService extends Service {
 
 		// register broadcast receiver
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(ACTION_SAVE_DATA);
+        filter.addAction(BROADCAST_SENSOR_DATA);
+        filter.addAction(BROADCAST_ANNOTATION);
+        filter.addAction(BROADCAST_LIGHTER);
 
 		registerReceiver(receiver, filter);
 
-		background = new PlainFileWriter(inHandler);
-		background.start();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+
+		plainFileWriter = new PlainFileWriter(inHandler);
+		//plainFileWriter.start();
 
 	}
 
 	public void onDestroy() {
-		background.requestStop();
+		plainFileWriter.requestStop();
         unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
 	}
 
 
 	private void saveData(Intent intent) {
 		//Log.v(TAG, "Saving Data: " + intent.getExtras().getString(EXTRA_SENSOR_DATA));
-		background.saveString(intent.getExtras().getString(EXTRA_SENSOR_DATA));
+		plainFileWriter.saveString(intent.getExtras().getString(EXTRA_SENSOR_DATA));
 	}
 
 	public void saveData(String save) {
 		//Log.v(TAG, "Saving Data: " + save);
-		background.saveString(save);
+		plainFileWriter.saveString(save);
 	}
 
 

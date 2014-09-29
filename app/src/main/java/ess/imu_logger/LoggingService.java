@@ -122,6 +122,8 @@ public class LoggingService extends Service {
 
 			serviceHandler.sendEmptyMessage(Logger.MESSAGE_STOP);
 			loggingStarted = false;
+
+            this.stopSelf();
 		}
 	}
 

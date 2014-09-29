@@ -129,9 +129,9 @@ public class PlainFileWriter extends Thread {
 			// quit() the looper (see below)
 			Looper.loop();
 
-			Log.i(TAG, "DownloadThread exiting gracefully");
+			Log.i(TAG, "Thread exiting gracefully");
 		} catch (Throwable t) {
-			Log.e(TAG, "DownloadThread halted due to an error", t);
+			Log.e(TAG, "Thread halted due to an error", t);
 		}
 	}
 
@@ -141,12 +141,15 @@ public class PlainFileWriter extends Thread {
 		// the Looper attached to our DownloadThread
 		// obviously, all previously queued tasks will be executed
 		// before the loop gets the quit Runnable
+        if(inHandler == null)
+            return;
+
 		inHandler.post(new Runnable() {
 			@Override
 			public void run() {
 				// This is guaranteed to run on the DownloadThread
 				// so we can use myLooper() to get its looper
-				Log.i(TAG, "DownloadThread loop quitting by request");
+				Log.i(TAG, "Thread loop quitting by request");
 
 				Looper.myLooper().quit();
 			}

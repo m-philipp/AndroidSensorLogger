@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -213,8 +214,12 @@ public class Uploader extends Thread {
 
 								} catch (MalformedURLException ex) {
 
-									ex.printStackTrace();
-									Log.e(TAG, "error: " + ex.getMessage(), ex);
+                                    ex.printStackTrace();
+                                    Log.e(TAG, "error: " + ex.getMessage(), ex);
+                                } catch (ConnectException ex) {
+
+                                    Log.d(TAG, "Host was not reachable.");
+
 								} catch (Exception e) {
 									e.printStackTrace();
 									Log.e(TAG, "Exception : " + e.getMessage(), e);
@@ -305,6 +310,9 @@ public class Uploader extends Thread {
 		// the Looper attached to our DownloadThread
 		// obviously, all previously queued tasks will be executed
 		// before the loop gets the quit Runnable
+        if(inHandler == null)
+            return;
+
 		inHandler.post(new Runnable() {
 			@Override
 			public void run() {

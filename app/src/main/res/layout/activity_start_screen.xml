@@ -71,13 +71,75 @@
 						android:layout_height="wrap_content"
 						android:paddingBottom="10dp"
 						android:paddingTop="10dp"
-						android:text="@string/logging_service_stopped"
+						android:text="@string/service_stopped"
 						android:textAppearance="?android:attr/textAppearanceLarge"
 						android:gravity="right"
 						android:layout_weight="1"
 						android:textColor="#ff6000"/>
 
 				</LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    tools:context=".StartScreen">
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+
+                        android:text="@string/zipUpload_service"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:layout_weight="9"/>
+
+                    <TextView
+                        android:id="@+id/zipUpload_service_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:text="@string/service_stopped"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:textColor="#ff6000"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    tools:context=".StartScreen">
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+
+                        android:text="@string/sensorDataSaving_service"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:layout_weight="9"/>
+
+                    <TextView
+                        android:id="@+id/sensorDataSaving_service_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:text="@string/service_stopped"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:textColor="#ff6000"/>
+
+                </LinearLayout>
 
 
 			</LinearLayout>

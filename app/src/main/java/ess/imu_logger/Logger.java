@@ -16,11 +16,11 @@ import android.os.Message;
 import android.app.Service;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import ess.imu_logger.data_save.SensorDataSavingService;
-import ess.imu_logger.data_save.SensorDataSavingService.LocalBinder;
 
 /**
  * Created by martin on 11.08.14.
@@ -40,8 +40,6 @@ public class Logger extends Handler implements SensorEventListener{
 
 	private int logging_frequency; //SensorManager.SENSOR_DELAY_FASTEST;
 
-	private SensorDataSavingService mSaver;
-	private boolean mBound = false;
 	private Context context;
 
 
@@ -84,10 +82,6 @@ public class Logger extends Handler implements SensorEventListener{
         if (msg.what == MESSAGE_START) {
 	        Log.i(TAG, "Logger started");
 
-	        // Bind to LocalService
-	        Intent intent = new Intent(context, SensorDataSavingService.class);
-	        this.context.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
 	        Toast.makeText(context, "register Sensor Listener.", Toast.LENGTH_SHORT).show();
 
 	        logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
@@ -101,11 +95,7 @@ public class Logger extends Handler implements SensorEventListener{
 
 	        mSensorManager.unregisterListener(this);
 
-	        // UnBind from LocalService
-	        if (mBound) {
-		        this.context.unbindService(mConnection);
-		        mBound = false;
-	        }
+
 
         }
     }
@@ -157,7 +147,7 @@ public class Logger extends Handler implements SensorEventListener{
 
 	    i++;
 
-	    if(event == null || !mBound){
+	    if(event == null){
 		    if( i % 500 == 0)
                 Log.d(TAG, "SensorEvent without binding");
 		        // Toast.makeText(context, "SensorEvent without binding.", Toast.LENGTH_SHORT).show();
@@ -171,7 +161,12 @@ public class Logger extends Handler implements SensorEventListener{
 
 		//Log.i(TAG, getString(event));
 
-	    mSaver.saveData(getString(event));
+        //mSaver.saveData(getString(event));
+
+        Intent intent = new Intent(SensorDataSavingService.BROADCAST_SENSOR_DATA);
+        // You can also include some extra data.
+        intent.putExtra(SensorDataSavingService.EXTRA_SENSOR_DATA, getString(event));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
     }
 
@@ -290,20 +285,5 @@ public class Logger extends Handler implements SensorEventListener{
 
 	}
 
-	/** Defines callbacks for service binding, passed to bindService() */
-	private ServiceConnection mConnection = new ServiceConnection() {
 
-		@Override
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			// We've bound to LocalService, cast the IBinder and get LocalService instance
-			LocalBinder binder = (LocalBinder) service;
-			mSaver = binder.getService();
-			mBound = true;
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName arg0) {
-			mBound = false;
-		}
-	};
 }

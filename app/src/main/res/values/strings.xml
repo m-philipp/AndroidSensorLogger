@@ -23,12 +23,16 @@
 	<string name="title_activity_settings_screen">Einstellungen</string>
 
 
-	<string name="logging_service">Aufzeichnung:</string>
-	<string name="logging_service_running">läuft</string>
-	<string name="logging_service_stopped">angehalten</string>
+    <string name="logging_service">Aufzeichnung:</string>
+    <string name="service_running">läuft</string>
+    <string name="service_stopped">angehalten</string>
+
+    <string name="zipUpload_service">Zip / Uploader:</string>
+
+    <string name="sensorDataSaving_service">Speichern:</string>
 
 
-	<item name="my_red" type="color">#ff6000</item>
+    <item name="my_red" type="color">#ff6000</item>
 	<item name="my_green" type="color">#ff00c600</item>
 
 	<string name="manual_data_upload">Manuell Sensor Daten hochladen</string>

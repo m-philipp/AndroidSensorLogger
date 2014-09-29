@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.CustomSwitchPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -215,6 +216,7 @@ public class ApplicationSettings extends PreferenceActivity {
 			super.onCreate(savedInstanceState);
 
 			addPreferencesFromResource(R.xml.preferences);
+
 
 
 			if (!activeSensors.get("accelerometer")) {
