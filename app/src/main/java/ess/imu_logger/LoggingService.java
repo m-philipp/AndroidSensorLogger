@@ -118,13 +118,13 @@ public class LoggingService extends Service {
 
 	private synchronized void stopRecording() {
 
-		if (loggingStarted) {
+		//if (loggingStarted) {
 
 			serviceHandler.sendEmptyMessage(Logger.MESSAGE_STOP);
 			loggingStarted = false;
 
             this.stopSelf();
-		}
+		//}
 	}
 
 }

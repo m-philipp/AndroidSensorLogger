@@ -212,7 +212,7 @@
 
 
 			<ListPreference
-				android:defaultValue="18000"
+				android:defaultValue="0"
 				android:entries="@array/pref_upload_frequency_titles"
 				android:entryValues="@array/pref_upload_frequency_values"
 				android:key="upload_frequency"

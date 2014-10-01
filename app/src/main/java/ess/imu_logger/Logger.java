@@ -82,7 +82,7 @@ public class Logger extends Handler implements SensorEventListener{
         if (msg.what == MESSAGE_START) {
 	        Log.i(TAG, "Logger started");
 
-	        Toast.makeText(context, "register Sensor Listener.", Toast.LENGTH_SHORT).show();
+	        //Toast.makeText(context, "register Sensor Listener.", Toast.LENGTH_SHORT).show();
 
 	        logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
 	        registerListeners(msg);
@@ -91,7 +91,7 @@ public class Logger extends Handler implements SensorEventListener{
 	        Log.i(TAG, "Logger stopped");
             this.removeMessages(0);
 
-	        Toast.makeText(context, "unregister Sensor Listener.", Toast.LENGTH_SHORT).show();
+	        //Toast.makeText(context, "unregister Sensor Listener.", Toast.LENGTH_SHORT).show();
 
 	        mSensorManager.unregisterListener(this);
 
@@ -124,7 +124,7 @@ public class Logger extends Handler implements SensorEventListener{
 	    if(humiditySensor != null && sharedPrefs.getBoolean("humidity", false))
 		    mSensorManager.registerListener(this, humiditySensor, logging_frequency);
 	    if(pressureSensor != null && sharedPrefs.getBoolean("pressure", false))
-		    mSensorManager.registerListener(this, pressureSensor, logging_frequency);
+		    mSensorManager.registerListener(this, pressureSensor, 30000); // static freq to every 30 Sek cause of some Android Isssues
 
         if(rotationSensor != null && sharedPrefs.getBoolean("rotation", false))
 	        mSensorManager.registerListener(this, rotationSensor, logging_frequency);

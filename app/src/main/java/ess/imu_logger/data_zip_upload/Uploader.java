@@ -128,9 +128,12 @@ public class Uploader extends Thread {
                 if (!sharedPrefs.getBoolean("anonymize", true))
                     name = sharedPrefs.getString("name", "default");
 
-                String u = sharedPrefs.getString("pref_server_url", "http://192.168.2.50") + ":" +
-                        sharedPrefs.getString("pref_server_port", "8080") +
+                String u = sharedPrefs.getString("server_url", "http://192.168.2.50") + ":" +
+                        sharedPrefs.getString("server_port", "8080") +
                         "/upload/" + sID + "/" + name;
+                if(!u.startsWith("http://"))
+                    u = "http://" + u;
+
                 Log.i(TAG, "URL: " + u);
                 URL url = new URL(u);
 
@@ -283,10 +286,7 @@ public class Uploader extends Thread {
         // the Looper attached to our DownloadThread
         // obviously, all previously queued tasks will be executed
         // before the loop gets the quit Runnable
-        if (inHandler == null)
-            return;
-
-        inHandler.post(new Runnable() {
+        getHandler().post(new Runnable() {
             @Override
             public void run() {
                 // This is guaranteed to run on the DownloadThread

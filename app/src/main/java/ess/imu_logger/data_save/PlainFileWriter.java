@@ -66,7 +66,7 @@ public class PlainFileWriter extends Thread {
 			// preparing a looper on current thread
 			// the current thread is being detected implicitly
 			Looper.prepare();
-
+            synchronized (this) {
 			// now, the handler will automatically bind to the
 			// Looper that is attached to the current thread
 			// You don't need to specify the Looper explicitly
@@ -122,6 +122,7 @@ public class PlainFileWriter extends Thread {
 					}
 				}
 			};
+            notifyAll();}
 
 			// After the following line the thread will start
 			// running the message loop and will not normally
@@ -141,10 +142,7 @@ public class PlainFileWriter extends Thread {
 		// the Looper attached to our DownloadThread
 		// obviously, all previously queued tasks will be executed
 		// before the loop gets the quit Runnable
-        if(inHandler == null)
-            return;
-
-		inHandler.post(new Runnable() {
+        getHandler().post(new Runnable() {
 			@Override
 			public void run() {
 				// This is guaranteed to run on the DownloadThread
@@ -156,6 +154,17 @@ public class PlainFileWriter extends Thread {
 		});
 	}
 
+    private Handler getHandler() {
+        while (inHandler == null) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                //Ignore and try again.
+            }
+        }
+        return inHandler;
+    }
+
 	public synchronized void saveString(final String data) {
 		Message msg = new Message();
 		Bundle b = new Bundle();
@@ -164,8 +173,7 @@ public class PlainFileWriter extends Thread {
 		msg.setData(b);
 
 		// could be a runnable when calling post instead of sendMessage
-		if(inHandler != null)
-			inHandler.sendMessage(msg);
+		getHandler().sendMessage(msg);
 	}
 
 

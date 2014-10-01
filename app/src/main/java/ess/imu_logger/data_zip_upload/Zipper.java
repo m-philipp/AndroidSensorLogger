@@ -49,7 +49,7 @@ public class Zipper extends Thread {
 								return; // TODO cry for some help...
 							Util.checkDirs();
 
-							Log.i(TAG, "ZIPPPPING some Data!!");
+							Log.i(TAG, "processing ZIPPPPING Message.");
 
 							// zip DB
 							String sourceFile = getFilenameToZip();
@@ -124,7 +124,7 @@ public class Zipper extends Thread {
 		// obviously, all previously queued tasks will be executed
 		// before the loop gets the quit Runnable
 
-		inHandler.post(new Runnable() {
+        getHandler().post(new Runnable() {
 			@Override
 			public void run() {
 				// This is guaranteed to run on the DownloadThread

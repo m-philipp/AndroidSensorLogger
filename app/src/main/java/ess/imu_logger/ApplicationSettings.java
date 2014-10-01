@@ -339,8 +339,6 @@ public class ApplicationSettings extends PreferenceActivity {
 			} else if(preference instanceof EditTextPreference &&
                     preference.getKey().equals("last_upload")) {
 
-                Log.e(TAG, "setting summary");
-                Log.e(TAG,  stringValue);
                 preference.setSummary(Util.getFriendlyTime(Long.parseLong(stringValue), System.currentTimeMillis()));
 
             } else {

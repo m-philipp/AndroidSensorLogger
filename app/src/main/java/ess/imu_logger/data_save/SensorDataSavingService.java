@@ -134,8 +134,9 @@ public class SensorDataSavingService extends Service {
                     plainFileWriter.start();
             } else if (ACTION_STOP_SERVICE.equals(action)) {
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
+
                 plainFileWriter.requestStop();
-                this.stopSelf();
+                stopSelf();
             }
 		}
 		return START_STICKY;

@@ -183,14 +183,19 @@ public class StartScreen extends Activity {
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                     Log.d(TAG, "----------------- PREFS CHANGED !! ------------");
+                    Log.d(TAG, key);
 
-                    // start/stop the Logging Service
-                    if (sharedPrefs.getBoolean("sensor_activate", false)) {
-                        startBackgroundLogging();
-                    } else {
-                        stopBackgroundLogging();
+                    Log.d(TAG, "sensor_activat status: " + sharedPrefs.getBoolean("sensor_activate", false));
+
+
+                    if(key.equals("sensor_activate")) {
+                        // start/stop the Logging Service
+                        if (sharedPrefs.getBoolean("sensor_activate", false)) {
+                            startBackgroundLogging();
+                        } else {
+                            stopBackgroundLogging();
+                        }
                     }
-
                     uiUpdate();
 
 
