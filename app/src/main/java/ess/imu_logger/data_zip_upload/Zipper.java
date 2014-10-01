@@ -24,9 +24,6 @@ public class Zipper extends Thread {
 	public static final String MESSAGE_TYPE_ACTION = "ess.imu_logger.data_zip_upload.MESSAGE_TYPE_ACTION";
 
 	public static final int MESSAGE_ACTION_ZIP = 0;
-	public static final int MESSAGE_ACTION_RETURNING_ZIP = 1;
-
-	private boolean messageInQueue = false;
 
 	private Handler inHandler;
 
@@ -45,7 +42,7 @@ public class Zipper extends Thread {
 						// Act on the message received from my UI thread doing my stuff
 
 
-						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_ZIP) {
+						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_ZIP) {
 
 
 							if (!Util.isExternalStorageWritable())
@@ -81,19 +78,6 @@ public class Zipper extends Thread {
 
 						}
 
-						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_RETURNING_ZIP ||
-								(msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_ZIP && !messageInQueue)) {
-
-							Message m = new Message();
-							Bundle b = new Bundle();
-							b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_RETURNING_ZIP);
-							m.setData(b);
-
-							// could be a runnable when calling post instead of sendMessage
-							// TODO set AlarmManager
-							inHandler.sendMessageDelayed(m, 2000);
-							messageInQueue = true;
-						}
 					}
 				};
 				notifyAll();}
@@ -105,9 +89,9 @@ public class Zipper extends Thread {
 			// quit() the looper (see below)
 			Looper.loop();
 
-			Log.i(TAG, "Upload Thread exiting gracefully");
+			Log.i(TAG, "Zipper Thread exiting gracefully");
 		} catch (Throwable t) {
-			Log.e(TAG, "Upload Thread halted due to an error", t);
+			Log.e(TAG, "Zipper Thread halted due to an error", t);
 		}
 	}
 
@@ -139,12 +123,13 @@ public class Zipper extends Thread {
 		// the Looper attached to our DownloadThread
 		// obviously, all previously queued tasks will be executed
 		// before the loop gets the quit Runnable
+
 		inHandler.post(new Runnable() {
 			@Override
 			public void run() {
 				// This is guaranteed to run on the DownloadThread
 				// so we can use myLooper() to get its looper
-				Log.i(TAG, "Upload Thread loop quitting by request");
+				Log.i(TAG, "Zipper Thread loop quitting by request");
 
 				Looper.myLooper().quit();
 			}

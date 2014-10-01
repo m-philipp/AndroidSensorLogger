@@ -26,6 +26,12 @@ public class SensorDataSavingService extends Service {
 
     public static final String BROADCAST_LIGHTER = "ess.imu_logger.data_save.annotateLighter";
     public static final String BROADCAST_ANNOTATION = "ess.imu_logger.data_save.annotateSmoking";
+    
+    /* Phills Annotation 
+     * 'de.tud.ess.smoking.NEW_CIGARETTE'
+     * contains a list of Timestamps
+     * 
+     */
     public static final String BROADCAST_SENSOR_DATA = "ess.imu_logger.data_save.sensorData";
 
 

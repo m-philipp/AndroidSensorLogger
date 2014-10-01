@@ -93,6 +93,31 @@ public class Util {
 	}
 
 
+    public static Long getFolderSize() {
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + fileDir);
+        return getFolderSize(dir);
+    }
+
+    public static Long getFolderSize(File dir) {
 
 
+        if(dir == null || !dir.isDirectory())
+            return 0L;
+
+        if (isExternalStorageReadable()) {
+            long size = 0;
+            for (File file : dir.listFiles()) {
+                if (file.isFile()) {
+                    // System.out.println(file.getName() + " " + file.length());
+                    size += file.length();
+                } else
+                    size += getFolderSize(file);
+            }
+            System.out.println("getfoldersize --------------------"+size+"--------------------");
+
+            return size;
+        } else {
+            return 0L;
+        }
+    }
 }

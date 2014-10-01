@@ -3,11 +3,13 @@ package ess.imu_logger;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -15,9 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.ToggleButton;
-
-import java.io.File;
 
 import ess.imu_logger.data_save.SensorDataSavingService;
 import ess.imu_logger.data_zip_upload.ZipUploadService;
@@ -28,6 +27,8 @@ public class StartScreen extends Activity {
     SharedPreferences sharedPrefs;
 
     private static final String TAG = "ess.imu_logger.StartScreen";
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
 
     private final Handler handler = new Handler();
 
@@ -45,9 +46,33 @@ public class StartScreen extends Activity {
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPrefs.registerOnSharedPreferenceChangeListener(listener);
 
-        Intent mServiceIntent = new Intent(this, ZipUploadService.class);
-        mServiceIntent.setAction(ZipUploadService.ACTION_START_SERVICE);
-        this.startService(mServiceIntent);
+
+
+        Intent intent = new Intent(this, myReceiver.class);
+        intent.setAction(ZipUploadService.ACTION_START_SERVICE);
+        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        if(alarmMgr == null){
+            Log.d(TAG, "AlarmManager was null");
+            alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
+        }
+        else {
+            Log.d(TAG, "AlarmManager was not null. Canceling alarmIntent");
+
+            alarmMgr.cancel(alarmIntent);
+        }
+
+
+        alarmMgr.cancel(alarmIntent);
+
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                5000,
+                5000, alarmIntent);
+
+
+
+
+
 
         if (sharedPrefs.getBoolean("sensor_activate", false))
             startBackgroundLogging();
@@ -172,11 +197,19 @@ public class StartScreen extends Activity {
                 }
             };
 
+    private int updateRequest = 0;
     private Runnable sendUpdatesToUI = new Runnable() {
         public void run() {
             // update Name
             uiUpdate();
-            handler.postDelayed(this, 1000); // 0,1 seconds
+
+            updateRequest++;
+            if(updateRequest % 10 == 0) {
+                new FolderSizeRetriever().execute("");
+                updateRequest = 0;
+            }
+
+            handler.postDelayed(this, 100); // 0,1 seconds
         }
     };
 
@@ -225,38 +258,9 @@ public class StartScreen extends Activity {
 
 
 
-        Long l = getFolderSize();
-        Float f = Util.round((l.floatValue() / (1024 * 1024)), 2);
-        Log.d(TAG, "-------->> " + f.toString());
-        t = (TextView) findViewById(R.id.amaount_of_data_to_upload);
-        t.setText(f.toString() + " MB");
+
     }
 
-
-    public static long getFolderSize() {
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + Util.fileDir);
-        return getFolderSize(dir);
-    }
-
-    public static long getFolderSize(File dir) {
-
-        if(dir == null || !dir.isDirectory())
-            return 0;
-
-        if (Util.isExternalStorageReadable()) {
-            long size = 0;
-            for (File file : dir.listFiles()) {
-                if (file.isFile()) {
-                    // System.out.println(file.getName() + " " + file.length());
-                    size += file.length();
-                } else
-                    size += getFolderSize(file);
-            }
-            return size;
-        } else {
-            return 0L;
-        }
-    }
 
     private boolean isLoggingServiceRunning() {
         return isServiceRunning(LoggingService.class.getName());
@@ -278,6 +282,31 @@ public class StartScreen extends Activity {
             }
         }
         return false;
+    }
+
+
+    private class FolderSizeRetriever extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            return Util.getFolderSize().toString();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+           Float f = Util.round((Float.parseFloat(result) / (1024 * 1024)), 2);
+           Log.d(TAG, "-------->> " + f.toString());
+           TextView t = (TextView) findViewById(R.id.amaount_of_data_to_upload);
+           t.setText(f + " MB");
+
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
     }
 
 

@@ -1,11 +1,15 @@
 package ess.imu_logger.data_zip_upload;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import ess.imu_logger.myReceiver;
 
 public class ZipUploadService extends Service {
 
@@ -28,8 +32,7 @@ public class ZipUploadService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return null;
     }
 
 	public void onCreate() {
@@ -37,37 +40,45 @@ public class ZipUploadService extends Service {
 
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-
-		zipper = new Zipper();
-		zipper.start();
-		zipper.zip();
-
-		uploader = new Uploader(this);
-		uploader.start();
-		uploader.up();
-
-
-
 	}
 
 	public int onStartCommand (Intent intent, int flags, int startId){
 		Log.i(TAG, "onStartCommand called ...");
-		// Todo null check
-		if(intent == null){
+
+
+        if(intent == null){
 			return START_STICKY;
 		}
 
-		if(intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)){
-			uploader.up();
-		}
+        if(intent.getAction().equals(ACTION_START_SERVICE) ||
+                intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)) {
+
+            Log.d(TAG, "onStartCommand with: " + ACTION_START_SERVICE + " called");
+            zipper = new Zipper();
+            zipper.start();
+            zipper.zip();
+            zipper.requestStop();
+
+            // TODO check upload cycle
+            if(intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)) {
+                uploader = new Uploader(this);
+                uploader.start();
+                uploader.up();
+                uploader.requestStop();
+            }
+        }
+
+
+
+
+
+        stopSelf();
 
 		return START_STICKY;
 	}
 
     public void onDestroy(){
         Log.i(TAG, "onDestroy called ...");
-        uploader.requestStop();
-        zipper.requestStop();
     }
 
 

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+import ess.imu_logger.data_zip_upload.ZipUploadService;
+
 public class myReceiver extends BroadcastReceiver {
     public myReceiver() {
     }
@@ -18,19 +20,19 @@ public class myReceiver extends BroadcastReceiver {
 
         String action = intent.getAction();
 	    if (intent != null) {
-		    if(action.equals("ess.imu_logger.annotateSmoking")) {
-
-			    // Toast.makeText(context, "smokeAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
-
-
-
-		    } else if(action.equals(intent.ACTION_BOOT_COMPLETED)){
+		    if(action.equals(intent.ACTION_BOOT_COMPLETED)){
 			    // TODO magic boot starting
 			    /*
 			      Intent serviceIntent = new Intent(context, MySystemService.class);
                   context.startService(serviceIntent);
 			     */
-		    }
+		    } else if(action.equals(ZipUploadService.ACTION_START_SERVICE)){
+
+                Intent mServiceIntent = new Intent(context, ZipUploadService.class);
+                mServiceIntent.setAction(ZipUploadService.ACTION_START_SERVICE);
+                context.startService(mServiceIntent);
+
+            }
 	    }
     }
 }
