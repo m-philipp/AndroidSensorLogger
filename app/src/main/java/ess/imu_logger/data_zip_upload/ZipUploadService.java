@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -60,18 +61,28 @@ public class ZipUploadService extends Service {
             zipper.requestStop();
 
             // TODO check upload cycle
-            if(intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)) {
+
+            Long freq = Long.parseLong(sharedPrefs.getString("upload_frequency", "0"));
+            Long last = Long.parseLong(sharedPrefs.getString("last_upload", "0"));
+            Long now = System.currentTimeMillis();
+
+            if(intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)
+                    || ( freq != 0 && (now - last) > freq)) {
                 uploader = new Uploader(this);
                 uploader.start();
                 uploader.up();
                 uploader.requestStop();
+
+                Editor editor = sharedPrefs.edit();
+                editor.putString("last_upload", ((Long) System.currentTimeMillis()).toString());
+                editor.commit();
             }
         }
 
 
 
 
-
+        // TODO: wait for thread finishing / working
         stopSelf();
 
 		return START_STICKY;

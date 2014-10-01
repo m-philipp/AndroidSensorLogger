@@ -25,8 +25,10 @@
 
 	<!-- Example settings for Data & Sync -->
 	<string name="pref_header_data_sync">Daten Upload &amp; Synchronisation</string>
-	<string name="pref_header_data_sync_data_upload">Daten Upload</string>
-	<string name="pref_header_data_sync_settings_sync">Einstellungs Synchronisation</string>
+    <string name="pref_header_data_sync_server">Server</string>
+    <string name="pref_header_data_sync_upload_modalities">Upload</string>
+
+    <string name="pref_header_data_sync_settings_sync">Einstellungs Synchronisation</string>
 
 
 	<string name="pref_server_url">URL</string>
@@ -47,15 +49,20 @@
 		<item>manuell</item>
 	</string-array>
 	<string-array name="pref_upload_frequency_values">
-		<item>10</item>
-		<item>300</item>
-		<item>3600</item>
-		<item>18000</item>
-		<item>43200</item>
-		<item>88800</item>
-		<item>177600</item>
+		<item>10000</item>
+		<item>300000</item>
+		<item>3600000</item>
+		<item>18000000</item>
+		<item>43200000</item>
+		<item>88800000</item>
+		<item>177600000</item>
 		<item>0</item>
 	</string-array>
+
+    <string name="pref_title_last_upload">Letzter Upload</string>
+    <string name="pref_default_last_upload">0</string>
+
+
 
 	<string name="pref_server_port">Server Port</string>
 	<string-array name="pref_server_port_titles">

@@ -176,8 +176,9 @@
 	                  android:title="@string/pref_header_data_sync">
 
 		<PreferenceCategory
-			android:key="pref_key_data_sync_general"
-			android:title="@string/pref_header_data_sync_data_upload">
+			android:key="pref_key_data_sync_server"
+			android:title="@string/pref_header_data_sync_server">
+
 
 			<EditTextPreference
 				android:defaultValue="@string/pref_default_server_url"
@@ -198,6 +199,12 @@
 				android:positiveButtonText="@null"
 				android:title="@string/pref_server_port"/>
 
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:key="pref_key_data_sync_upload_modalities"
+            android:title="@string/pref_header_data_sync_upload_modalities">
+
 			<CustomSwitchPreference
 				android:defaultValue="true"
 				android:key="wifi_only"
@@ -212,6 +219,17 @@
 				android:negativeButtonText="@null"
 				android:positiveButtonText="@null"
 				android:title="@string/pref_title_upload_frequency"/>
+
+            <EditTextPreference
+                android:defaultValue="@string/pref_default_last_upload"
+                android:ellipsize="end"
+                android:enabled="false"
+                android:key="last_upload"
+                android:maxLines="1"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="@string/pref_title_last_upload"/>
+
 		</PreferenceCategory>
 
 		<PreferenceCategory

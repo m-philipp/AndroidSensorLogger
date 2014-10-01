@@ -8,6 +8,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.CustomSwitchPreference;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -45,6 +46,8 @@ public class ApplicationSettings extends PreferenceActivity {
 	final static String ACTION_PREFS_GENERAL = "ess.imu_logger.action.prefs_general";
 	final static String ACTION_PREFS_DATA_SYNC = "ess.imu_logger.action.prefs_data_sync";
 	final static String ACTION_PREFS_SENSOR = "ess.imu_logger.action.prefs_sensor";
+
+    private static final String TAG = "ess.imu_logger.ApplicationSettings";
 
 	private static HashMap<String, Boolean> activeSensors = new HashMap<String, Boolean>();
 
@@ -303,6 +306,9 @@ public class ApplicationSettings extends PreferenceActivity {
 
 			bindPreferenceSummaryToValue(findPreference("upload_frequency"));
 
+
+            bindPreferenceSummaryToValue(findPreference("last_upload"));
+
 		}
 
 	}
@@ -330,7 +336,14 @@ public class ApplicationSettings extends PreferenceActivity {
 								: null
 				);
 
-			} else {
+			} else if(preference instanceof EditTextPreference &&
+                    preference.getKey().equals("last_upload")) {
+
+                Log.e(TAG, "setting summary");
+                Log.e(TAG,  stringValue);
+                preference.setSummary(Util.getFriendlyTime(Long.parseLong(stringValue), System.currentTimeMillis()));
+
+            } else {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
 				preference.setSummary(stringValue);
