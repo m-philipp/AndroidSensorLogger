@@ -57,7 +57,11 @@ public class Uploader extends Thread {
 
     private Handler inHandler;
 
+	private ZipUploadService zus;
+
     public Uploader(Context context) {
+	    zus = (ZipUploadService) context;
+
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         sID = Util.id(context);
@@ -95,6 +99,9 @@ public class Uploader extends Thread {
 
                             }
                         }
+
+	                    zus.uploaderStopped();
+	                    Looper.myLooper().quit();
                     }
                 };
                 notifyAll();

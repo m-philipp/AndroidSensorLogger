@@ -2,6 +2,7 @@ package ess.imu_logger;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -106,8 +107,9 @@ public class Util {
 
         if (isExternalStorageReadable()) {
             long size = 0;
+	        // TODO Multiply dir.listFiles() with Zipped File Size.
             for (File file : dir.listFiles()) {
-                if (file.isFile()) {
+	            if (file.isFile()) {
                     // System.out.println(file.getName() + " " + file.length());
                     size += file.length();
                 } else

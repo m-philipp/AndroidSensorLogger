@@ -1,10 +1,12 @@
 package ess.imu_logger.data_zip_upload;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.File;
@@ -27,6 +29,13 @@ public class Zipper extends Thread {
 
 	private Handler inHandler;
 
+	private ZipUploadService zus;
+
+	public Zipper(Context context){
+		zus = (ZipUploadService) context;
+	}
+
+
 	public void run() {
 		try {
 			// preparing a looper on current thread
@@ -44,6 +53,9 @@ public class Zipper extends Thread {
 
 						if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_ZIP) {
 
+
+							// TODO remove
+							//SystemClock.sleep(2000);
 
 							if (!Util.isExternalStorageWritable())
 								return; // TODO cry for some help...
@@ -77,6 +89,10 @@ public class Zipper extends Thread {
 
 
 						}
+
+
+						zus.zipperStopped();
+						Looper.myLooper().quit();
 
 					}
 				};

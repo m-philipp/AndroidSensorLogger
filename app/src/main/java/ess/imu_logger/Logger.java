@@ -110,30 +110,30 @@ public class Logger extends Handler implements SensorEventListener{
 
 
 	    if(accelerometerSensor != null && sharedPrefs.getBoolean("accelerometer", false))
-		    mSensorManager.registerListener(this, accelerometerSensor, logging_frequency);
+		    mSensorManager.registerListener(this, accelerometerSensor, logging_frequency, this);
         if(gyroscopeSensor != null && sharedPrefs.getBoolean("gyroscope", false))
-	        mSensorManager.registerListener(this, gyroscopeSensor, logging_frequency);
+	        mSensorManager.registerListener(this, gyroscopeSensor, logging_frequency, this);
         if(magneticFieldSensor != null && sharedPrefs.getBoolean("magneticField", false))
-	        mSensorManager.registerListener(this, magneticFieldSensor, logging_frequency);
+	        mSensorManager.registerListener(this, magneticFieldSensor, logging_frequency, this);
 	    if(ambientLightSensor != null && sharedPrefs.getBoolean("ambientLight", false))
-		    mSensorManager.registerListener(this, ambientLightSensor, logging_frequency);
+		    mSensorManager.registerListener(this, ambientLightSensor, logging_frequency, this);
 	    if(proximitySensor != null && sharedPrefs.getBoolean("proximity", false))
-		    mSensorManager.registerListener(this, proximitySensor, logging_frequency);
+		    mSensorManager.registerListener(this, proximitySensor, logging_frequency, this);
 	    if(temperatureSensor != null && sharedPrefs.getBoolean("temperature", false))
-		    mSensorManager.registerListener(this, temperatureSensor, logging_frequency);
+		    mSensorManager.registerListener(this, temperatureSensor, logging_frequency, this);
 	    if(humiditySensor != null && sharedPrefs.getBoolean("humidity", false))
-		    mSensorManager.registerListener(this, humiditySensor, logging_frequency);
+		    mSensorManager.registerListener(this, humiditySensor, logging_frequency, this);
 	    if(pressureSensor != null && sharedPrefs.getBoolean("pressure", false))
-		    mSensorManager.registerListener(this, pressureSensor, 30000); // static freq to every 30 Sek cause of some Android Isssues
+		    mSensorManager.registerListener(this, pressureSensor, 30000, this); // static freq to every 30 Sek cause of some Android Isssues
 
         if(rotationSensor != null && sharedPrefs.getBoolean("rotation", false))
-	        mSensorManager.registerListener(this, rotationSensor, logging_frequency);
+	        mSensorManager.registerListener(this, rotationSensor, logging_frequency, this);
 	    if(gravitySensor != null && sharedPrefs.getBoolean("gravity", false))
-		    mSensorManager.registerListener(this, gravitySensor, logging_frequency);
+		    mSensorManager.registerListener(this, gravitySensor, logging_frequency, this);
 	    if(linearAccelerometerSensor != null && sharedPrefs.getBoolean("linearAccelerometer", false))
-		    mSensorManager.registerListener(this, linearAccelerometerSensor, logging_frequency);
+		    mSensorManager.registerListener(this, linearAccelerometerSensor, logging_frequency, this);
 	    if(stepCountSensor != null && sharedPrefs.getBoolean("steps", false))
-		    mSensorManager.registerListener(this, stepCountSensor, logging_frequency);
+		    mSensorManager.registerListener(this, stepCountSensor, logging_frequency, this);
 
     }
 
@@ -157,16 +157,14 @@ public class Logger extends Handler implements SensorEventListener{
 
 	    if( i % 500 == 0)
             Log.d(TAG, "sensorEvent " + i);
-	        // Toast.makeText(context, "sensorEvent" + i, Toast.LENGTH_SHORT).show();
 
-		//Log.i(TAG, getString(event));
-
-        //mSaver.saveData(getString(event));
+	    // TODO: THIS IS NOT BACKGROUNDING!! --> DONE registerListener get this Handler now!
+	    // SystemClock.sleep(200);
 
         Intent intent = new Intent(SensorDataSavingService.BROADCAST_SENSOR_DATA);
-        // You can also include some extra data.
         intent.putExtra(SensorDataSavingService.EXTRA_SENSOR_DATA, getString(event));
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
 
     }
 

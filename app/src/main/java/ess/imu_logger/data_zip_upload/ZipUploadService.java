@@ -26,6 +26,9 @@ public class ZipUploadService extends Service {
 	private Zipper zipper;
 	private Uploader uploader;
 
+	private Boolean zipperRunning = false;
+	private Boolean uploaderRunning = false;
+
 
 
 	public ZipUploadService() {
@@ -46,20 +49,18 @@ public class ZipUploadService extends Service {
 	public int onStartCommand (Intent intent, int flags, int startId){
 		Log.i(TAG, "onStartCommand called ...");
 
-
-        if(intent == null){
-			return START_STICKY;
-		}
-
         if(intent.getAction().equals(ACTION_START_SERVICE) ||
                 intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)) {
 
-            Log.d(TAG, "onStartCommand with: " + ACTION_START_SERVICE + " called");
-            zipper = new Zipper();
-            zipper.start();
-            zipper.zip();
-            zipper.requestStop();
+	        if(!zipperRunning) {
+		        Log.d(TAG, "onStartCommand with: " + ACTION_START_SERVICE + " called");
+		        zipper = new Zipper(this);
+		        zipper.start();
+		        zipper.zip();
+		        zipperRunning = true;
+		        //zipper.requestStop();
 
+	        }
             // TODO check upload cycle
 
             Long freq = Long.parseLong(sharedPrefs.getString("upload_frequency", "0"));
@@ -68,14 +69,17 @@ public class ZipUploadService extends Service {
 
             if(intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)
                     || ( freq != 0 && (now - last) > freq)) {
-                uploader = new Uploader(this);
-                uploader.start();
-                uploader.up();
-                uploader.requestStop();
+                if(!uploaderRunning) {
+	                uploader = new Uploader(this);
+	                uploader.start();
+	                uploader.up();
+	                uploaderRunning = true;
+	                //uploader.requestStop();
 
-                Editor editor = sharedPrefs.edit();
-                editor.putString("last_upload", ((Long) System.currentTimeMillis()).toString());
-                editor.commit();
+	                Editor editor = sharedPrefs.edit();
+	                editor.putString("last_upload", ((Long) System.currentTimeMillis()).toString());
+	                editor.commit();
+                }
             }
         }
 
@@ -83,7 +87,7 @@ public class ZipUploadService extends Service {
 
 
         // TODO: wait for thread finishing / working
-        stopSelf();
+        // stopSelf();
 
 		return START_STICKY;
 	}
@@ -93,6 +97,20 @@ public class ZipUploadService extends Service {
     }
 
 
+	public void zipperStopped(){
+		zipperRunning = false;
 
+		if(!zipperRunning && !uploaderRunning){
+			stopSelf();
+		}
+	}
+
+	public  void uploaderStopped(){
+		uploaderRunning = false;
+
+		if(!zipperRunning && !uploaderRunning){
+			stopSelf();
+		}
+	}
 
 }

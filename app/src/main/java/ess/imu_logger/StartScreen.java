@@ -66,8 +66,8 @@ public class StartScreen extends Activity {
         alarmMgr.cancel(alarmIntent);
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                5000,
-                5000, alarmIntent);
+                6000,
+                6000, alarmIntent);
 
 
 
@@ -208,11 +208,14 @@ public class StartScreen extends Activity {
             // update Name
             uiUpdate();
 
-            updateRequest++;
-            if(updateRequest % 10 == 0) {
+
+            if(updateRequest == 0) {
+	            Log.d(TAG, "Update Folder Size");
+
                 new FolderSizeRetriever().execute("");
-                updateRequest = 0;
+                updateRequest = 100; // 10 Seconds
             }
+	        updateRequest--;
 
             handler.postDelayed(this, 100); // 0,1 seconds
         }
