@@ -90,6 +90,9 @@ public class Uploader extends Thread {
 
                             NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
+                            if(mWifi == null) // TODO
+                                   return;
+
                             if (mWifi.isConnected() || !sharedPrefs.getBoolean("wifi_only", true)) {
 
                                 Log.d(TAG, "now trying to upload date while concerning settings and WIFI State");

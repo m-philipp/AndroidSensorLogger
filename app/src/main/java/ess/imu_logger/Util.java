@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -96,7 +98,8 @@ public class Util {
 
     public static Long getFolderSize() {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + fileDir);
-        return getFolderSize(dir);
+        //return getFolderSize(dir);
+        return getFileSize(dir);
     }
 
     public static Long getFolderSize(File dir) {
@@ -121,6 +124,34 @@ public class Util {
             return 0L;
         }
     }
+
+    public static long getFileSize(final File file)
+    {
+        if(file==null||!file.exists())
+            return 0;
+        if(!file.isDirectory())
+            return file.length();
+        final List<File> dirs=new LinkedList<File>();
+        dirs.add(file);
+        long result=0;
+        while(!dirs.isEmpty())
+        {
+            final File dir=dirs.remove(0);
+            if(!dir.exists())
+                continue;
+            final File[] listFiles=dir.listFiles();
+            if(listFiles==null||listFiles.length==0)
+                continue;
+            for(final File child : listFiles)
+            {
+                result+=child.length();
+                if(child.isDirectory())
+                    dirs.add(child);
+            }
+        }
+        return result;
+    }
+
 
      public static String getFriendlyTime(long firstMillies, long secondMillies){
         StringBuffer sb = new StringBuffer();

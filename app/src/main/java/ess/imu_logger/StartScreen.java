@@ -66,8 +66,8 @@ public class StartScreen extends Activity {
         alarmMgr.cancel(alarmIntent);
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                6000,
-                6000, alarmIntent);
+                1000,
+                10000, alarmIntent); // TODO make Values static finals
 
 
 
@@ -212,8 +212,10 @@ public class StartScreen extends Activity {
             if(updateRequest == 0) {
 	            Log.d(TAG, "Update Folder Size");
 
-                new FolderSizeRetriever().execute("");
-                updateRequest = 100; // 10 Seconds
+                FolderSizeRetriever fsr = new FolderSizeRetriever();
+                fsr.execute(""); // 1.6GB can take about 28 Seconds with small files.
+
+                updateRequest = 1000; // 100 Seconds and on Start
             }
 	        updateRequest--;
 
@@ -225,8 +227,13 @@ public class StartScreen extends Activity {
         TextView t = (TextView) findViewById(R.id.welcome_name);
         t.setText("Hi, " + sharedPrefs.getString("name", "Kunibert"));
 
+        t = (TextView) findViewById(R.id.amaount_of_data_to_upload);
+        t.setText(sharedPrefs.getString("amount_of_logged_data", "0.0") +  " MB");
+
         // update logging status
         t = (TextView) findViewById(R.id.logging_service_state);
+
+
 
         /*
         if( sharedPrefs.getBoolean("sensor_activate", false)){
@@ -295,19 +302,30 @@ public class StartScreen extends Activity {
 
     private class FolderSizeRetriever extends AsyncTask<String, Void, String> {
 
+        private final static String TAG = "ess.imu_logger.StartScreen.FolderSizeRetriever";
+
         @Override
         protected String doInBackground(String... params) {
 
-            return Util.getFolderSize().toString();
+            Long start = System.currentTimeMillis();
+
+            String r = Util.getFolderSize().toString();
+
+            Long duration = System.currentTimeMillis() - start;
+            Log.d(TAG, "File Size Retrieving took: " + duration.toString());
+
+            return r;
         }
 
         @Override
         protected void onPostExecute(String result) {
            Float f = Util.round((Float.parseFloat(result) / (1024 * 1024)), 2);
-           Log.d(TAG, "-------->> " + f.toString());
-           TextView t = (TextView) findViewById(R.id.amaount_of_data_to_upload);
-           t.setText(f + " MB");
+           Log.d(TAG, "-------->> retrieved File Size: " + f.toString());
 
+            // TODO amount_of_logged_data
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putString("amount_of_logged_data", f.toString());
+            editor.commit();
         }
 
         @Override

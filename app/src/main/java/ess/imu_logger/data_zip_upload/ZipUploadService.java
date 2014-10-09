@@ -49,7 +49,13 @@ public class ZipUploadService extends Service {
 	public int onStartCommand (Intent intent, int flags, int startId){
 		Log.i(TAG, "onStartCommand called ...");
 
-        if(intent.getAction().equals(ACTION_START_SERVICE) ||
+/*
+        if(intent == null){
+			return START_STICKY;
+		} //Caused by: java.lang.NullPointerException at ess.imu_logger.data_zip_upload.ZipUploadService.onStartCommand(ZipUploadService.java:52) // HERE
+*/
+
+        if(intent == null || intent.getAction().equals(ACTION_START_SERVICE) ||
                 intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)) {
 
 	        if(!zipperRunning) {
@@ -67,7 +73,7 @@ public class ZipUploadService extends Service {
             Long last = Long.parseLong(sharedPrefs.getString("last_upload", "0"));
             Long now = System.currentTimeMillis();
 
-            if(intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)
+            if(!(intent == null) && intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)
                     || ( freq != 0 && (now - last) > freq)) {
                 if(!uploaderRunning) {
 	                uploader = new Uploader(this);
