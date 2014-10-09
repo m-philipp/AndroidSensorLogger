@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="ess.imu_logger.AnnotateSmoking"
+    tools:context="ess.imu_logger.wear.AnnotateSmoking"
     tools:deviceIds="wear_square">
 
     <TextView
