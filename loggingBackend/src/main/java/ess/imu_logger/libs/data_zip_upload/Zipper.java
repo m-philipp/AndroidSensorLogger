@@ -53,7 +53,7 @@ public class Zipper extends Thread {
                         if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_ZIP) {
 
 
-                            // TODO remove
+
                             //SystemClock.sleep(2000);
 
                             if (!Util.isExternalStorageWritable())
@@ -77,7 +77,7 @@ public class Zipper extends Thread {
                                     Log.d(TAG, "Zip file size: " + (new File(exportFilePath)).length() + " Bytes");
 
                                     File file = new File(sourceFile);
-                                    boolean deleted = file.delete();
+                                    boolean deleted = file.delete(); // TODO maybe some cleanup ...
 
                                 }
 

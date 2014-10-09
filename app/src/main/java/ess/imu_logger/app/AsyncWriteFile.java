@@ -20,6 +20,7 @@ public class AsyncWriteFile extends AsyncTask<ArrayList<String>, Integer, Boolea
     private String dirname = "smokingStudy";
     private static final Integer MAX_FILE_SIZE = 655360;
 
+    // TODO delete (currently not used)
 
     FileOutputStream outputStream;
 

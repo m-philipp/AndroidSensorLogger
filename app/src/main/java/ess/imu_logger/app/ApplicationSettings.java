@@ -41,11 +41,12 @@ public class ApplicationSettings extends PreferenceActivity {
 	 * as a master/detail two-pane view on tablets. When true, a single pane is
 	 * shown on tablets.
 	 */
+    /*
 	private static final boolean ALWAYS_SIMPLE_PREFS = false;
 	final static String ACTION_PREFS_GENERAL = "ess.imu_logger.action.prefs_general";
 	final static String ACTION_PREFS_DATA_SYNC = "ess.imu_logger.action.prefs_data_sync";
 	final static String ACTION_PREFS_SENSOR = "ess.imu_logger.action.prefs_sensor";
-
+*/
     private static final String TAG = "ess.imu_logger.app.ApplicationSettings";
 
 	private static HashMap<String, Boolean> activeSensors = new HashMap<String, Boolean>();
@@ -143,10 +144,7 @@ public class ApplicationSettings extends PreferenceActivity {
 
 
 	protected boolean isValidFragment(String fragmentName) {
-		if (SettingsFragment.class.getName().equals(fragmentName))
-			return true;
-		return false;
-
+        return SettingsFragment.class.getName().equals(fragmentName);
 	}
 
 	/**

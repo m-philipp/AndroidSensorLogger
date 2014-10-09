@@ -16,8 +16,10 @@ public class myReceiver extends BroadcastReceiver {
         // an Intent broadcast.
 
 
-        String action = intent.getAction();
+
         if (intent != null) {
+            String action = intent.getAction();
+
             if (action.equals(intent.ACTION_BOOT_COMPLETED)) {
                 // TODO magic boot starting
                 /*

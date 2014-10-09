@@ -38,21 +38,8 @@ public class SensorDataSavingService extends Service {
 
     private static final String TAG = "ess.imu_logger.libs.data_save.SensorDataSavingService";
 
-	private SharedPreferences sharedPrefs;
 	private PlainFileWriter plainFileWriter;
 
-	Handler inHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-
-			if (msg.getData().getString("action").equals("save finished")) {
-				Log.i(TAG, "finished some Data Saving");
-			} else if (msg.getData().getString("action").equals("upload finished")) {
-				Log.i(TAG, "finished some Data Upload");
-			}
-			//txt.setText(txt.getText() + "Item " + key +System.getProperty("line.separator"));
-		}
-	};
 
 
 
@@ -144,7 +131,6 @@ public class SensorDataSavingService extends Service {
 	public void onCreate() {
 		Log.d(TAG, "SensorDataSavingService onCreate ...");
 
-		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		// register broadcast receiver
 		IntentFilter filter = new IntentFilter();
@@ -156,8 +142,8 @@ public class SensorDataSavingService extends Service {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
-		plainFileWriter = new PlainFileWriter(inHandler);
-		//plainFileWriter.start();
+		plainFileWriter = new PlainFileWriter();
+
 
 	}
 

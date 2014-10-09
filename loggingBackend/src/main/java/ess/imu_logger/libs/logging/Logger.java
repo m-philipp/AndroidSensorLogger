@@ -46,7 +46,7 @@ public class Logger extends Handler implements SensorEventListener {
         this.context = context;
 
 
-        logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
+        logging_frequency = Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
 
 
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -77,8 +77,8 @@ public class Logger extends Handler implements SensorEventListener {
 
             //Toast.makeText(context, "register Sensor Listener.", Toast.LENGTH_SHORT).show();
 
-            logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
-            registerListeners(msg);
+            logging_frequency = Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
+            registerListeners();
         } else if (msg.what == MESSAGE_STOP) {
             Log.i(TAG, "Logger stopped");
             this.removeMessages(0);
@@ -91,13 +91,13 @@ public class Logger extends Handler implements SensorEventListener {
         }
     }
 
-    private void registerListeners(Message msg) {
+    private void registerListeners() {
 
         Log.i(TAG, "registerListeners");
 
-        // evtl. check if getDefaultSensor() == null
-        Intent i = (Intent) msg.obj;
-        logging_frequency = (int) Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
+        // TODO evtl. check if getDefaultSensor() == null
+
+        logging_frequency = Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
 
 
         if (accelerometerSensor != null && sharedPrefs.getBoolean("accelerometer", false))

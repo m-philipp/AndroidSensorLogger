@@ -24,7 +24,6 @@ public class LoggingService extends Service {
 
 
     private boolean loggingStarted = false;
-    private SharedPreferences sharedPrefs;
 
 
     // TODO: Rename actions, choose action names that describe tasks that this
@@ -84,8 +83,6 @@ public class LoggingService extends Service {
 
         Log.d(TAG, "on onCreate called.");
 
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
         thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_FOREGROUND);
         thread.start();
         serviceLooper = thread.getLooper();
@@ -95,17 +92,6 @@ public class LoggingService extends Service {
 
 
     private synchronized void startRecording() {
-
-		/*
-        if (!loggingStarted) {
-			// send message to Logger
-			Message msg = serviceHandler.obtainMessage();
-			msg.what = Logger.MESSAGE_START;
-			msg.obj = new Intent();
-			serviceHandler.sendMessage(msg);
-			loggingStarted = true;
-		}
-        */
 
         serviceHandler.sendEmptyMessage(Logger.MESSAGE_START);
         loggingStarted = true;

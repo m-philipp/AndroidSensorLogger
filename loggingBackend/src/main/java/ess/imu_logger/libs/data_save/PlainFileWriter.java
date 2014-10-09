@@ -25,14 +25,12 @@ public class PlainFileWriter extends Thread {
     // private static final String TAG = PlainFileWriter.class.getSimpleName();
     private static final String TAG = "ess.imu_logger.libs.data_save.PlainFileWriter";
 
-    public static final int MESSAGE_WRITE = 0;
 
     public static final String MESSAGE_TYPE_ACTION = "ess.imu_logger.libs.data_save.MESSAGE_TYPE_ACTION";
     public static final int MESSAGE_ACTION_SAVE = 0;
 
     public static final String MESSAGE_DATA = "ess.imu_logger.libs.data_save.MESSAGE_DATA";
 
-    private Handler outHandler;
     private Handler inHandler;
 
 
@@ -50,16 +48,13 @@ public class PlainFileWriter extends Thread {
     //private static final Integer MAX_FILE_SIZE = 25000;
     //private static final Integer MAX_BUFFER_SIZE = 2000;
 
-    private static final Integer MAX_FILE_SIZE = 2621440; // 2.5 MB
-    private static final Integer MAX_BUFFER_SIZE = 8192;
+    //private static final Integer MAX_FILE_SIZE = 2621440; // 2.5 MB
+    private static final Integer MAX_FILE_SIZE = 1024*1024*50; // 50 MB
+    private static final Integer MAX_BUFFER_SIZE = 1024*8;
 
-    FileOutputStream outputStream;
 
-
-    public PlainFileWriter(Handler handler) {
+    public PlainFileWriter() {
         this.data = new ArrayList<String>(MAX_BUFFER_SIZE);
-
-        this.outHandler = handler;
     }
 
 

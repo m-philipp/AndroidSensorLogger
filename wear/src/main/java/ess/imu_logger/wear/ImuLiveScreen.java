@@ -92,6 +92,8 @@ public class ImuLiveScreen extends Activity implements SensorEventListener {
     }
 
     private void drawSensor(SensorEvent event, TextView xyz, TextView hz, LinkedList<Long> timestamps) {
+        if(timestamps == null)
+            timestamps = new LinkedList<Long>();
 
         if (xyz == null || hz == null)
             return;
@@ -107,7 +109,7 @@ public class ImuLiveScreen extends Activity implements SensorEventListener {
                 + (float) Math.round(event.values[2] * 100) / 100 + " ");
 
         double fps = 0;
-        if (timestamps != null && timestamps.size() > 99) {
+        if (timestamps.size() > 99) {
             fps = 100000000000D / (timestamps.getFirst() - timestamps.getLast());
         }
         hz.setText((float) Math.round(fps * 100) / 100 + " Hz");
