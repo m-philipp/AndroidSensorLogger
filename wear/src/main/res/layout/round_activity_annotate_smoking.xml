@@ -3,14 +3,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="ess.imu_logger.wear.AnnotateSmoking"
-    tools:deviceIds="wear_round">
+    tools:deviceIds="wear_round"
+    android:weightSum="1"
+    android:padding="10dp">
 
-    <TextView
-        android:id="@+id/text"
+
+    <android.support.wearable.view.DelayedConfirmationView
+        android:id="@+id/delayed_confirmation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/hello_round" />
+        android:layout_gravity="center"
+        android:src="@drawable/ic_action_core_cancel_hd"
+        app:circle_color="@color/blue"
+        app:circle_radius="40dp"
+        app:circle_radius_pressed="@dimen/circle_radius_pressed"
+        app:circle_padding="@dimen/circle_padding"
+        app:circle_border_width="@dimen/circle_border_normal_width"
+        app:circle_border_color="@color/dark_blue"
+
+        android:layout_below="@+id/tv_annotate_smoking"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="annotate..."
+        android:id="@+id/desc_annotate"
+        android:layout_toEndOf="@+id/delayed_confirmation"
+        style="@style/CardTitle"
+        android:layout_gravity="left"
+        android:layout_below="@+id/delayed_confirmation"
+        android:gravity="center"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/tv_annotate_smoking" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Annotiere Rauchen"
+        android:id="@+id/tv_annotate_smoking"
+        style="@style/TextAppearance.Wearable.Large"
+        android:autoText="false"
+        android:gravity="center"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Message"
+        android:id="@+id/textView"
+        android:layout_toEndOf="@+id/delayed_confirmation"
+        style="@style/TextAppearance.Wearable.Small"
+        android:textColor="@color/light_grey"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/delayed_confirmation" />
+
 </RelativeLayout>

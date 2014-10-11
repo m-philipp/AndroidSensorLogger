@@ -76,8 +76,8 @@ public class AnnotateSmoking extends Activity implements
 
 		Notification notification = new Notification.Builder(this)
 				.setSmallIcon(R.drawable.ic_launcher)
-				.setContentTitle(getString(R.string.notification_title))
-				.setContentText(getString(R.string.notification_timer_selected))
+				.setContentTitle(getString(R.string.annotateSmoking_finished_notification_title))
+				.setContentText(getString(R.string.annotateSmoking_finished_notification_timer_selected))
 				.build();
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
 		sendMessageToCompanion(TIMER_SELECTED_PATH);
@@ -94,8 +94,8 @@ public class AnnotateSmoking extends Activity implements
 	public void onTimerFinished(View v) {
 		Notification notification = new Notification.Builder(this)
 				.setSmallIcon(R.drawable.ic_launcher)
-				.setContentTitle(getString(R.string.notification_title))
-				.setContentText(getString(R.string.notification_timer_finished))
+				.setContentTitle(getString(R.string.annotateSmoking_finished_notification_title))
+				.setContentText(getString(R.string.annotateSmoking_finished_notification_timer_finished))
 				.build();
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
 		sendMessageToCompanion(TIMER_FINISHED_PATH);
@@ -132,7 +132,9 @@ public class AnnotateSmoking extends Activity implements
 				if (!sendMessageResult.getStatus().isSuccess()) {
 					Log.e(TAG, "Failed to connect to Google Api Client with status "
 							+ sendMessageResult.getStatus());
-				}
+				} else {
+                    Log.d(TAG, "Successfully connected to Google Api Client.");
+                }
 			}
 		};
 	}
