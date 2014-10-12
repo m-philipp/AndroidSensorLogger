@@ -34,8 +34,10 @@
         android:layout_toEndOf="@+id/textView"
         style="@style/CardTitle"
         android:layout_gravity="left"
+        android:layout_marginTop="23dp"
         android:layout_alignTop="@+id/delayed_confirmation"
-        android:layout_marginTop="19dp" />
+        android:layout_alignEnd="@+id/tv_annotate_smoking"
+        android:gravity="right" />
 
     <TextView
         android:layout_width="wrap_content"

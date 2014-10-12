@@ -16,6 +16,10 @@ import java.util.UUID;
  */
 public class Util {
 
+
+    public static final String GAC_PATH_ANNOTATE_SMOKING_ACTIVITY = "/annotate-smoking";
+    public static final String GAC_PATH_TEST_ACTIVITY = "/test";
+
     public static final String fileDir = "smokingStudy";
 
     public static boolean isExternalStorageWritable() {

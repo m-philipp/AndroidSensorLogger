@@ -13,13 +13,12 @@
     <string name="live_sensor_magn">Magnetometer</string>
 
 
+    <string name="title_activity_annotate_smoking">Rauchen</string>
 
-	<string name="title_activity_annotate_smoking">Rauchen</string>
+    <string name="start_timer">Start Timer (5 seconds)</string>
 
-	<string name="start_timer">Start Timer (5 seconds)</string>
-
-	<string name="annotateSmoking_finished_notification_title">DelayedConfirmation</string>
-	<string name="annotateSmoking_finished_notification_timer_selected">Timer Selected</string>
-	<string name="annotateSmoking_finished_notification_timer_finished">Timer Finished</string>
+    <string name="annotateSmoking_finished_notification_title">Rauchannotation</string>
+    <string name="annotateSmoking_finished_notification_timer_selected">Annotation verworfen</string>
+    <string name="annotateSmoking_finished_notification_timer_finished">Annotation gespeichert</string>
 
 </resources>

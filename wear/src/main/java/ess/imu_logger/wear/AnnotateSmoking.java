@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.os.Bundle;
 import android.support.wearable.view.DelayedConfirmationView;
+import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
 
@@ -16,6 +17,8 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
+import ess.imu_logger.libs.Util;
+
 public class AnnotateSmoking extends Activity implements
 		DelayedConfirmationView.DelayedConfirmationListener,
 		GoogleApiClient.OnConnectionFailedListener {
@@ -24,8 +27,6 @@ public class AnnotateSmoking extends Activity implements
 	private static final String TAG = "ess.imu_Logger.wear.AnnotateSmoking";
 	private static final int NUM_SECONDS = 5;
 
-	private static final String TIMER_SELECTED_PATH = "/timer_selected";
-	private static final String TIMER_FINISHED_PATH = "/timer_finished";
 
 	private DelayedConfirmationView delayedConfirmationView;
 	private GoogleApiClient mGoogleApiClient;
@@ -33,10 +34,25 @@ public class AnnotateSmoking extends Activity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_annotate_smoking);
 
-	    delayedConfirmationView = (DelayedConfirmationView) findViewById(R.id.delayed_confirmation);
-	    delayedConfirmationView.setTotalTimeMs(NUM_SECONDS * 1000);
+        final AnnotateSmoking me = this;
+
+        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+            @Override
+            public void onLayoutInflated(WatchViewStub watchViewStub) {
+                delayedConfirmationView = (DelayedConfirmationView) findViewById(R.id.delayed_confirmation);
+                delayedConfirmationView.setTotalTimeMs(NUM_SECONDS * 1000);
+
+                delayedConfirmationView.start();
+                delayedConfirmationView.setListener(me);
+            }
+        });
+
+
+
 	    mGoogleApiClient = new GoogleApiClient.Builder(this)
 			    .addApi(Wearable.API)
 			    .addOnConnectionFailedListener(this)
@@ -44,8 +60,8 @@ public class AnnotateSmoking extends Activity implements
     }
 
 
-	@Override
-	protected void onResume() {
+    @Override
+    protected void onResume() {
 		super.onResume();
 		if (!mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.connect();
@@ -60,15 +76,7 @@ public class AnnotateSmoking extends Activity implements
 		super.onDestroy();
 	}
 
-	/**
-	 * Starts the DelayedConfirmationView when user presses "Start Timer" button.
-	 */
-	public void onStartTimer(View view) {
-		Log.d(TAG, "timer started");
 
-		delayedConfirmationView.start();
-		delayedConfirmationView.setListener(this);
-	}
 
 	@Override
 	public void onTimerSelected(View v) {
@@ -80,9 +88,6 @@ public class AnnotateSmoking extends Activity implements
 				.setContentText(getString(R.string.annotateSmoking_finished_notification_timer_selected))
 				.build();
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
-		sendMessageToCompanion(TIMER_SELECTED_PATH);
-
-
 
 		// Prevent onTimerFinished from being heard.
 		((DelayedConfirmationView) v).setListener(null);
@@ -98,7 +103,10 @@ public class AnnotateSmoking extends Activity implements
 				.setContentText(getString(R.string.annotateSmoking_finished_notification_timer_finished))
 				.build();
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
-		sendMessageToCompanion(TIMER_FINISHED_PATH);
+
+
+        sendMessageToCompanion(Util.GAC_PATH_TEST_ACTIVITY);
+
 
 		finish();
 	}
