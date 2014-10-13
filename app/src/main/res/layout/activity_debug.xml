@@ -192,6 +192,25 @@
                     android:onClick="onSendMessageToWearable"
                     android:text="@string/onSendMessageToWearable"/>
 
+                <TextView
+                    android:id="@+id/object_to_wearable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/sendObjectToWearable"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    />
+
+                <Button
+                    android:id="@+id/sendObjectToWearble"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:onClick="onSendDataObjectToWearable"
+                    android:text="@string/onSendObjectToWearable"/>
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -18,10 +18,14 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import ess.imu_logger.app.R;
@@ -90,6 +94,18 @@ public class Debug extends Activity implements
     public void onSendMessageToWearable(View v) {
         // TODO
         sendMessageToCompanion(Util.GAC_PATH_TEST_ACTIVITY);
+    }
+
+
+    private static final String COUNT_KEY = "/count";
+    private int count = 0;
+    public void onSendDataObjectToWearable(View v){
+        Log.d(TAG, "sending Data Object");
+        PutDataMapRequest dataMap = PutDataMapRequest.create("/count");
+        dataMap.getDataMap().putInt(COUNT_KEY, count++);
+        PutDataRequest request = dataMap.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
+                .putDataItem(mGoogleApiClient, request);
     }
 
     @Override

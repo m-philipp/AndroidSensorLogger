@@ -18,6 +18,11 @@ public class Util {
 
 
     public static final String GAC_PATH_ANNOTATE_SMOKING_ACTIVITY = "/annotate-smoking";
+
+    public static final String GAC_PATH_START_LOGGING = "/ess/imu_logger/startLogging";
+    public static final String GAC_PATH_STOP_LOGGING = "/ess/imu_logger/stopLogging";
+
+
     public static final String GAC_PATH_TEST_ACTIVITY = "/test";
 
     public static final String fileDir = "smokingStudy";

@@ -4,7 +4,7 @@
     <string name="app_name">IMU-Logger</string>
     <string name="action_settings">Einstellungen</string>
     <string name="welcome_placeholer">Hi, Kunibert</string>
-    <string name="open_live_logging">Anzeigen</string>
+    <string name="open_live_logging">anzeigen</string>
     <string name="live_view">Echtzeit Daten</string>
     <string name="title_activity_imu_live_screen">Echtzeit Daten</string>
     <string name="live_sensor_title">Live Sensor View</string>
@@ -34,5 +34,7 @@
 
     <string name="sendMessageToWearable">Nachricht an das Wearable</string>
     <string name="onSendMessageToWearable">senden</string>
+    <string name="sendObjectToWearable">DataObject an das Wearable</string>
+    <string name="onSendObjectToWearable">senden</string>
 
 </resources>
