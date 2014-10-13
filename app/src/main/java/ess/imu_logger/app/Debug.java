@@ -16,14 +16,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
+
 import ess.imu_logger.app.R;
+import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
 import ess.imu_logger.libs.logging.LoggingService;
 
-public class Debug extends Activity {
+public class Debug extends Activity implements
+        GoogleApiClient.OnConnectionFailedListener{
 
     SharedPreferences sharedPrefs;
+    private GoogleApiClient mGoogleApiClient;
 
     private static final String TAG = "ess.imu_logger.app.Debug";
     private final Handler handler = new Handler();
@@ -45,6 +56,10 @@ public class Debug extends Activity {
         handler.postDelayed(sendUpdatesToUI, 100); // 0,1 second
 
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addOnConnectionFailedListener(this)
+                .build();
     }
 
 
@@ -74,11 +89,15 @@ public class Debug extends Activity {
 
     public void onSendMessageToWearable(View v) {
         // TODO
+        sendMessageToCompanion(Util.GAC_PATH_TEST_ACTIVITY);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
 
         handler.removeCallbacks(sendUpdatesToUI);
         handler.postDelayed(sendUpdatesToUI, 100); // 0,1 second
@@ -97,11 +116,16 @@ public class Debug extends Activity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+
         Log.d(TAG, "destroying");
 
         handler.removeCallbacks(sendUpdatesToUI);
         //sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener);
+        //
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onDestroy();
     }
 
     private Runnable sendUpdatesToUI = new Runnable() {
@@ -169,5 +193,41 @@ public class Debug extends Activity {
             }
         }
         return false;
+    }
+
+    private void sendMessageToCompanion(final String path) {
+        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
+                new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                    @Override
+                    public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
+                        for (final Node node : getConnectedNodesResult.getNodes()) {
+                            Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path,
+                                    new byte[0]).setResultCallback(getSendMessageResultCallback());
+                        }
+                    }
+                }
+        );
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(TAG, "Failed to connect to Google Api Client");
+    }
+
+
+
+    private ResultCallback<MessageApi.SendMessageResult> getSendMessageResultCallback() {
+        return new ResultCallback<MessageApi.SendMessageResult>() {
+            @Override
+            public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                if (!sendMessageResult.getStatus().isSuccess()) {
+                    Log.e(TAG, "Failed to connect to Google Api Client with status "
+                            + sendMessageResult.getStatus());
+                } else {
+                    Log.d(TAG, "Successfully connected to Google Api Client.");
+                }
+            }
+        };
     }
 }

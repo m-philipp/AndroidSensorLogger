@@ -25,7 +25,7 @@ public class AnnotateSmoking extends Activity implements
 
 
 	private static final String TAG = "ess.imu_Logger.wear.AnnotateSmoking";
-	private static final int NUM_SECONDS = 5;
+	private static final int NUM_SECONDS = 3;
 
 
 	private DelayedConfirmationView delayedConfirmationView;
