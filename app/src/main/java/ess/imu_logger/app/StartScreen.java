@@ -82,6 +82,15 @@ public class StartScreen extends Activity {
         handler.removeCallbacks(sendUpdatesToUI);
         handler.postDelayed(sendUpdatesToUI, 100); // 0,1 second
 
+        TextView t = (TextView) findViewById(R.id.amaount_of_data_to_upload);
+        t.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onStartDebug();
+                return true;
+            }
+        });
+
 
     }
 
@@ -113,6 +122,10 @@ public class StartScreen extends Activity {
         //sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener);
     }
 
+    private void onStartDebug() {
+        Intent intent = new Intent(this, Debug.class);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -134,10 +147,7 @@ public class StartScreen extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onStartLiveScreen(View v) {
-        Intent intent = new Intent(this, ImuLiveScreen.class);
-        startActivity(intent);
-    }
+
 
     private void startBackgroundLogging() {
         Intent loggingServiceIntent = new Intent(this, LoggingService.class);
@@ -235,19 +245,7 @@ public class StartScreen extends Activity {
         // update logging status
         t = (TextView) findViewById(R.id.logging_service_state);
 
-
-
-        /*
-        if( sharedPrefs.getBoolean("sensor_activate", false)){
-            t.setText(getResources().getText(R.string.logging_service_running));
-            t.setTextColor(getResources().getColor(R.color.my_green));
-        }
-        else{
-            t.setText(getResources().getText(R.string.logging_service_stopped));
-            t.setTextColor(getResources().getColor(R.color.my_red));
-        }
-        */
-        if (isLoggingServiceRunning()) {
+        if (isLoggingServiceRunning() && isSensorDataSavingServiceRunning()) {
             t.setText(getResources().getText(R.string.service_running));
             t.setTextColor(getResources().getColor(R.color.my_green));
         } else {
@@ -255,23 +253,7 @@ public class StartScreen extends Activity {
             t.setTextColor(getResources().getColor(R.color.my_red));
         }
 
-        t = (TextView) findViewById(R.id.zipUpload_service_state);
-        if (isZipUploadServiceRunning()) {
-            t.setText(getResources().getText(R.string.service_running));
-            t.setTextColor(getResources().getColor(R.color.my_green));
-        } else {
-            t.setText(getResources().getText(R.string.service_stopped));
-            t.setTextColor(getResources().getColor(R.color.my_red));
-        }
 
-        t = (TextView) findViewById(R.id.sensorDataSaving_service_state);
-        if (isSensorDataSavingServiceRunning()) {
-            t.setText(getResources().getText(R.string.service_running));
-            t.setTextColor(getResources().getColor(R.color.my_green));
-        } else {
-            t.setText(getResources().getText(R.string.service_stopped));
-            t.setTextColor(getResources().getColor(R.color.my_red));
-        }
 
 
 

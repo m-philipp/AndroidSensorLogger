@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ess.imu_logger.app">
+    package="ess.imu_logger.app" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -15,11 +15,11 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".StartScreen"
             android:label="@string/app_name"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +29,7 @@
         <activity
             android:name=".ImuLiveScreen"
             android:label="@string/title_activity_imu_live_screen"
-            android:parentActivityName=".StartScreen">
+            android:parentActivityName=".StartScreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="StartScreen" />
@@ -38,38 +38,33 @@
         <service
             android:name="ess.imu_logger.libs.logging.LoggingService"
             android:enabled="true"
-            android:exported="false"></service>
-
+            android:exported="false" />
         <service
             android:name="ess.imu_logger.libs.data_zip_upload.ZipUploadService"
             android:enabled="true"
             android:exported="false" />
         <!-- android:process=":background_logging_process" -->
 
-
-        <service android:name=".WearableMessageListenerService">
+        <service android:name=".WearableMessageListenerService" >
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
         </service>
-
-
         <service
             android:name="ess.imu_logger.libs.data_save.SensorDataSavingService"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="ess.imu_logger.data_export.action.saveData" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
         </service>
 
         <receiver
             android:name=".myReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="ess.imu_logger.data_zip_upload.action.startService" />
                 <action android:name="android.intent.action.TIME_SET" />
@@ -79,11 +74,10 @@
             </intent-filter>
         </receiver>
 
-
         <activity
             android:name=".HelpScreen"
             android:label="@string/title_activity_settings_screen"
-            android:parentActivityName=".StartScreen">
+            android:parentActivityName=".StartScreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ess.imu_logger.StartScreen" />
@@ -91,7 +85,15 @@
         <activity
             android:name=".ApplicationSettings"
             android:label="@string/title_activity_test"
-            android:parentActivityName=".StartScreen"></activity>
+            android:parentActivityName=".StartScreen" />
+        <activity
+            android:name=".Debug"
+            android:label="@string/title_activity_debug"
+            android:parentActivityName=".StartScreen" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ess.imu_logger.app.StartScreen" />
+        </activity>
     </application>
 
 </manifest>
