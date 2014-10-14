@@ -44,10 +44,12 @@
         <service
             android:name="ess.imu_logger.libs.logging.LoggingService"
             android:enabled="true"
+            android:process=":background_logging_process"
             android:exported="false" />
         <service
             android:name="ess.imu_logger.libs.data_zip_upload.ZipUploadService"
             android:enabled="true"
+            android:process=":background_logging_process"
             android:exported="false" />
         <!-- android:process=":background_logging_process" -->
 
@@ -59,6 +61,7 @@
         <service
             android:name="ess.imu_logger.libs.data_save.SensorDataSavingService"
             android:enabled="true"
+            android:process=":background_logging_process"
             android:exported="true" >
             <intent-filter>
                 <action android:name="ess.imu_logger.data_export.action.saveData" />
@@ -70,6 +73,7 @@
         <receiver
             android:name=".myReceiver"
             android:enabled="true"
+            android:process=":background_logging_process"
             android:exported="true" >
             <intent-filter>
                 <action android:name="ess.imu_logger.data_zip_upload.action.startService" />

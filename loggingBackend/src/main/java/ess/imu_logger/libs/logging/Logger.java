@@ -15,6 +15,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 
@@ -139,16 +140,17 @@ public class Logger extends Handler implements SensorEventListener {
         i++;
 
         if (event == null) {
-            if (i % 500 == 0)
+            if (i % 2000 == 0)
                 Log.d(TAG, "SensorEvent without binding");
             // Toast.makeText(context, "SensorEvent without binding.", Toast.LENGTH_SHORT).show();
             return;
 
         }
 
-        if (i % 500 == 0)
+        if (i % 2000 == 0) {
             Log.d(TAG, "sensorEvent " + i);
-
+            Toast.makeText(context, "SensorEvent: " + i, Toast.LENGTH_SHORT).show();
+        }
         // TODO: THIS IS NOT BACKGROUNDING!! --> DONE registerListener get this Handler now!
         // SystemClock.sleep(200);
 
