@@ -2,9 +2,11 @@ package ess.imu_logger.wear;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +17,7 @@ import java.util.List;
 public class StartActivity extends Activity {
 
     private TextView mTextView;
+    private SharedPreferences sharedPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,13 @@ public class StartActivity extends Activity {
             }
         });
 
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false); // false ensures this is only executed once
+        //sharedPrefs = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        // SharedPreferences.Editor editor = sharedPrefs.edit();
+        // editor.putString("key", "value");
+        // editor.commit();
 
         List<Sensor> sensors;
         SensorManager mgr = (SensorManager) getSystemService(SENSOR_SERVICE);

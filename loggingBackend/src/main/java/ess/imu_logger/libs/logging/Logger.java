@@ -17,6 +17,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 
 /**
@@ -47,7 +48,7 @@ public class Logger extends Handler implements SensorEventListener {
         this.context = context;
 
 
-        logging_frequency = Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
+        logging_frequency = Integer.parseInt(sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "0"));
 
 
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -78,7 +79,7 @@ public class Logger extends Handler implements SensorEventListener {
 
             //Toast.makeText(context, "register Sensor Listener.", Toast.LENGTH_SHORT).show();
 
-            logging_frequency = Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
+            logging_frequency = Integer.parseInt(sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "0"));
             registerListeners();
         } else if (msg.what == MESSAGE_STOP) {
             Log.i(TAG, "Logger stopped");
@@ -98,33 +99,33 @@ public class Logger extends Handler implements SensorEventListener {
 
         // TODO evtl. check if getDefaultSensor() == null
 
-        logging_frequency = Integer.parseInt(sharedPrefs.getString("sampling_rate", "0"));
+        logging_frequency = Integer.parseInt(sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "0"));
 
 
-        if (accelerometerSensor != null && sharedPrefs.getBoolean("accelerometer", false))
+        if (accelerometerSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_ACCELEROMETER, false))
             mSensorManager.registerListener(this, accelerometerSensor, logging_frequency, this);
-        if (gyroscopeSensor != null && sharedPrefs.getBoolean("gyroscope", false))
+        if (gyroscopeSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_GYROSCOPE, false))
             mSensorManager.registerListener(this, gyroscopeSensor, logging_frequency, this);
-        if (magneticFieldSensor != null && sharedPrefs.getBoolean("magneticField", false))
+        if (magneticFieldSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_MAGNETIC_FIELD, false))
             mSensorManager.registerListener(this, magneticFieldSensor, logging_frequency, this);
-        if (ambientLightSensor != null && sharedPrefs.getBoolean("ambientLight", false))
+        if (ambientLightSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_AMBIENT_LIGHT, false))
             mSensorManager.registerListener(this, ambientLightSensor, logging_frequency, this);
-        if (proximitySensor != null && sharedPrefs.getBoolean("proximity", false))
+        if (proximitySensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_PROXIMITY, false))
             mSensorManager.registerListener(this, proximitySensor, logging_frequency, this);
-        if (temperatureSensor != null && sharedPrefs.getBoolean("temperature", false))
+        if (temperatureSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_TEMPERATURE, false))
             mSensorManager.registerListener(this, temperatureSensor, logging_frequency, this);
-        if (humiditySensor != null && sharedPrefs.getBoolean("humidity", false))
+        if (humiditySensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_HUMIDITY, false))
             mSensorManager.registerListener(this, humiditySensor, logging_frequency, this);
-        if (pressureSensor != null && sharedPrefs.getBoolean("pressure", false))
+        if (pressureSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_PRESSURE, false))
             mSensorManager.registerListener(this, pressureSensor, 30000, this); // static freq to every 30 Sek cause of some Android Isssues
 
-        if (rotationSensor != null && sharedPrefs.getBoolean("rotation", false))
+        if (rotationSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_ROTATION, false))
             mSensorManager.registerListener(this, rotationSensor, logging_frequency, this);
-        if (gravitySensor != null && sharedPrefs.getBoolean("gravity", false))
+        if (gravitySensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_GRAVITY, false))
             mSensorManager.registerListener(this, gravitySensor, logging_frequency, this);
-        if (linearAccelerometerSensor != null && sharedPrefs.getBoolean("linearAccelerometer", false))
+        if (linearAccelerometerSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, false))
             mSensorManager.registerListener(this, linearAccelerometerSensor, logging_frequency, this);
-        if (stepCountSensor != null && sharedPrefs.getBoolean("steps", false))
+        if (stepCountSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_STEPS, false))
             mSensorManager.registerListener(this, stepCountSensor, logging_frequency, this);
 
     }
@@ -173,7 +174,7 @@ public class Logger extends Handler implements SensorEventListener {
         dataString.append(event.timestamp);
         dataString.append(" ");
 
-        // TODO Save Sensor Data....
+        // TODO this Code is awful ...
 
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:

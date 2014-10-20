@@ -21,14 +21,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+
 import ess.imu_logger.libs.DataCollectorService;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
 import ess.imu_logger.libs.logging.LoggingService;
 
-public class StartScreen extends Activity {
+public class StartScreen extends Activity implements
+        GoogleApiClient.OnConnectionFailedListener{
 
+    private GoogleApiClient mGoogleApiClient;
 
     SharedPreferences sharedPrefs;
 
@@ -73,10 +86,13 @@ public class StartScreen extends Activity {
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 1000,
-                10000, alarmIntent); // TODO make Values static finals
+                Util.ZIP_UPLOAD_SERVICE_FREQUENCY, alarmIntent); // TODO make Values static finals
 
 
-
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addOnConnectionFailedListener(this)
+                .build();
 
 
 
@@ -102,8 +118,14 @@ public class StartScreen extends Activity {
     protected void onResume() {
         super.onResume();
 
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
+
         handler.removeCallbacks(sendUpdatesToUI);
         handler.postDelayed(sendUpdatesToUI, 100); // 0,1 second
+
+        updateRequest = 0;
 
         Log.d(TAG, "resuming");
     }
@@ -119,11 +141,17 @@ public class StartScreen extends Activity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+
         Log.d(TAG, "destroying");
 
         handler.removeCallbacks(sendUpdatesToUI);
         //sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener);
+
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+
+        super.onDestroy();
     }
 
     private void onStartDebug() {
@@ -205,6 +233,44 @@ public class StartScreen extends Activity {
 
     }
 
+    public void sendPreferencesToWearable(){
+        Log.d(TAG, "sending Data Object");
+
+        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(Util.GAC_PATH_PREFERENCES);
+
+        DataMap dataMap = putDataMapRequest.getDataMap();
+
+        dataMap.putString(Util.PREFERENCES_NAME, sharedPrefs.getString(Util.PREFERENCES_NAME, "Eva Musterfrau"));
+        dataMap.putBoolean(Util.PREFERENCES_ANONYMIZE, sharedPrefs.getBoolean(Util.PREFERENCES_ANONYMIZE, true));
+
+        dataMap.putBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false));
+        dataMap.putString(Util.PREFERENCES_SAMPLING_RATE, sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "3"));
+
+        dataMap.putBoolean(Util.PREFERENCES_ACCELEROMETER, sharedPrefs.getBoolean(Util.PREFERENCES_ACCELEROMETER, false));
+        dataMap.putBoolean(Util.PREFERENCES_GYROSCOPE, sharedPrefs.getBoolean(Util.PREFERENCES_GYROSCOPE, false));
+        dataMap.putBoolean(Util.PREFERENCES_MAGNETIC_FIELD, sharedPrefs.getBoolean(Util.PREFERENCES_MAGNETIC_FIELD, false));
+        dataMap.putBoolean(Util.PREFERENCES_AMBIENT_LIGHT, sharedPrefs.getBoolean(Util.PREFERENCES_AMBIENT_LIGHT, false));
+        dataMap.putBoolean(Util.PREFERENCES_PROXIMITY, sharedPrefs.getBoolean(Util.PREFERENCES_PROXIMITY, false));
+        dataMap.putBoolean(Util.PREFERENCES_TEMPERATURE, sharedPrefs.getBoolean(Util.PREFERENCES_TEMPERATURE, false));
+        dataMap.putBoolean(Util.PREFERENCES_HUMIDITY, sharedPrefs.getBoolean(Util.PREFERENCES_HUMIDITY, false));
+        dataMap.putBoolean(Util.PREFERENCES_PRESSURE, sharedPrefs.getBoolean(Util.PREFERENCES_PRESSURE, false));
+
+        dataMap.putBoolean(Util.PREFERENCES_ROTATION, sharedPrefs.getBoolean(Util.PREFERENCES_ROTATION, false));
+        dataMap.putBoolean(Util.PREFERENCES_GRAVITY, sharedPrefs.getBoolean(Util.PREFERENCES_GRAVITY, false));
+        dataMap.putBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, sharedPrefs.getBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, false));
+        dataMap.putBoolean(Util.PREFERENCES_STEPS, sharedPrefs.getBoolean(Util.PREFERENCES_STEPS, false));
+
+        dataMap.putString(Util.PREFERENCES_SERVER_URL, sharedPrefs.getString(Util.PREFERENCES_SERVER_URL, "http://example.com"));
+        dataMap.putString(Util.PREFERENCES_SERVER_PORT, sharedPrefs.getString(Util.PREFERENCES_SERVER_PORT, "8080"));
+        dataMap.putString(Util.PREFERENCES_UPLOAD_FREQUENCY, sharedPrefs.getString(Util.PREFERENCES_UPLOAD_FREQUENCY, "0"));
+
+
+
+        PutDataRequest request = putDataMapRequest.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
+                .putDataItem(mGoogleApiClient, request);
+    }
+
     SharedPreferences.OnSharedPreferenceChangeListener listener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -223,6 +289,7 @@ public class StartScreen extends Activity {
                         }
                     }
                     uiUpdate();
+                    sendPreferencesToWearable();
 
 
                 }
@@ -269,7 +336,24 @@ public class StartScreen extends Activity {
 
     }
 
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(TAG, "Failed to connect to Google Api Client");
+    }
 
+    private ResultCallback<MessageApi.SendMessageResult> getSendMessageResultCallback() {
+        return new ResultCallback<MessageApi.SendMessageResult>() {
+            @Override
+            public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                if (!sendMessageResult.getStatus().isSuccess()) {
+                    Log.e(TAG, "Failed to connect to Google Api Client with status "
+                            + sendMessageResult.getStatus());
+                } else {
+                    Log.d(TAG, "Successfully connected to Google Api Client.");
+                }
+            }
+        };
+    }
     // ------------------------------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------------------------

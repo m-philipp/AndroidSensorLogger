@@ -17,13 +17,48 @@ import java.util.UUID;
 public class Util {
 
 
-    public static final String GAC_PATH_ANNOTATE_SMOKING_ACTIVITY = "/annotate-smoking";
+    public static final String GAC_PATH_ANNOTATE_SMOKING_ACTIVITY = "/ess/imu_logger/annotate-smoking";
 
     public static final String GAC_PATH_START_LOGGING = "/ess/imu_logger/startLogging";
     public static final String GAC_PATH_STOP_LOGGING = "/ess/imu_logger/stopLogging";
 
 
+    public static final String GAC_PATH_PREFERENCES = "/ess/imu_logger/preferences";
+
     public static final String GAC_PATH_TEST_ACTIVITY = "/test";
+
+
+    public static final String PREFERENCES_NAME = "name";
+    public static final String PREFERENCES_ANONYMIZE = "anonymize";
+    public static final String PREFERENCES_AUTO_START = "auto_start";
+    public static final String PREFERENCES_START_ON_BOOT = "start_on_boot";
+
+    public static final String PREFERENCES_SENSOR_ACTIVATE = "sensor_activate";
+    public static final String PREFERENCES_SAMPLING_RATE = "sampling_rate";
+
+    public static final String PREFERENCES_ACCELEROMETER = "accelerometer";
+    public static final String PREFERENCES_GYROSCOPE = "gyroscope";
+    public static final String PREFERENCES_MAGNETIC_FIELD = "magneticField";
+    public static final String PREFERENCES_AMBIENT_LIGHT = "ambientLight";
+    public static final String PREFERENCES_PROXIMITY = "proximity";
+    public static final String PREFERENCES_TEMPERATURE = "temperature";
+    public static final String PREFERENCES_HUMIDITY = "humidity";
+    public static final String PREFERENCES_PRESSURE = "pressure";
+
+    public static final String PREFERENCES_ROTATION = "rotation";
+    public static final String PREFERENCES_GRAVITY = "gravity";
+    public static final String PREFERENCES_LINEAR_ACCELEROMETER = "linearAccelerometer";
+    public static final String PREFERENCES_STEPS = "steps";
+
+    public static final String PREFERENCES_SERVER_URL = "server_url";
+    public static final String PREFERENCES_SERVER_PORT = "server_port";
+    public static final String PREFERENCES_UPLOAD_FREQUENCY = "upload_frequency";
+    public static final String PREFERENCES_LAST_UPLOAD = "last_upload";
+    public static final String PREFERENCES_WIFI_ONLY = "wifi_only";
+
+
+
+    public static final int ZIP_UPLOAD_SERVICE_FREQUENCY = 10000;
 
     public static final String fileDir = "smokingStudy";
 
