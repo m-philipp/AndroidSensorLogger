@@ -40,17 +40,14 @@ public class PlainFileWriter extends Thread {
     public static final String fileExtension = ".log";
 
 
-    // about 640,04 KB
-    // private static final Integer MAX_FILE_SIZE = 655360;
-    // private static final Integer MAX_FILE_SIZE = 25000;
-    // private static final Integer MAX_BUFFER_SIZE = 10000;
 
-    //private static final Integer MAX_FILE_SIZE = 25000;
-    //private static final Integer MAX_BUFFER_SIZE = 2000;
+    private static final Integer MAX_FILE_SIZE = 1024*1024*5; // 50 MB
+    private static final Integer MAX_BUFFER_SIZE = 1024*1;
 
-    //private static final Integer MAX_FILE_SIZE = 2621440; // 2.5 MB
-    private static final Integer MAX_FILE_SIZE = 1024*1024*50; // 50 MB
-    private static final Integer MAX_BUFFER_SIZE = 1024*8;
+
+
+    //private static final Integer MAX_FILE_SIZE = 1024*1024*50; // 50 MB
+    //private static final Integer MAX_BUFFER_SIZE = 1024*8;
 
 
     public PlainFileWriter() {

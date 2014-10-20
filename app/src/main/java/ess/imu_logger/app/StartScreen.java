@@ -5,12 +5,15 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import ess.imu_logger.libs.DataCollectorService;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
@@ -150,23 +154,33 @@ public class StartScreen extends Activity {
 
 
     private void startBackgroundLogging() {
-        Intent loggingServiceIntent = new Intent(this, LoggingService.class);
-        loggingServiceIntent.setAction(LoggingService.ACTION_START_LOGGING);
-        this.startService(loggingServiceIntent);
+
+        //startRecording();
 
         Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
         sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
         this.startService(sensorDataSavingServiceIntent);
+
+        Intent loggingServiceIntent = new Intent(this, LoggingService.class);
+        loggingServiceIntent.setAction(LoggingService.ACTION_START_LOGGING);
+        this.startService(loggingServiceIntent);
+
     }
 
     public void stopBackgroundLogging() {
-        Intent loggingServiceIntent = new Intent(this, LoggingService.class);
-        loggingServiceIntent.setAction(LoggingService.ACTION_STOP_LOGGING);
-        this.startService(loggingServiceIntent);
+
+        //endRecording();
 
         Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
         sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_STOP_SERVICE);
         this.startService(sensorDataSavingServiceIntent);
+
+        Intent loggingServiceIntent = new Intent(this, LoggingService.class);
+        loggingServiceIntent.setAction(LoggingService.ACTION_STOP_LOGGING);
+        this.startService(loggingServiceIntent);
+
+
+
     }
 
     public void triggerManualDataUpload(View v) {
@@ -197,7 +211,7 @@ public class StartScreen extends Activity {
                     Log.d(TAG, "----------------- PREFS CHANGED !! ------------");
                     Log.d(TAG, key);
 
-                    Log.d(TAG, "sensor_activat status: " + sharedPrefs.getBoolean("sensor_activate", false));
+                    Log.d(TAG, "sensor_activate status: " + sharedPrefs.getBoolean("sensor_activate", false));
 
 
                     if(key.equals("sensor_activate")) {
@@ -253,13 +267,55 @@ public class StartScreen extends Activity {
             t.setTextColor(getResources().getColor(R.color.my_red));
         }
 
-
-
-
-
-
     }
 
+
+    // ------------------------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------------------------
+    /*
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            service = ((DataCollectorService.MyBinder) binder).getService();
+
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            service = null;
+        }
+    };
+
+    private void startRecording() {
+        if (!isLoggerServiceRunning()) {
+            startService(new Intent(this, DataCollectorService.class));
+            bindService(new Intent(this, DataCollectorService.class), mConnection, Context.BIND_AUTO_CREATE);
+            serviceStopped = false;
+        }
+    }
+    DataCollectorService service = null;
+    private boolean serviceStopped = true;
+
+    private void endRecording() {
+        // stop annotations
+
+        if (isLoggerServiceRunning()) {
+            if (service != null) {
+                unbindService(mConnection);
+                service = null;
+            }
+            stopService(new Intent(this, DataCollectorService.class));
+
+        }
+    }
+    private boolean isLoggerServiceRunning() {
+        return isServiceRunning(DataCollectorService.class.getName());
+    }
+
+       */
+    // ------------------------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------------------------
 
     private boolean isLoggingServiceRunning() {
         return isServiceRunning(LoggingService.class.getName());

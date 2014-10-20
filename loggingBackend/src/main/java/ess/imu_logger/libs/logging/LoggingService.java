@@ -1,14 +1,21 @@
 package ess.imu_logger.libs.logging;
 
+import android.app.Notification;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.os.Process;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import ess.imu_logger.R;
 
 /**
  * An {@link Service} subclass for handling asynchronous task requests.
@@ -37,6 +44,9 @@ public class LoggingService extends Service {
     // private static final String EXTRA_GYRO = "ess.imu_logger.extra.GYRO";
 
 
+    private WakeLock wl;
+
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -57,6 +67,7 @@ public class LoggingService extends Service {
             }
         } else {
 
+            Log.d(TAG, "Called onStartCommand. intent == null");
             startRecording();
 
         }
@@ -72,6 +83,8 @@ public class LoggingService extends Service {
     public void onDestroy() {
 
         Log.d(TAG, "on Destroy called.");
+        stopForeground(true);
+        wl.release();
 
         stopRecording();
 
@@ -83,7 +96,24 @@ public class LoggingService extends Service {
 
         Log.d(TAG, "on onCreate called.");
 
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_action_core_refresh_hd)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+
+        startForeground(1337,  mBuilder.build());
+        PowerManager pm = (PowerManager)getApplicationContext().getSystemService(
+                getApplicationContext().POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+        wl.acquire();
+
+        // TODO
         thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_FOREGROUND);
+        //thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_MORE_FAVORABLE);
+
+
+
         thread.start();
         serviceLooper = thread.getLooper();
         serviceHandler = new Logger(serviceLooper, this);

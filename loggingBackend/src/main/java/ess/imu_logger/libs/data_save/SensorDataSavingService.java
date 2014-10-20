@@ -62,7 +62,7 @@ public class SensorDataSavingService extends Service {
                         * start Service from StartScreen
                         * ...
                      */
-
+                    // Log.d(TAG, "save SensorData from Broadcast");
 					saveData(intent);
 
 

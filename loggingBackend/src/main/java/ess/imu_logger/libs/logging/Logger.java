@@ -33,7 +33,7 @@ public class Logger extends Handler implements SensorEventListener {
 
     private SharedPreferences sharedPrefs;
 
-    private static final String TAG = "ess.imu_logger.app.logger";
+    private static final String TAG = "ess.imu_logger.libs.logging.logger";
 
     private int logging_frequency; //SensorManager.SENSOR_DELAY_FASTEST;
 
@@ -162,7 +162,7 @@ public class Logger extends Handler implements SensorEventListener {
     }
 
 
-    private String getString(SensorEvent event) {
+    public static String getString(SensorEvent event) {
 
         StringBuilder dataString = new StringBuilder();
 
