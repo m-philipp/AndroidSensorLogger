@@ -28,6 +28,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -271,6 +273,22 @@ public class StartScreen extends Activity implements
                 .putDataItem(mGoogleApiClient, request);
     }
 
+    private void sendMessageToCompanion(final String path) {
+
+        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
+                new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                    @Override
+                    public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
+                        for (final Node node : getConnectedNodesResult.getNodes()) {
+                            Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path,
+                                    new byte[0]).setResultCallback(getSendMessageResultCallback());
+                        }
+                    }
+                }
+        );
+
+    }
+
     SharedPreferences.OnSharedPreferenceChangeListener listener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -284,8 +302,12 @@ public class StartScreen extends Activity implements
                         // start/stop the Logging Service
                         if (sharedPrefs.getBoolean("sensor_activate", false)) {
                             startBackgroundLogging();
+                            sendMessageToCompanion(Util.GAC_PATH_START_LOGGING);
+
                         } else {
                             stopBackgroundLogging();
+                            sendMessageToCompanion(Util.GAC_PATH_STOP_LOGGING);
+
                         }
                     }
                     uiUpdate();

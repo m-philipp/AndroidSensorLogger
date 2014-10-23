@@ -31,4 +31,44 @@
 		android:text="Annotate Smoking"
 		android:id="@+id/startAnnotateSmoking"
 		android:onClick="onStartAnnotateSmoking"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:context=".StartActivity">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_logging_running"
+            android:id="@+id/id_title_logging_running" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="..."
+            android:id="@+id/id_logging_running"
+            android:gravity="right"  />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        tools:context=".StartActivity">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_mb_to_upload"
+            android:id="@+id/id_title_mb_to_upload" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0.0 MB"
+            android:id="@+id/id_mb_to_upload"
+            android:gravity="right" />
+    </LinearLayout>
 </LinearLayout>

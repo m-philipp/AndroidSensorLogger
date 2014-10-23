@@ -104,10 +104,13 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         } else if (event.getPath().equals(Util.GAC_PATH_START_LOGGING)) {
 
+            Log.d(TAG, "GAC Start Logging");
             startBackgroundLogging();
+
 
         } else if (event.getPath().equals(Util.GAC_PATH_STOP_LOGGING)) {
 
+            Log.d(TAG, "GAC Stop Logging");
             stopBackgroundLogging();
 
         }
@@ -124,23 +127,101 @@ public class WearableMessageListenerService extends WearableListenerService impl
                 String eventUri = event.getDataItem().getUri().toString();
                 if (eventUri.contains (Util.GAC_PATH_PREFERENCES)) {
 
+                    SharedPreferences.Editor editor = sharedPrefs.edit();
                     DataMapItem dataItem = DataMapItem.fromDataItem(event.getDataItem());
+
+
                     Boolean data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_ACCELEROMETER);
                     Log.d(TAG, "Acc = " + data);
+                    editor.putBoolean(Util.PREFERENCES_ACCELEROMETER, data);
+
                     data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_GYROSCOPE);
                     Log.d(TAG, "gyro = " + data);
+                    editor.putBoolean(Util.PREFERENCES_GYROSCOPE, data);
+
                     data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_MAGNETIC_FIELD);
                     Log.d(TAG, "mag = " + data);
+                    editor.putBoolean(Util.PREFERENCES_MAGNETIC_FIELD, data);
 
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_AMBIENT_LIGHT);
+                    Log.d(TAG, "ambient light = " + data);
+                    editor.putBoolean(Util.PREFERENCES_AMBIENT_LIGHT, data);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_PROXIMITY);
+                    Log.d(TAG, "proximity = " + data);
+                    editor.putBoolean(Util.PREFERENCES_PROXIMITY, data);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_TEMPERATURE);
+                    Log.d(TAG, "temperature = " + data);
+                    editor.putBoolean(Util.PREFERENCES_TEMPERATURE, data);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_HUMIDITY);
+                    Log.d(TAG, "humidity = " + data);
+                    editor.putBoolean(Util.PREFERENCES_HUMIDITY, data);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_PRESSURE);
+                    Log.d(TAG, "pressure = " + data);
+                    editor.putBoolean(Util.PREFERENCES_PRESSURE, data);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_ROTATION);
+                    Log.d(TAG, "rotation = " + data);
+                    editor.putBoolean(Util.PREFERENCES_ROTATION, data);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_GRAVITY);
+                    Log.d(TAG, "gravity = " + data);
+                    editor.putBoolean(Util.PREFERENCES_GRAVITY, data);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER);
+                    Log.d(TAG, "lin acc = " + data);
+                    editor.putBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, data);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_STEPS);
+                    Log.d(TAG, "steps = " + data);
+                    editor.putBoolean(Util.PREFERENCES_STEPS, data);
+
+
+                    String dataString = dataItem.getDataMap().getString(Util.PREFERENCES_SERVER_URL);
+                    Log.d(TAG, "server url = " + dataString);
+                    editor.putString(Util.PREFERENCES_SERVER_URL, dataString);
+
+                    dataString = dataItem.getDataMap().getString(Util.PREFERENCES_SERVER_PORT);
+                    Log.d(TAG, "port = " + dataString);
+                    editor.putString(Util.PREFERENCES_SERVER_PORT, dataString);
+
+                    dataString = dataItem.getDataMap().getString(Util.PREFERENCES_NAME);
+                    Log.d(TAG, "name = " + dataString);
+                    editor.putString(Util.PREFERENCES_NAME, dataString);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_ANONYMIZE);
+                    Log.d(TAG, "anonymize = " + dataString);
+                    editor.putBoolean(Util.PREFERENCES_ANONYMIZE, data);
+
+                    dataString = dataItem.getDataMap().getString(Util.PREFERENCES_SAMPLING_RATE);
+                    Log.d(TAG, "sampling rate = " + dataString);
+                    editor.putString(Util.PREFERENCES_SAMPLING_RATE, dataString);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE);
+                    Log.d(TAG, "Sensor Activate = " + data);
+                    editor.putBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, data);
+
+
+                    editor.commit();
+
+
+
+                } else if(eventUri.contains (Util.GAC_PATH_START_LOGGING)) {
+                    startBackgroundLogging();
+                } else if(eventUri.contains (Util.GAC_PATH_STOP_LOGGING)) {
+                    stopBackgroundLogging();
                 }
             }
 
         }
     }
 
-    // TODO get preferences
-
     private void startBackgroundLogging() {
+
+        Log.d(TAG, "starting Background Logging ...");
 
         Intent loggingServiceIntent = new Intent(this, LoggingService.class);
         loggingServiceIntent.setAction(LoggingService.ACTION_START_LOGGING);
@@ -153,6 +234,8 @@ public class WearableMessageListenerService extends WearableListenerService impl
     }
 
     public void stopBackgroundLogging() {
+
+        Log.d(TAG, "stopping Background Logging ...");
 
         Intent loggingServiceIntent = new Intent(this, LoggingService.class);
         loggingServiceIntent.setAction(LoggingService.ACTION_STOP_LOGGING);

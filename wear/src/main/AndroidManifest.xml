@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ess.imu_logger.wear" >
 
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -10,6 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-feature android:name="android.hardware.type.watch" />
 
@@ -51,6 +53,35 @@
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
+        </service>
+
+        <service
+            android:name="ess.imu_logger.libs.logging.LoggingService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name="ess.imu_logger.libs.data_zip_upload.ZipUploadService"
+            android:enabled="true"
+            android:exported="true" />
+        <!-- android:process=":background_logging_process" -->
+
+        <service
+            android:name="ess.imu_logger.libs.data_save.SensorDataSavingService"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="ess.imu_logger.data_export.action.saveData" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+
+
+
+
+
+        <service android:name="ess.imu_logger.libs.DataCollectorService" >
         </service>
     </application>
 
