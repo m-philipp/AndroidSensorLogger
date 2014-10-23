@@ -24,6 +24,7 @@ public class Util {
 
 
     public static final String GAC_PATH_PREFERENCES = "/ess/imu_logger/preferences";
+    public static final String GAC_PATH_UPLOAD_DATA = "/ess/imu_logger/uploadData";
 
     public static final String GAC_PATH_TEST_ACTIVITY = "/test";
 

@@ -113,6 +113,12 @@ public class WearableMessageListenerService extends WearableListenerService impl
             Log.d(TAG, "GAC Stop Logging");
             stopBackgroundLogging();
 
+        } else if(event.getPath().equals(Util.GAC_PATH_UPLOAD_DATA)){
+
+            Intent mServiceIntent = new Intent(this, ZipUploadService.class);
+            mServiceIntent.setAction(ZipUploadService.ACTION_MANUAL_UPLOAD_DATA);
+            this.startService(mServiceIntent);
+
         }
     }
 

@@ -1,6 +1,7 @@
 package ess.imu_logger.libs.logging;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
@@ -96,11 +97,16 @@ public class LoggingService extends Service {
 
         Log.d(TAG, "on onCreate called.");
 
+        PendingIntent open =
+                PendingIntent.getActivity(this,0,new Intent(this, StartActivity.class),0);
+
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_action_core_refresh_hd)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
+                        .setContentTitle("Raucherstudie") // Title
+                        .setContentText("Aufzeichnung läuft.") // Sub-Title
+                        .setContentIntent(open);
 
         startForeground(1337,  mBuilder.build());
         PowerManager pm = (PowerManager)getApplicationContext().getSystemService(

@@ -219,6 +219,8 @@ public class StartScreen extends Activity implements
         mServiceIntent.setAction(ZipUploadService.ACTION_MANUAL_UPLOAD_DATA);
         this.startService(mServiceIntent);
 
+        sendMessageToCompanion(Util.GAC_PATH_UPLOAD_DATA);
+
 		/*
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(500);
 		*/
