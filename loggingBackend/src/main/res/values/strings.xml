@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">LoggingBackend</string>
+
+    <string name="annotate">Rauchen annotieren</string>
+    <string name="startStartActivity">IMU-Logger öffnen</string>
 </resources>

@@ -1,22 +1,20 @@
 package ess.imu_logger.libs.logging;
 
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.TaskStackBuilder;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.Process;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import ess.imu_logger.R;
+import ess.imu_logger.libs.StartActivity;
+import ess.imu_logger.libs.Util;
 
 /**
  * An {@link Service} subclass for handling asynchronous task requests.
@@ -51,7 +49,7 @@ public class LoggingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.d(TAG, "on onStartCommand called.");
+        Log.d(TAG, "onStartCommand called.");
 
         if (intent != null) {
             final String action = intent.getAction();
@@ -97,6 +95,31 @@ public class LoggingService extends Service {
 
         Log.d(TAG, "on onCreate called.");
 
+        /*
+        Intent openIntent = new Intent();
+        openIntent.setAction(Util.ACTION_OPEN_START_ACTIVITY);
+        openIntent.setType("text/plain");
+        PendingIntent open =
+                PendingIntent.getActivity(this,0,openIntent,0);
+
+        Intent smokeIntent = new Intent();
+        smokeIntent.setAction(Util.ACTION_ANNOTATE_SMOKING);
+        //smokeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        smokeIntent.setType("text/plain");
+        PendingIntent annotateSmoking =
+                PendingIntent.getActivity(this,0,smokeIntent,0);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_action_core_refresh_hd)
+                        .setContentTitle("Raucherstudie") // Title
+                        .setContentText("Aufzeichnung läuft.") // Sub-Title
+                        .setContentIntent(open)
+                        .addAction(R.drawable.ic_action_camera_switch_camera_hd,
+                                getString(R.string.annotate), annotateSmoking);
+        startForeground(1337,  mBuilder.build());
+        */
+
         PendingIntent open =
                 PendingIntent.getActivity(this,0,new Intent(this, StartActivity.class),0);
 
@@ -109,6 +132,8 @@ public class LoggingService extends Service {
                         .setContentIntent(open);
 
         startForeground(1337,  mBuilder.build());
+
+
         PowerManager pm = (PowerManager)getApplicationContext().getSystemService(
                 getApplicationContext().POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
@@ -129,20 +154,21 @@ public class LoggingService extends Service {
 
     private synchronized void startRecording() {
 
-        serviceHandler.sendEmptyMessage(Logger.MESSAGE_START);
-        loggingStarted = true;
+        if(!loggingStarted) {
+            serviceHandler.sendEmptyMessage(Logger.MESSAGE_START);
+            loggingStarted = true;
+        }
     }
 
 
     private synchronized void stopRecording() {
 
-        //if (loggingStarted) {
-
-        serviceHandler.sendEmptyMessage(Logger.MESSAGE_STOP);
-        loggingStarted = false;
+        if (loggingStarted) {
+            serviceHandler.sendEmptyMessage(Logger.MESSAGE_STOP);
+            loggingStarted = false;
+        }
 
         this.stopSelf();
-        //}
     }
 
 }

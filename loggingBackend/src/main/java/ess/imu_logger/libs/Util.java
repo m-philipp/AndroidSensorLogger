@@ -18,6 +18,7 @@ public class Util {
 
 
     public static final String GAC_PATH_ANNOTATE_SMOKING_ACTIVITY = "/ess/imu_logger/annotate-smoking";
+    public static final String GAC_PATH_ANNOTATED_SMOKING = "/ess/imu_logger/annotated-smoking";
 
     public static final String GAC_PATH_START_LOGGING = "/ess/imu_logger/startLogging";
     public static final String GAC_PATH_STOP_LOGGING = "/ess/imu_logger/stopLogging";
@@ -62,6 +63,10 @@ public class Util {
     public static final int ZIP_UPLOAD_SERVICE_FREQUENCY = 10000;
 
     public static final String fileDir = "smokingStudy";
+
+
+    public static final String ACTION_ANNOTATE_SMOKING = "ess.imu_logger.libs.Util.ACTION_ANNOTATE_SMOKING";
+    public static final String ACTION_OPEN_START_ACTIVITY = "ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY";
 
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();

@@ -33,6 +33,11 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ImuLiveScreen"
@@ -45,6 +50,11 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="ess.imu_logger.libs.Util.ACTION_ANNOTATE_SMOKING" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
 
@@ -72,7 +82,6 @@
             android:exported="true" >
             <intent-filter>
                 <action android:name="ess.imu_logger.data_export.action.saveData" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>

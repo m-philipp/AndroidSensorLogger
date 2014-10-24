@@ -1,12 +1,16 @@
-package ess.imu_logger.app;
+package ess.imu_logger.libs;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
 
 public class myReceiver extends BroadcastReceiver {
+
+    private static final String TAG = "ess.imu_logger.libs.myReceiver";
+
     public myReceiver() {
     }
 
@@ -32,6 +36,8 @@ public class myReceiver extends BroadcastReceiver {
                 mServiceIntent.setAction(ZipUploadService.ACTION_START_SERVICE);
                 context.startService(mServiceIntent);
 
+            } else {
+                Log.d(TAG, action);
             }
         }
     }

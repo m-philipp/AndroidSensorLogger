@@ -39,7 +39,7 @@ public class SensorDataSavingService extends Service {
     private static final String TAG = "ess.imu_logger.libs.data_save.SensorDataSavingService";
 
 	private PlainFileWriter plainFileWriter;
-
+    private boolean pfwRunning = false;
 
 
 
@@ -106,7 +106,7 @@ public class SensorDataSavingService extends Service {
 
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.i(TAG, "onStartCommand called in SensorDataSavingService ...");
+		Log.i(TAG, "onStartCommand called.");
 		if (intent != null) {
 			final String action = intent.getAction();
 			if (ACTION_SAVE_DATA.equals(action)) {
@@ -116,12 +116,15 @@ public class SensorDataSavingService extends Service {
 
 			} else if (ACTION_START_SERVICE.equals(action)) {
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
-                if(!plainFileWriter.isAlive())
+                if(!pfwRunning && !plainFileWriter.isAlive()) {
                     plainFileWriter.start();
+                    pfwRunning = true;
+                }
             } else if (ACTION_STOP_SERVICE.equals(action)) {
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
 
                 plainFileWriter.requestStop();
+                pfwRunning = false;
                 stopSelf();
             }
 		}
@@ -148,7 +151,7 @@ public class SensorDataSavingService extends Service {
 	}
 
 	public void onDestroy() {
-		plainFileWriter.requestStop();
+		// plainFileWriter.requestStop();
         unregisterReceiver(receiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 

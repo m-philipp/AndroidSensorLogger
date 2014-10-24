@@ -2,8 +2,6 @@ package ess.imu_logger.app;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,7 +26,6 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import ess.imu_logger.app.R;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
@@ -96,6 +93,12 @@ public class Debug extends Activity implements
         sendMessageToCompanion(Util.GAC_PATH_TEST_ACTIVITY);
     }
 
+    public void sendImplicitIntent(View v) {
+        Intent openIntent = new Intent();
+        openIntent.setAction(Util.ACTION_ANNOTATE_SMOKING);
+        openIntent.setType("text/plain");
+        startActivity(openIntent);
+    }
 
     private static final String COUNT_KEY = "/count";
     private int count = 0;

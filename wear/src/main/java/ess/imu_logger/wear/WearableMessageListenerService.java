@@ -4,8 +4,10 @@ package ess.imu_logger.wear;
  * Created by martin on 09.09.2014.
  */
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -40,8 +42,8 @@ public class WearableMessageListenerService extends WearableListenerService impl
     private GoogleApiClient mGoogleApiClient;
 
 
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
+    // private AlarmManager alarmMgr;
+    // private PendingIntent alarmIntent;
     SharedPreferences sharedPrefs;
 
 
@@ -53,7 +55,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-
+        /*
         Intent intent = new Intent(this, myReceiver.class);
         intent.setAction(ZipUploadService.ACTION_START_SERVICE);
         alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
@@ -74,7 +76,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 1000,
                 Util.ZIP_UPLOAD_SERVICE_FREQUENCY, alarmIntent);
-
+        */
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -105,7 +107,8 @@ public class WearableMessageListenerService extends WearableListenerService impl
         } else if (event.getPath().equals(Util.GAC_PATH_START_LOGGING)) {
 
             Log.d(TAG, "GAC Start Logging");
-            startBackgroundLogging();
+            if(!isLoggingServiceRunning() || !isSensorDataSavingServiceRunning())
+                startBackgroundLogging();
 
 
         } else if (event.getPath().equals(Util.GAC_PATH_STOP_LOGGING)) {
@@ -206,20 +209,11 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     Log.d(TAG, "sampling rate = " + dataString);
                     editor.putString(Util.PREFERENCES_SAMPLING_RATE, dataString);
 
-                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE);
-                    Log.d(TAG, "Sensor Activate = " + data);
-                    editor.putBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, data);
-
 
                     editor.commit();
 
-
-
-                } else if(eventUri.contains (Util.GAC_PATH_START_LOGGING)) {
-                    startBackgroundLogging();
-                } else if(eventUri.contains (Util.GAC_PATH_STOP_LOGGING)) {
-                    stopBackgroundLogging();
                 }
+
             }
 
         }
@@ -258,7 +252,23 @@ public class WearableMessageListenerService extends WearableListenerService impl
         Log.e(TAG, "Failed to connect to Google Api Client");
     }
 
+    protected boolean isLoggingServiceRunning() {
+        return isServiceRunning(LoggingService.class.getName());
+    }
 
+    protected boolean isSensorDataSavingServiceRunning() {
+        return isServiceRunning(SensorDataSavingService.class.getName());
+    }
+
+    protected boolean isServiceRunning(String classname) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (classname.equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
     /*
     PendingResult<DataItemBuffer> results = Wearable.DataApi.getDataItems(mGoogleApiClient);
     results.setResultCallback(new ResultCallback<DataItemBuffer>() {

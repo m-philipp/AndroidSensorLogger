@@ -3,6 +3,7 @@ package ess.imu_logger.wear;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.view.DelayedConfirmationView;
 import android.support.wearable.view.WatchViewStub;
@@ -18,6 +19,7 @@ import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
 import ess.imu_logger.libs.Util;
+import ess.imu_logger.libs.data_save.SensorDataSavingService;
 
 public class AnnotateSmoking extends Activity implements
 		DelayedConfirmationView.DelayedConfirmationListener,
@@ -105,8 +107,10 @@ public class AnnotateSmoking extends Activity implements
 		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(0, notification);
 
 
-        sendMessageToCompanion(Util.GAC_PATH_TEST_ACTIVITY);
+        sendMessageToCompanion(Util.GAC_PATH_ANNOTATED_SMOKING);
 
+        Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
+        sendBroadcast(sendIntent);
 
 		finish();
 	}

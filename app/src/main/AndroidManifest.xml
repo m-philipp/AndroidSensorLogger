@@ -29,10 +29,16 @@
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="ess.imu_logger.libs.Util.ACTION_ANNOTATE_SMOKING" />
+                <action android:name="ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
+
         <activity
             android:name=".ImuLiveScreen"
             android:label="@string/title_activity_imu_live_screen"
@@ -91,7 +97,7 @@
         </service>
 
         <receiver
-            android:name=".myReceiver"
+            android:name="ess.imu_logger.libs.myReceiver"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
