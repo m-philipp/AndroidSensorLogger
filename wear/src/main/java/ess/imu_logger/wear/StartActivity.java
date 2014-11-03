@@ -18,6 +18,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+
 import java.util.List;
 
 import ess.imu_logger.libs.Util;
@@ -53,9 +60,40 @@ public class StartActivity extends ess.imu_logger.libs.StartActivity {
 
     }
 
-    public void onStartLiveScreen(View v) {
+    public void sendObjectToWearable(){
+            Log.d(TAG, "sending Data Object");
+            PutDataMapRequest dataMap = PutDataMapRequest.create("/count");
+            dataMap.getDataMap().putInt("/count", 42);
+            PutDataRequest request = dataMap.asPutDataRequest();
+            PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
+                    .putDataItem(mGoogleApiClient, request);
+        }
+
+    public void onStartLiveScreen_ORIGINAL(View v) {
+
         Intent intent = new Intent(this, ImuLiveScreen.class);
         startActivity(intent);
+
+
+    }
+
+    private static final String COUNT_KEY = "/count";
+    private int count = 0;
+    public void onStartLiveScreen(View v){
+
+        Log.d(TAG, "sending Data Object");
+
+        Intent mServiceIntent = new Intent(this, TransferDataAsAssets.class);
+        mServiceIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
+        this.startService(mServiceIntent);
+        /*
+        PutDataMapRequest dataMap = PutDataMapRequest.create("/count");
+        dataMap.getDataMap().putInt(COUNT_KEY, count++);
+        PutDataRequest request = dataMap.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
+                .putDataItem(mGoogleApiClient, request);
+         */
+
     }
 
     public void onStartAnnotateSmoking(View v) {

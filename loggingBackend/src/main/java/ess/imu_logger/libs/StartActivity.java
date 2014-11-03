@@ -18,6 +18,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
+
 import java.util.List;
 
 import ess.imu_logger.R;
@@ -26,13 +34,15 @@ import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
 import ess.imu_logger.libs.logging.LoggingService;
 
-public abstract class StartActivity extends Activity {
+public abstract class StartActivity extends Activity implements
+        GoogleApiClient.OnConnectionFailedListener{
 
     protected SharedPreferences sharedPrefs;
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
     private final Handler handler = new Handler();
 
+    protected GoogleApiClient mGoogleApiClient;
 
     private static final String TAG = "ess.imu_logger.libs.StartActivity";
 
@@ -65,7 +75,10 @@ public abstract class StartActivity extends Activity {
                 1000,
                 Util.ZIP_UPLOAD_SERVICE_FREQUENCY, alarmIntent); // TODO make Values static finals
 
-
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addOnConnectionFailedListener(this)
+                .build();
 
 
         handler.removeCallbacks(sendUpdatesToUI);
@@ -81,6 +94,21 @@ public abstract class StartActivity extends Activity {
     }
 
 
+    protected void sendMessageToCompanion(final String path) {
+
+        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
+                new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                    @Override
+                    public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
+                        for (final Node node : getConnectedNodesResult.getNodes()) {
+                            Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path,
+                                    new byte[0]).setResultCallback(getSendMessageResultCallback());
+                        }
+                    }
+                }
+        );
+
+    }
 
     public void triggerManualDataUpload(View v) {
 
@@ -97,8 +125,6 @@ public abstract class StartActivity extends Activity {
     }
 
     public void annotateSmoking() {
-
-        // TODO use it
 
         Log.i(TAG, "annotateSmoking called");
 
@@ -140,6 +166,10 @@ public abstract class StartActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
+
         handler.removeCallbacks(sendUpdatesToUI);
         handler.postDelayed(sendUpdatesToUI, 100); // 0,1 second
 
@@ -159,6 +189,10 @@ public abstract class StartActivity extends Activity {
     protected void onDestroy() {
 
         Log.d(TAG, "destroying");
+
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
 
         handler.removeCallbacks(sendUpdatesToUI);
         //sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener);
@@ -214,6 +248,25 @@ public abstract class StartActivity extends Activity {
         return false;
     }
 
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(TAG, "Failed to connect to Google Api Client");
+    }
+
+    private ResultCallback<MessageApi.SendMessageResult> getSendMessageResultCallback() {
+        return new ResultCallback<MessageApi.SendMessageResult>() {
+            @Override
+            public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                if (!sendMessageResult.getStatus().isSuccess()) {
+                    Log.e(TAG, "Failed to connect to Google Api Client with status "
+                            + sendMessageResult.getStatus());
+                } else {
+                    Log.d(TAG, "Successfully connected to Google Api Client.");
+                }
+            }
+        };
+    }
+
     private class FolderSizeRetriever extends AsyncTask<String, Void, String> {
 
         private final static String TAG = "ess.imu_logger.app.StartScreen.FolderSizeRetriever";
@@ -248,6 +301,8 @@ public abstract class StartActivity extends Activity {
         @Override
         protected void onProgressUpdate(Void... values) {}
     }
+
+
 
 
 }

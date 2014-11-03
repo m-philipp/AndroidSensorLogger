@@ -17,7 +17,7 @@ import java.util.UUID;
 public class Util {
 
 
-    public static final String GAC_PATH_ANNOTATE_SMOKING_ACTIVITY = "/ess/imu_logger/annotate-smoking";
+    //public static final String GAC_PATH_ANNOTATE_SMOKING_ACTIVITY = "/ess/imu_logger/annotate-smoking";
     public static final String GAC_PATH_ANNOTATED_SMOKING = "/ess/imu_logger/annotated-smoking";
 
     public static final String GAC_PATH_START_LOGGING = "/ess/imu_logger/startLogging";
@@ -26,6 +26,8 @@ public class Util {
 
     public static final String GAC_PATH_PREFERENCES = "/ess/imu_logger/preferences";
     public static final String GAC_PATH_UPLOAD_DATA = "/ess/imu_logger/uploadData";
+
+    public static final String GAC_PATH_SENSOR_DATA = "/ess/imu_logger/sensorData";
 
     public static final String GAC_PATH_TEST_ACTIVITY = "/test";
 
@@ -58,6 +60,8 @@ public class Util {
     public static final String PREFERENCES_LAST_UPLOAD = "last_upload";
     public static final String PREFERENCES_WIFI_ONLY = "wifi_only";
 
+    public static final String SENSOR_FILE_NAME = "fileName";
+    public static final String SENSOR_FILE = "file";
 
 
     public static final int ZIP_UPLOAD_SERVICE_FREQUENCY = 10000;
@@ -67,6 +71,7 @@ public class Util {
 
     public static final String ACTION_ANNOTATE_SMOKING = "ess.imu_logger.libs.Util.ACTION_ANNOTATE_SMOKING";
     public static final String ACTION_OPEN_START_ACTIVITY = "ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY";
+
 
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();

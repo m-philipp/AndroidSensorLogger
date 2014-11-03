@@ -39,7 +39,6 @@ import ess.imu_logger.libs.logging.LoggingService;
 public class WearableMessageListenerService extends WearableListenerService implements
         GoogleApiClient.OnConnectionFailedListener{
 
-    private GoogleApiClient mGoogleApiClient;
 
 
     // private AlarmManager alarmMgr;
@@ -56,6 +55,10 @@ public class WearableMessageListenerService extends WearableListenerService impl
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         /*
+
+        // TODO reimplement
+
+
         Intent intent = new Intent(this, myReceiver.class);
         intent.setAction(ZipUploadService.ACTION_START_SERVICE);
         alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
@@ -78,31 +81,18 @@ public class WearableMessageListenerService extends WearableListenerService impl
                 Util.ZIP_UPLOAD_SERVICE_FREQUENCY, alarmIntent);
         */
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addOnConnectionFailedListener(this)
-                .build();
-        mGoogleApiClient.connect();
+
     }
 
-    @Override
-    public void onDestroy(){
-        mGoogleApiClient.disconnect();
-        super.onDestroy();
-    }
 
     @Override
     public void onMessageReceived(MessageEvent event) {
 
+        Log.d(TAG, "onMessageReceived");
+
         if (event.getPath().equals(Util.GAC_PATH_TEST_ACTIVITY)) {
 
             Toast.makeText(this, "Hello from Phone!", Toast.LENGTH_LONG).show();
-
-        } else if (event.getPath().equals(Util.GAC_PATH_ANNOTATE_SMOKING_ACTIVITY)) {
-
-            Intent startIntent = new Intent(this, AnnotateSmoking.class);
-            startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(startIntent);
 
         } else if (event.getPath().equals(Util.GAC_PATH_START_LOGGING)) {
 
@@ -127,6 +117,9 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
+
+        Log.d(TAG, "onDataChanged");
+
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_DELETED) {
                 Log.d(TAG, "DataItem deleted: " + event.getDataItem().getUri());

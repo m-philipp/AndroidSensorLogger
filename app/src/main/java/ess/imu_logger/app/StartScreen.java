@@ -26,10 +26,8 @@ import ess.imu_logger.libs.StartActivity;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
 
-public class StartScreen extends StartActivity implements
-        GoogleApiClient.OnConnectionFailedListener{
+public class StartScreen extends StartActivity {
 
-    private GoogleApiClient mGoogleApiClient;
 
     private static final String TAG = "ess.imu_logger.app.StartScreen";
 
@@ -50,10 +48,6 @@ public class StartScreen extends StartActivity implements
 
         sharedPrefs.registerOnSharedPreferenceChangeListener(listener);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addOnConnectionFailedListener(this)
-                .build();
 
         if (sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false))
             startBackgroundLogging();
@@ -74,10 +68,6 @@ public class StartScreen extends StartActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (!mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.connect();
-        }
 
         if(getIntent() != null && getIntent().getAction().equals(Util.ACTION_ANNOTATE_SMOKING)){
             Log.d(TAG, "annotate Smoke ACTION");
@@ -101,10 +91,6 @@ public class StartScreen extends StartActivity implements
         Log.d(TAG, "destroying");
 
         //sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener);
-
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
 
         super.onDestroy();
     }
@@ -193,21 +179,6 @@ public class StartScreen extends StartActivity implements
                 .putDataItem(mGoogleApiClient, request);
     }
 
-    private void sendMessageToCompanion(final String path) {
-
-        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
-                new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-                    @Override
-                    public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
-                        for (final Node node : getConnectedNodesResult.getNodes()) {
-                            Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path,
-                                    new byte[0]).setResultCallback(getSendMessageResultCallback());
-                        }
-                    }
-                }
-        );
-
-    }
 
     SharedPreferences.OnSharedPreferenceChangeListener listener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -260,23 +231,6 @@ public class StartScreen extends StartActivity implements
 
     }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e(TAG, "Failed to connect to Google Api Client");
-    }
 
-    private ResultCallback<MessageApi.SendMessageResult> getSendMessageResultCallback() {
-        return new ResultCallback<MessageApi.SendMessageResult>() {
-            @Override
-            public void onResult(MessageApi.SendMessageResult sendMessageResult) {
-                if (!sendMessageResult.getStatus().isSuccess()) {
-                    Log.e(TAG, "Failed to connect to Google Api Client with status "
-                            + sendMessageResult.getStatus());
-                } else {
-                    Log.d(TAG, "Successfully connected to Google Api Client.");
-                }
-            }
-        };
-    }
 
 }

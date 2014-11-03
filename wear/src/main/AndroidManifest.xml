@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ess.imu_logger.wear" >
 
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -21,9 +20,9 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.DeviceDefault" >
 
-	    <meta-data
-		    android:name="com.google.android.gms.version"
-		    android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".StartActivity"
@@ -31,11 +30,14 @@
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
@@ -43,33 +45,32 @@
             android:name=".ImuLiveScreen"
             android:label="@string/title_activity_imu_live_screen" >
         </activity>
-
         <activity
             android:name=".AnnotateSmoking"
             android:label="@string/title_activity_annotate_smoking" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="ess.imu_logger.libs.Util.ACTION_ANNOTATE_SMOKING" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
 
         <service android:name=".WearableMessageListenerService" >
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
         </service>
-
         <service
             android:name="ess.imu_logger.libs.logging.LoggingService"
             android:enabled="true"
             android:exported="true" />
-
         <service
             android:name="ess.imu_logger.libs.data_zip_upload.ZipUploadService"
             android:enabled="true"
@@ -82,15 +83,16 @@
             android:exported="true" >
             <intent-filter>
                 <action android:name="ess.imu_logger.data_export.action.saveData" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
-
-
-
-
-
         <service android:name="ess.imu_logger.libs.DataCollectorService" >
+        </service>
+        <service
+            android:name=".TransferDataAsAssets"
+            android:enabled="true"
+            android:exported="true" >
         </service>
     </application>
 
