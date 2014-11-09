@@ -112,6 +112,11 @@ public class WearableMessageListenerService extends WearableListenerService impl
             mServiceIntent.setAction(ZipUploadService.ACTION_MANUAL_UPLOAD_DATA);
             this.startService(mServiceIntent);
 
+        } else if(event.getPath().equals(Util.GAC_PATH_CONFIRM_FILE_RECEIVED)){
+
+            Log.d(TAG, "Received GAC_PARH: " + Util.GAC_PATH_CONFIRM_FILE_RECEIVED+ " Message Contend was: " + event.getData().toString());
+
+
         }
     }
 

@@ -12,11 +12,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
@@ -30,6 +34,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import ess.imu_logger.libs.Util;
+import ess.imu_logger.libs.WearableMessageSenderService;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 
 /**
@@ -41,6 +46,20 @@ public class WearableMessageListenerService extends WearableListenerService impl
     private static final String TAG = "ess.imu_logger.app.WearableMessageListenerService";
 
     private GoogleApiClient mGoogleApiClient;
+
+    @Override
+    public void onCreate(){
+
+        super.onCreate();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        mGoogleApiClient.connect();
+
+    }
 
 
     @Override
@@ -71,16 +90,15 @@ public class WearableMessageListenerService extends WearableListenerService impl
             Binder.restoreCallingIdentity(token);
         }
         */
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addOnConnectionFailedListener(this)
-                .build();
-        ConnectionResult connectionResult = mGoogleApiClient.blockingConnect(30, TimeUnit.SECONDS);
-        if (!connectionResult.isSuccess()) {
-            Log.e(TAG, "Failed to connect to GoogleApiClient.");
-            return;
+/*
+        if(!mGoogleApiClient.isConnected()){
+            ConnectionResult connectionResult = mGoogleApiClient.blockingConnect(30, TimeUnit.SECONDS);
+            if (!connectionResult.isSuccess()) {
+                Log.e(TAG, "Failed to connect to GoogleApiClient.");
+                return;
+            }
         }
+*/
 
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
@@ -99,13 +117,32 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     saveFileFromAsset(fileName, profileAsset);
                     // Do something with the bitmap
 
+                    // TODO sendMessage to Wearable -> delete file!
+                    sendMessage(Util.GAC_PATH_CONFIRM_FILE_RECEIVED, fileName);
+
                     Log.d(TAG, "SensorDataFileName: " + fileName);
                 }
             }
         }
 
-        mGoogleApiClient.disconnect();
+        // mGoogleApiClient.disconnect();
     }
+
+
+    private void sendMessage(String path, String content) {
+
+        Log.d(TAG, "starting Message Sender ...");
+
+        Intent messageSenderIntent = new Intent(this, WearableMessageSenderService.class);
+        messageSenderIntent.setAction(WearableMessageSenderService.ACTION_SEND_MESSAGE);
+        messageSenderIntent.putExtra(WearableMessageSenderService.EXTRA_PATH, path);
+        messageSenderIntent.putExtra(WearableMessageSenderService.EXTRA_MESSAGE_CONTENT_STRING, content);
+
+
+        this.startService(messageSenderIntent);
+
+    }
+
 
     private void saveFileFromAsset(String fileName, Asset asset) {
 
@@ -134,6 +171,8 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         Util.checkDirs();
         try {
+
+            // TODO CHECK IF FILE ALREADY EXISTED!! IF THEN DON'T APPEND!
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + Util.fileDir, "wear_" + fileName);
             OutputStream out = new FileOutputStream(file, true);
 
@@ -155,6 +194,14 @@ public class WearableMessageListenerService extends WearableListenerService impl
         // return BitmapFactory.decodeStream(assetInputStream);
     }
 
+
+
+    @Override
+    public void onDestroy(){
+        if(mGoogleApiClient.isConnected())
+            mGoogleApiClient.disconnect();
+        super.onDestroy();
+    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {

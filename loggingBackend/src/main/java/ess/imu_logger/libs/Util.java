@@ -28,6 +28,7 @@ public class Util {
     public static final String GAC_PATH_UPLOAD_DATA = "/ess/imu_logger/uploadData";
 
     public static final String GAC_PATH_SENSOR_DATA = "/ess/imu_logger/sensorData";
+    public static final String GAC_PATH_CONFIRM_FILE_RECEIVED = "/ess/imu_logger/sensorDataReceived";
 
     public static final String GAC_PATH_TEST_ACTIVITY = "/test";
 
@@ -62,7 +63,7 @@ public class Util {
 
     public static final String SENSOR_FILE_NAME = "fileName";
     public static final String SENSOR_FILE = "file";
-
+    public static final String SENSOR_SENT_TIMESTAMP = "timestamp";
 
     public static final int ZIP_UPLOAD_SERVICE_FREQUENCY = 10000;
 
@@ -71,6 +72,7 @@ public class Util {
 
     public static final String ACTION_ANNOTATE_SMOKING = "ess.imu_logger.libs.Util.ACTION_ANNOTATE_SMOKING";
     public static final String ACTION_OPEN_START_ACTIVITY = "ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY";
+
 
 
     public static boolean isExternalStorageWritable() {

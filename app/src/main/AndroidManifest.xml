@@ -112,6 +112,10 @@
             </intent-filter>
         </receiver>
 
+        <service android:name="ess.imu_logger.libs.WearableMessageSenderService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
 
 
 

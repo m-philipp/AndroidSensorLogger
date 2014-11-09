@@ -178,7 +178,9 @@ public class TransferDataAsAssets extends Service implements
 
             PutDataMapRequest dataMap = PutDataMapRequest.create(Util.GAC_PATH_SENSOR_DATA);
             dataMap.getDataMap().putString(Util.SENSOR_FILE_NAME, fileName);
+            dataMap.getDataMap().putString(Util.SENSOR_SENT_TIMESTAMP, "" + System.currentTimeMillis());
             dataMap.getDataMap().putAsset(Util.SENSOR_FILE, asset);
+
             //dataMap.getDataMap().putInt(COUNT_KEY, count++);
             PutDataRequest request = dataMap.asPutDataRequest();
             PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
