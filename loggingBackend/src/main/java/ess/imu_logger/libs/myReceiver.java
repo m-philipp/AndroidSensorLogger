@@ -36,6 +36,18 @@ public class myReceiver extends BroadcastReceiver {
                 mServiceIntent.setAction(ZipUploadService.ACTION_START_SERVICE);
                 context.startService(mServiceIntent);
 
+            } else if (action.equals(ZipUploadService.ACTION_START_ZIPPER_ONLY)) {
+
+                Intent mServiceIntent = new Intent(context, ZipUploadService.class);
+                mServiceIntent.setAction(ZipUploadService.ACTION_START_ZIPPER_ONLY);
+                context.startService(mServiceIntent);
+
+            } else if (action.equals(TransferDataAsAssets.ACTION_TRANSFER)) {
+
+                Intent mServiceIntent = new Intent(context, TransferDataAsAssets.class);
+                mServiceIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
+                context.startService(mServiceIntent);
+
             } else {
                 Log.d(TAG, action);
             }

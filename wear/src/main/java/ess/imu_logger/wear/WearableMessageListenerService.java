@@ -5,28 +5,25 @@ package ess.imu_logger.wear;
  */
 
 import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
-import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
+import java.io.File;
+
+import ess.imu_logger.libs.TransferDataAsAssets;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
@@ -41,8 +38,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
 
 
-    // private AlarmManager alarmMgr;
-    // private PendingIntent alarmIntent;
+
     SharedPreferences sharedPrefs;
 
 
@@ -54,32 +50,15 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        /*
 
         // TODO reimplement
 
-
-        Intent intent = new Intent(this, myReceiver.class);
-        intent.setAction(ZipUploadService.ACTION_START_SERVICE);
-        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
-        if(alarmMgr == null){
-            Log.d(TAG, "AlarmManager was null");
-            alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
-        }
-        else {
-            Log.d(TAG, "AlarmManager was not null. Canceling alarmIntent");
-
-            alarmMgr.cancel(alarmIntent);
-        }
-
-
-        alarmMgr.cancel(alarmIntent);
-
-        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                1000,
-                Util.ZIP_UPLOAD_SERVICE_FREQUENCY, alarmIntent);
+        /*
+        Intent mServiceIntent = new Intent(this, TransferDataAsAssets.class);
+        mServiceIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
+        this.startService(mServiceIntent);
         */
+
 
 
     }
@@ -114,8 +93,15 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         } else if(event.getPath().equals(Util.GAC_PATH_CONFIRM_FILE_RECEIVED)){
 
-            Log.d(TAG, "Received GAC_PARH: " + Util.GAC_PATH_CONFIRM_FILE_RECEIVED+ " Message Contend was: " + event.getData().toString());
+            Log.d(TAG, "Received GAC_PARH: " + Util.GAC_PATH_CONFIRM_FILE_RECEIVED + " Message Contend was: " + event.getData().toString());
 
+            // delete file
+            deleteLogFile(new String(event.getData()));
+
+            // transfer next File
+            Intent mServiceIntent = new Intent(this, TransferDataAsAssets.class);
+            mServiceIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
+            this.startService(mServiceIntent);
 
         }
     }
@@ -244,6 +230,26 @@ public class WearableMessageListenerService extends WearableListenerService impl
         this.startService(sensorDataSavingServiceIntent);
 
     }
+
+    private void deleteLogFile(String filename){
+
+        Util.checkDirs();
+        Log.d(TAG, "original filename: " + filename);
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        String absFileName = dir.getAbsolutePath()  + File.separator + Util.fileDir + File.separator + filename;
+
+        Log.d(TAG, "deleting: " + absFileName);
+
+        File f = new File(absFileName);
+        f.setWritable(true);
+        if (f.delete()) {
+            Log.d(TAG, f.getName() + " is deleted!");
+        } else {
+            Log.d(TAG, f.getName() + " Delete operation is failed.");
+        }
+
+    }
+
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {

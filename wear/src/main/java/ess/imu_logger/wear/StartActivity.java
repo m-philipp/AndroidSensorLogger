@@ -1,41 +1,29 @@
 package ess.imu_logger.wear;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import java.util.List;
-
-import ess.imu_logger.libs.Util;
-import ess.imu_logger.libs.data_save.SensorDataSavingService;
+import ess.imu_logger.libs.*;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
-import ess.imu_logger.libs.logging.LoggingService;
 
 public class StartActivity extends ess.imu_logger.libs.StartActivity {
 
     //private TextView mTextView;
 
+    private AlarmManager alarmMgr;
+    private PendingIntent transferDataAlarmIntent;
+    private PendingIntent zipDataAlarmIntent;
 
     private static final String TAG = "ess.imu_logger.wear.StartScreen";
 
@@ -58,6 +46,34 @@ public class StartActivity extends ess.imu_logger.libs.StartActivity {
         */
 
 
+        Intent transferDataIntent = new Intent(this, ess.imu_logger.libs.myReceiver.class);
+        transferDataIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
+        transferDataAlarmIntent = PendingIntent.getBroadcast(this, 0, transferDataIntent, 0);
+
+        Intent zipDataIntent = new Intent(this, ess.imu_logger.libs.myReceiver.class);
+        zipDataIntent.setAction(ZipUploadService.ACTION_START_ZIPPER_ONLY);
+        zipDataAlarmIntent = PendingIntent.getBroadcast(this, 0, zipDataIntent, 0);
+
+        if(alarmMgr == null){
+            Log.d(TAG, "AlarmManager was null");
+            alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
+        }
+
+
+        alarmMgr.cancel(transferDataAlarmIntent);
+        alarmMgr.cancel(zipDataAlarmIntent);
+
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                1000,
+                Util.ZIP_UPLOAD_SERVICE_FREQUENCY, transferDataAlarmIntent);
+
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                1000,
+                Util.ZIP_UPLOAD_SERVICE_FREQUENCY, zipDataAlarmIntent);
+
+
+
+
     }
 
     public void sendObjectToWearable(){
@@ -77,23 +93,11 @@ public class StartActivity extends ess.imu_logger.libs.StartActivity {
 
     }
 
-    private static final String COUNT_KEY = "/count";
-    private int count = 0;
+
     public void onStartLiveScreen(View v){
 
-        Log.d(TAG, "sending Data Object");
-
-        Intent mServiceIntent = new Intent(this, TransferDataAsAssets.class);
-        mServiceIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
-        this.startService(mServiceIntent);
-        /*
-        PutDataMapRequest dataMap = PutDataMapRequest.create("/count");
-        dataMap.getDataMap().putInt(COUNT_KEY, count++);
-        PutDataRequest request = dataMap.asPutDataRequest();
-        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
-                .putDataItem(mGoogleApiClient, request);
-         */
-
+        Intent intent = new Intent(this, ImuLiveScreen.class);
+        startActivity(intent);
     }
 
     public void onStartAnnotateSmoking(View v) {

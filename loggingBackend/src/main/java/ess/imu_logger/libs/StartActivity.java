@@ -38,8 +38,6 @@ public abstract class StartActivity extends Activity implements
         GoogleApiClient.OnConnectionFailedListener{
 
     protected SharedPreferences sharedPrefs;
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
     private final Handler handler = new Handler();
 
     protected GoogleApiClient mGoogleApiClient;
@@ -53,27 +51,6 @@ public abstract class StartActivity extends Activity implements
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false); // false ensures this is only executed once
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Intent intent = new Intent(this, myReceiver.class);
-        intent.setAction(ZipUploadService.ACTION_START_SERVICE);
-        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
-        if(alarmMgr == null){
-            Log.d(TAG, "AlarmManager was null");
-            alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
-        }
-        else {
-            Log.d(TAG, "AlarmManager was not null. Canceling alarmIntent");
-
-            alarmMgr.cancel(alarmIntent);
-        }
-
-
-        alarmMgr.cancel(alarmIntent);
-
-        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                1000,
-                Util.ZIP_UPLOAD_SERVICE_FREQUENCY, alarmIntent); // TODO make Values static finals
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)

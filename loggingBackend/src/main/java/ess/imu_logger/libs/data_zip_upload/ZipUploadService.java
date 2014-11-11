@@ -15,6 +15,7 @@ public class ZipUploadService extends Service {
 
     public static final String ACTION_MANUAL_UPLOAD_DATA = "ess.imu_logger.libs.data_zip_upload.action.manUploadData";
     public static final String ACTION_START_SERVICE = "ess.imu_logger.libs.data_zip_upload.action.startService";
+    public static final String ACTION_START_ZIPPER_ONLY = "ess.imu_logger.libs.data_zip_upload.action.startZipperOnly";
 
     // public static final String EXTRA_SENSOR_DATA = "ess.imu_logger.libs.data_zip_upload.extra.sensorData";
 
@@ -84,8 +85,18 @@ public class ZipUploadService extends Service {
                     editor.commit();
                 }
             }
-        }
+        } else if (intent == null || intent.getAction().equals(ACTION_START_ZIPPER_ONLY)) {
 
+            if (!zipperRunning) {
+                Log.d(TAG, "onStartCommand with: " + ACTION_START_SERVICE + " called");
+                zipper = new Zipper(this);
+                zipper.start();
+                zipper.zip();
+                zipperRunning = true;
+                //zipper.requestStop();
+
+            }
+        }
 
         // TODO: wait for thread finishing / working
         // stopSelf();

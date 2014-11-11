@@ -5,6 +5,7 @@ package ess.imu_logger.app;
  */
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
@@ -117,7 +119,17 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     saveFileFromAsset(fileName, profileAsset);
                     // Do something with the bitmap
 
-                    // TODO sendMessage to Wearable -> delete file!
+
+                    ConnectionResult result =
+                            mGoogleApiClient.blockingConnect(1000, TimeUnit.MILLISECONDS);
+                    if (!result.isSuccess()) {
+                        return;
+                    }
+                    Uri.Builder uri = new Uri.Builder().scheme(PutDataRequest.WEAR_URI_SCHEME).path(Util.GAC_PATH_SENSOR_DATA);
+                    Wearable.DataApi.deleteDataItems(mGoogleApiClient, uri.build()).await();
+                    mGoogleApiClient.disconnect();
+
+
                     sendMessage(Util.GAC_PATH_CONFIRM_FILE_RECEIVED, fileName);
 
                     Log.d(TAG, "SensorDataFileName: " + fileName);

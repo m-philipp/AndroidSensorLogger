@@ -1,10 +1,13 @@
-package ess.imu_logger.wear;
+package ess.imu_logger.libs;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -12,9 +15,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -31,10 +31,12 @@ import ess.imu_logger.libs.Util;
 public class TransferDataAsAssets extends Service implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = "ess.imu_logger.wear.TransferDataAsAssets";
-    public static final String ACTION_TRANSFER = "transfer";
+    private static final String TAG = "ess.imu_logger.libs.TransferDataAsAssets";
+    public static final String ACTION_TRANSFER = "ess.imu_logger.libs.TransferDataAsAssets.transfer";
 
     protected GoogleApiClient mGoogleApiClient;
+    private SendToDataLayerThread stdlt;
+    private Boolean stdltRunning = false;
 
 
     public TransferDataAsAssets() {
@@ -50,9 +52,12 @@ public class TransferDataAsAssets extends Service implements
                 .addConnectionCallbacks(this)
                 .build();
 
+        stdlt = new SendToDataLayerThread();
     }
+
     private static final String COUNT_KEY = "/count";
     private int count = 0;
+
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand called ...");
 
@@ -61,16 +66,20 @@ public class TransferDataAsAssets extends Service implements
         else
             mGoogleApiClient.connect();
 
-        /*
-        PutDataMapRequest dataMap = PutDataMapRequest.create("/count");
-        dataMap.getDataMap().putInt(COUNT_KEY, count++);
-        PutDataRequest request = dataMap.asPutDataRequest();
-        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
-                .putDataItem(mGoogleApiClient, request);
-        */
 
-        new SendToDataLayerThread().start();
+        if (intent != null) {
+            final String action = intent.getAction();
+            if (ACTION_TRANSFER.equals(action)) {
 
+                Log.d(TAG, ACTION_TRANSFER);
+
+                if(!stdltRunning && !stdlt.isAlive()) { // TODO check that logic
+                    stdlt.start();
+                    stdltRunning = true;
+                }
+                stdlt.queueDataTransfer();
+            }
+        }
 
 
         return START_STICKY;
@@ -78,24 +87,6 @@ public class TransferDataAsAssets extends Service implements
 
     public void onConnected(Bundle connectionHint) {
         Log.i(TAG, "onConnected called ...");
-/*
-        String fileName = getFilenameToUpload();
-        //Asset asset = createAssetFromFile(fileName);
-
-        //PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(Util.GAC_PATH_SENSOR_DATA);
-        //DataMap dataMap = putDataMapRequest.getDataMap();
-
-        DataMap dataMap = new DataMap();
-
-        //dataMap.putAsset(Util.SENSOR_FILE, asset);
-        dataMap.putString(Util.SENSOR_FILE_NAME, fileName);
-
-        //PutDataRequest request = putDataMapRequest.asPutDataRequest();
-        //PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
-        //        .putDataItem(mGoogleApiClient, request);
-        new SendToDataLayerThread(Util.GAC_PATH_SENSOR_DATA, dataMap).start();
-
-        */
     }
 
 
@@ -106,6 +97,7 @@ public class TransferDataAsAssets extends Service implements
 
     private static Asset createAssetFromFile(String fileName) {
         Log.d(TAG, "asset Creation from File");
+        byte[] r;
         final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         try {
 
@@ -129,10 +121,15 @@ public class TransferDataAsAssets extends Service implements
                 bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
             }
+            r = byteStream.toByteArray();
+            fileInputStream.close();
+            byteStream.close();
         } catch (IOException e) {
             Log.d(TAG, "asset Creation from File failed: " + e.getMessage());
+            r = new byte[0];
         }
-        return Asset.createFromBytes(byteStream.toByteArray());
+
+        return Asset.createFromBytes(r);
     }
 
 
@@ -158,8 +155,10 @@ public class TransferDataAsAssets extends Service implements
 
 
     class SendToDataLayerThread extends Thread {
-        String path;
-        DataMap dataMap;
+        private Handler inHandler;
+        public static final String MESSAGE_TYPE_ACTION = "ess.imu_logger.libs.data_save.MESSAGE_TYPE_ACTION";
+        public static final int MESSAGE_ACTION_TRANSFER_DATA = 0;
+
 
         // Constructor for sending data objects to the data layer
         SendToDataLayerThread() {
@@ -167,53 +166,86 @@ public class TransferDataAsAssets extends Service implements
 
         public void run() {
             Log.d(TAG, "SendToDataLayerThread run");
+            try {
+                Looper.prepare();
+                synchronized (this) {
+                    inHandler = new Handler() {
+                        public void handleMessage(Message msg) {
 
-            String fileName = getFilenameToUpload(false);
-            if(fileName == null){
-                Log.d(TAG, "there's no file to send");
-                return;
+
+                            if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_TRANSFER_DATA) {
+
+                                Log.d(TAG, "trying to transfer data to phone");
+
+                                String fileName = getFilenameToUpload(false);
+                                if (fileName == null) {
+                                    Log.d(TAG, "there's no file to transfer");
+                                    return;
+                                }
+
+                                Asset asset = createAssetFromFile(getFilenameToUpload());
+
+                                PutDataMapRequest dataMap = PutDataMapRequest.create(Util.GAC_PATH_SENSOR_DATA);
+                                dataMap.getDataMap().putString(Util.SENSOR_FILE_NAME, fileName);
+                                dataMap.getDataMap().putString(Util.SENSOR_SENT_TIMESTAMP, "" + System.currentTimeMillis());
+                                dataMap.getDataMap().putAsset(Util.SENSOR_FILE, asset);
+
+                                //dataMap.getDataMap().putInt(COUNT_KEY, count++);
+                                PutDataRequest request = dataMap.asPutDataRequest();
+                                PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
+                                        .putDataItem(mGoogleApiClient, request);
+
+                                // TODO check that on not connected it isn't called every sec
+                                // TODO check that there's no out of memory
+                            }
+
+                        }
+                    };
+                    notifyAll();
+                }
+
+
+                Looper.loop();
+
+                Log.i(TAG, "Thread exiting gracefully");
+            } catch (Throwable t) {
+                Log.e(TAG, "Thread halted due to an error", t);
             }
 
-            Asset asset = createAssetFromFile(getFilenameToUpload());
 
-            PutDataMapRequest dataMap = PutDataMapRequest.create(Util.GAC_PATH_SENSOR_DATA);
-            dataMap.getDataMap().putString(Util.SENSOR_FILE_NAME, fileName);
-            dataMap.getDataMap().putString(Util.SENSOR_SENT_TIMESTAMP, "" + System.currentTimeMillis());
-            dataMap.getDataMap().putAsset(Util.SENSOR_FILE, asset);
+        }
 
-            //dataMap.getDataMap().putInt(COUNT_KEY, count++);
-            PutDataRequest request = dataMap.asPutDataRequest();
-            PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
-                    .putDataItem(mGoogleApiClient, request);
+        public synchronized void queueDataTransfer() {
 
+            Log.d(TAG, "called queueDataTransfer");
 
-/*
-            //Asset asset = createAssetFromFile(fileName);
+            Message msg = new Message();
+            Bundle b = new Bundle();
+            b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_TRANSFER_DATA);
+            msg.setData(b);
+            getHandler().sendMessage(msg);
+        }
 
-            //PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(Util.GAC_PATH_SENSOR_DATA);
-            //DataMap dataMap = putDataMapRequest.getDataMap();
+        // This method is allowed to be called from any thread
+        public synchronized void requestStop() {
+            getHandler().post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "Thread loop quitting by request");
+                    Looper.myLooper().quit();
+                }
+            });
+        }
 
-            PutDataMapRequest putDMR = PutDataMapRequest.create(Util.GAC_PATH_SENSOR_DATA);
-            DataMap dataMap = putDMR.getDataMap();
-
-            //dataMap.putAsset(Util.SENSOR_FILE, asset);
-            dataMap.putString(Util.SENSOR_FILE_NAME, fileName);
-            PutDataRequest request = putDMR.asPutDataRequest();
-            PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
-                    .putDataItem(mGoogleApiClient, request);
-
-            /*
-            DataApi.DataItemResult result = Wearable.DataApi.putDataItem(mGoogleApiClient, request).await();
-
-            Log.d(TAG, "DataApi put completed");
-
-            if (result.getStatus().isSuccess()) {
-                Log.v(TAG, "DataMap: " + dataMap + " sent");
-            } else {
-                // Log an error
-                Log.v(TAG, "ERROR: failed to send DataMap");
+        private Handler getHandler() {
+            while (inHandler == null) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    //Ignore and try again.
+                }
             }
-            */
+            return inHandler;
         }
 
 

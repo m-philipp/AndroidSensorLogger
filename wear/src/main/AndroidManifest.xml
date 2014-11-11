@@ -62,6 +62,22 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name="ess.imu_logger.libs.myReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="ess.imu_logger.libs.TransferDataAsAssets.transfer" />
+                <action android:name="ess.imu_logger.libs.data_zip_upload.action.startZipperOnly" />
+
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+
         <service android:name=".WearableMessageListenerService" >
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
@@ -90,7 +106,7 @@
         <service android:name="ess.imu_logger.libs.DataCollectorService" >
         </service>
         <service
-            android:name=".TransferDataAsAssets"
+            android:name="ess.imu_logger.libs.TransferDataAsAssets"
             android:enabled="true"
             android:exported="true" >
         </service>
