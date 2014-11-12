@@ -237,7 +237,7 @@ public class Uploader extends Thread {
             ex.printStackTrace();
             Log.e(TAG, "error: " + ex.getMessage(), ex);
         } catch (ConnectException ex) {
-            Log.d(TAG, "Host was not reachable.");
+            Log.d(TAG, "Host was not reachable."); // TODO reduce timeout ?
         } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, "Exception : " + e.getMessage(), e);

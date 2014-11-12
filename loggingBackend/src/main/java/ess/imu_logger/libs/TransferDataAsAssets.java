@@ -55,8 +55,7 @@ public class TransferDataAsAssets extends Service implements
         stdlt = new SendToDataLayerThread();
     }
 
-    private static final String COUNT_KEY = "/count";
-    private int count = 0;
+
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand called ...");
@@ -196,7 +195,7 @@ public class TransferDataAsAssets extends Service implements
                                         .putDataItem(mGoogleApiClient, request);
 
                                 // TODO check that on not connected it isn't called every sec
-                                // TODO check that there's no out of memory
+                                // TODO check that there's no out of memory (closed streams)
                             }
 
                         }
