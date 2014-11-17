@@ -85,12 +85,6 @@ public class WearableMessageListenerService extends WearableListenerService impl
             Log.d(TAG, "GAC Stop Logging");
             stopBackgroundLogging();
 
-        } else if(event.getPath().equals(Util.GAC_PATH_UPLOAD_DATA)){
-
-            Intent mServiceIntent = new Intent(this, ZipUploadService.class);
-            mServiceIntent.setAction(ZipUploadService.ACTION_MANUAL_UPLOAD_DATA);
-            this.startService(mServiceIntent);
-
         } else if(event.getPath().equals(Util.GAC_PATH_CONFIRM_FILE_RECEIVED)){
 
             Log.d(TAG, "Received GAC_PARH: " + Util.GAC_PATH_CONFIRM_FILE_RECEIVED + " Message Contend was: " + event.getData().toString());
@@ -196,11 +190,24 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
                     editor.commit();
 
+
+                    // start home screen
+                    startStartActivity();
                 }
 
             }
 
         }
+    }
+
+    private void startStartActivity() {
+
+        Log.d(TAG, "starting Start Activity ...");
+
+        Intent startActivityIntent = new Intent(this, StartActivity.class);
+        startActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        this.startActivity(startActivityIntent);
+
     }
 
     private void startBackgroundLogging() {

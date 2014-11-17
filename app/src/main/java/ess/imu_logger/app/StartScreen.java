@@ -161,7 +161,6 @@ public class StartScreen extends StartActivity {
         mServiceIntent.setAction(ZipUploadService.ACTION_MANUAL_UPLOAD_DATA);
         this.startService(mServiceIntent);
 
-        sendMessageToCompanion(Util.GAC_PATH_UPLOAD_DATA);
 
 		/*
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(500);
@@ -245,6 +244,10 @@ public class StartScreen extends StartActivity {
 
         t = (TextView) findViewById(R.id.amaount_of_data_to_upload);
         t.setText(sharedPrefs.getString("amount_of_logged_data", "0.0") +  " MB");
+
+        t = (TextView) findViewById(R.id.id_sensor_event);
+        t.setText(Long.toString(sensorEventNo) + " k");
+        Log.d(TAG, "updating Sensor events to: " + sensorEventNo + " k");
 
         // update logging status
         t = (TextView) findViewById(R.id.logging_service_state);

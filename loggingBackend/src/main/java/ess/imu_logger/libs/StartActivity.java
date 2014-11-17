@@ -4,15 +4,19 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -41,8 +45,33 @@ public abstract class StartActivity extends Activity implements
     private final Handler handler = new Handler();
 
     protected GoogleApiClient mGoogleApiClient;
+    protected Long sensorEventNo = 0L;
 
     private static final String TAG = "ess.imu_logger.libs.StartActivity";
+
+    public static final String BROADCAST_SENSOR_EVENT_NO = "ess.imu_logger.libs.sensorEventNo";
+    public static final String EXTRA_SENSOR_EVENT_NO = "ess.imu_logger.libs.sensorEventNo.Extra";
+
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            Log.d(TAG, "Broadcast Receiver received a Broadcast");
+
+            // TODO check is the extra is really there
+
+            if (intent != null) {
+                if (action.equals(BROADCAST_SENSOR_EVENT_NO)) {
+
+                    Long seo  = intent.getLongExtra(EXTRA_SENSOR_EVENT_NO, 0L);
+                    sensorEventNo = seo / 1000;
+
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +89,12 @@ public abstract class StartActivity extends Activity implements
 
         handler.removeCallbacks(sendUpdatesToUI);
         handler.postDelayed(sendUpdatesToUI, 100); // 0,1 second
+
+        // register broadcast receiver
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BROADCAST_SENSOR_EVENT_NO);
+        registerReceiver(receiver, filter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
 
         List<Sensor> sensors;
@@ -182,7 +217,6 @@ public abstract class StartActivity extends Activity implements
         public void run() {
             // update Name
             uiUpdate();
-
 
             if(updateRequest == 0) {
                 Log.d(TAG, "Update Folder Size");

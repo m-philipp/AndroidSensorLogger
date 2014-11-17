@@ -17,18 +17,19 @@
 		android:textColor="@color/orange"
 		android:layout_gravity="center_horizontal"/>
 
-
+    <!--
 	<Button
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/open_live_logging"
 		android:id="@+id/startLiveScreen"
 		android:onClick="onStartLiveScreen"/>
+	-->
 
 	<Button
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:text="Annotate Smoking"
+		android:text="@string/annotate_smoking"
 		android:id="@+id/startAnnotateSmoking"
 		android:onClick="onStartAnnotateSmoking"/>
 
@@ -49,6 +50,26 @@
             android:layout_height="wrap_content"
             android:text="..."
             android:id="@+id/id_logging_running"
+            android:gravity="right"  />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:context=".StartActivity">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_sensor_event"
+            android:id="@+id/id_title_sensor_event" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="..."
+            android:id="@+id/id_sensor_event"
             android:gravity="right"  />
     </LinearLayout>
 

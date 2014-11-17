@@ -48,7 +48,7 @@ public class SensorDataSavingService extends Service {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 
-			//Log.i(TAG, "Broaccast Reciever recieved a Broadcast");
+			//Log.i(TAG, "Broadcast Receiver received a Broadcast");
 
 			// TODO check is the extra is really there
 
@@ -68,9 +68,10 @@ public class SensorDataSavingService extends Service {
 
 
 				} else if (action.equals(BROADCAST_ANNOTATION)) {
-					Toast.makeText(context, "smokeAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
+					Toast.makeText(context, "Raucher Annotation erhalten", Toast.LENGTH_SHORT).show();
 
 					StringBuilder dataString = new StringBuilder();
+                    dataString.append("Annotation: ");
 					dataString.append(System.currentTimeMillis());
 					dataString.append(" ");
 					dataString.append(SystemClock.elapsedRealtime());
@@ -81,9 +82,10 @@ public class SensorDataSavingService extends Service {
 					plainFileWriter.saveString(dataString.toString());
 
 				} else if (action.equals(BROADCAST_LIGHTER)) {
-                    Toast.makeText(context, "lighterAnnotation Broadcast received", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Feuerzeug Annotation erhalten", Toast.LENGTH_SHORT).show();
 
                     StringBuilder dataString = new StringBuilder();
+                    dataString.append("Annotation: ");
                     dataString.append(System.currentTimeMillis());
                     dataString.append(" ");
                     dataString.append(SystemClock.elapsedRealtime());

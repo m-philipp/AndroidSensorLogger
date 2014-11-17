@@ -2,6 +2,7 @@ package ess.imu_logger.libs;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -84,6 +85,12 @@ public class TransferDataAsAssets extends Service implements
         return START_STICKY;
     }
 
+
+    public void transferFinished() {
+        stdltRunning = false;
+        stopSelf();
+    }
+
     public void onConnected(Bundle connectionHint) {
         Log.i(TAG, "onConnected called ...");
     }
@@ -94,42 +101,7 @@ public class TransferDataAsAssets extends Service implements
     public void onConnectionSuspended(int cause) {
     }
 
-    private static Asset createAssetFromFile(String fileName) {
-        Log.d(TAG, "asset Creation from File");
-        byte[] r;
-        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        try {
 
-            //bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
-            FileInputStream fileInputStream = new FileInputStream(new File(fileName));
-            int maxBufferSize = 1 * 1024 * 1024;
-            int bytesRead, bytesAvailable, bufferSize;
-            byte[] buffer;
-            bytesAvailable = fileInputStream.available();
-
-            bufferSize = Math.min(bytesAvailable, maxBufferSize);
-            buffer = new byte[bufferSize];
-
-            // read file and write it into form...
-            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-            while (bytesRead > 0) {
-
-                byteStream.write(buffer, 0, bufferSize);
-                bytesAvailable = fileInputStream.available();
-                bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
-            }
-            r = byteStream.toByteArray();
-            fileInputStream.close();
-            byteStream.close();
-        } catch (IOException e) {
-            Log.d(TAG, "asset Creation from File failed: " + e.getMessage());
-            r = new byte[0];
-        }
-
-        return Asset.createFromBytes(r);
-    }
 
 
     @Override
@@ -168,9 +140,12 @@ public class TransferDataAsAssets extends Service implements
             try {
                 Looper.prepare();
                 synchronized (this) {
+
+
                     inHandler = new Handler() {
                         public void handleMessage(Message msg) {
 
+                            Log.d(TAG, "SendToDataLayerThread run -> handle message");
 
                             if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_TRANSFER_DATA) {
 
@@ -181,6 +156,9 @@ public class TransferDataAsAssets extends Service implements
                                     Log.d(TAG, "there's no file to transfer");
                                     return;
                                 }
+
+                                Uri.Builder uri = new Uri.Builder().scheme(PutDataRequest.WEAR_URI_SCHEME).path(Util.GAC_PATH_SENSOR_DATA);
+                                Wearable.DataApi.deleteDataItems(mGoogleApiClient, uri.build()).await();
 
                                 Asset asset = createAssetFromFile(getFilenameToUpload());
 
@@ -196,6 +174,8 @@ public class TransferDataAsAssets extends Service implements
 
                                 // TODO check that on not connected it isn't called every sec
                                 // TODO check that there's no out of memory (closed streams)
+
+                                transferFinished();
                             }
 
                         }
@@ -212,6 +192,44 @@ public class TransferDataAsAssets extends Service implements
             }
 
 
+        }
+
+        private Asset createAssetFromFile(String fileName) {
+            Log.d(TAG, "asset Creation from File");
+            byte[] r;
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            try {
+
+                //bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
+                FileInputStream fileInputStream = new FileInputStream(new File(fileName));
+                int maxBufferSize = 1 * 1024 * 1024;
+                int bytesRead, bytesAvailable, bufferSize;
+                byte[] buffer;
+                bytesAvailable = fileInputStream.available();
+
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                buffer = new byte[bufferSize];
+
+                // read file and write it into form...
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                while (bytesRead > 0) {
+
+                    byteStream.write(buffer, 0, bufferSize);
+                    bytesAvailable = fileInputStream.available();
+                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                }
+                r = byteStream.toByteArray();
+                fileInputStream.close();
+                byteStream.close();
+
+            } catch (IOException e) {
+                Log.d(TAG, "asset Creation from File failed: " + e.getMessage());
+                r = new byte[0];
+            }
+
+            return Asset.createFromBytes(r);
         }
 
         public synchronized void queueDataTransfer() {

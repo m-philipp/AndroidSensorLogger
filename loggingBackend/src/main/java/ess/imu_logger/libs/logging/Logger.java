@@ -17,6 +17,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import ess.imu_logger.libs.StartActivity;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 
@@ -134,11 +135,9 @@ public class Logger extends Handler implements SensorEventListener {
 
     }
 
-    private int i = 0;
+    private Long i = 0L;
 
     public void onSensorChanged(SensorEvent event) {
-
-        i++;
 
         if (event == null) {
             if (i % 2000 == 0)
@@ -148,11 +147,20 @@ public class Logger extends Handler implements SensorEventListener {
 
         }
 
-        if (i % 2000 == 0) {
+        if (i % 1000 == 0) {
             Log.d(TAG, "sensorEvent " + i);
-            Toast.makeText(context, "SensorEvent: " + i, Toast.LENGTH_SHORT).show();
+            // Toast.makeText(context, "SensorEvent: " + i, Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(StartActivity.BROADCAST_SENSOR_EVENT_NO);
+            intent.putExtra(StartActivity.EXTRA_SENSOR_EVENT_NO, i);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
         }
-        // TODO: THIS IS NOT BACKGROUNDING!! --> DONE registerListener get this Handler now!
+
+        i++;
+
+
+        // TODO: THIS IS NOT BACKGROUNDING!! --> DONE registerListener gets Handler now!
         // SystemClock.sleep(200);
 
         Intent intent = new Intent(SensorDataSavingService.BROADCAST_SENSOR_DATA);

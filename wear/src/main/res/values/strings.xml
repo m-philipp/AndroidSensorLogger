@@ -13,7 +13,9 @@
     <string name="live_sensor_magn">Magnetometer</string>
 
 
+    <string name="annotate_smoking">starte Rauchen</string>
     <string name="title_logging_running">Aufzeichnung</string>
+    <string name="title_sensor_event">Event No.</string>
     <string name="title_mb_to_upload">hochzuladen</string>
 
     <string name="stopped">angehalten</string>

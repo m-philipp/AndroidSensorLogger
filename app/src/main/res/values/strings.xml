@@ -36,5 +36,6 @@
     <string name="onSendMessageToWearable">senden</string>
     <string name="sendObjectToWearable">DataObject an das Wearable</string>
     <string name="onSendObjectToWearable">senden</string>
+    <string name="sensor_event">Aufgezeichnete Events:</string>
 
 </resources>

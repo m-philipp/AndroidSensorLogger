@@ -48,36 +48,66 @@
 					android:onClick="annotateSmoking"
 					android:text="@+string/annotateSmoking"/>
 
-				<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="horizontal"
-					tools:context=".StartScreen">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:context=".StartScreen">
 
-					<TextView
-						android:id="@+id/textView2"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:paddingBottom="10dp"
-						android:paddingTop="10dp"
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
 
-						android:text="@string/logging_service"
-						android:textAppearance="?android:attr/textAppearanceLarge"
-						android:layout_weight="9"/>
+                        android:text="@string/logging_service"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:layout_weight="9"/>
 
-					<TextView
-						android:id="@+id/logging_service_state"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:paddingBottom="10dp"
-						android:paddingTop="10dp"
-						android:text="@string/service_stopped"
-						android:textAppearance="?android:attr/textAppearanceLarge"
-						android:gravity="right"
-						android:layout_weight="1"
-						android:textColor="#ff6000"/>
+                    <TextView
+                        android:id="@+id/logging_service_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:text="@string/service_stopped"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:textColor="#ff6000"/>
 
-				</LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:context=".StartScreen">
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+
+                        android:text="@string/sensor_event"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:layout_weight="9"/>
+
+                    <TextView
+                        android:id="@+id/id_sensor_event"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:text="..."
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:textColor="#74565656"/>
+
+                </LinearLayout>
 
 
             </LinearLayout>

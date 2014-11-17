@@ -41,7 +41,7 @@ public class PlainFileWriter extends Thread {
 
 
 
-    private static final Integer MAX_FILE_SIZE = 1024*1024*5; // 50 MB
+    private static final Integer MAX_FILE_SIZE = 1024*1024*1; // 1 MB
     private static final Integer MAX_BUFFER_SIZE = 1024*1;
 
 
