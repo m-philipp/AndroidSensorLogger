@@ -133,7 +133,7 @@ public class StartActivity extends ess.imu_logger.libs.StartActivity {
 
         t = (TextView) findViewById(R.id.id_sensor_event);
         t.setText(Long.toString(sensorEventNo) + " k");
-        Log.d(TAG, "updating Sensor events to: " + sensorEventNo + " k");
+        // Log.d(TAG, "updating Sensor events to: " + sensorEventNo + " k");
 
         // update logging status
         t = (TextView) findViewById(R.id.id_logging_running);

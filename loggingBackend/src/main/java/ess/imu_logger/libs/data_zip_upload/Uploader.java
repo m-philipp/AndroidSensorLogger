@@ -197,8 +197,7 @@ public class Uploader extends Thread {
                         + serverResponseMessage + ": " + serverResponseCode);
 
 
-                //close the streams //
-
+                //close the streams
                 fileInputStream.close();
                 fileInputStream = null;
 
@@ -249,7 +248,7 @@ public class Uploader extends Thread {
             Log.e(TAG, "Exception : " + e.getMessage(), e);
         }
 
-        // on exceptions we're nor trying again.
+        // on exceptions we're not trying again.
         return false;
     }
 

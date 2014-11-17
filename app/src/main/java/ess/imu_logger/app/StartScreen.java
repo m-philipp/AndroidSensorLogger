@@ -247,7 +247,7 @@ public class StartScreen extends StartActivity {
 
         t = (TextView) findViewById(R.id.id_sensor_event);
         t.setText(Long.toString(sensorEventNo) + " k");
-        Log.d(TAG, "updating Sensor events to: " + sensorEventNo + " k");
+        // Log.d(TAG, "updating Sensor events to: " + sensorEventNo + " k");
 
         // update logging status
         t = (TextView) findViewById(R.id.logging_service_state);

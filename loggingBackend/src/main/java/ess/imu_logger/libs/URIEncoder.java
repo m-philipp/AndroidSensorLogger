@@ -20,7 +20,8 @@ public class URIEncoder {
                     (c >= 'A' && c <= 'Z') || mark.indexOf(c) != -1) {
                 uri.append(c);
             } else {
-                appendEscaped(uri, c);
+                // just crop out
+                // appendEscaped(uri, c);
             }
         }
         return uri.toString();
