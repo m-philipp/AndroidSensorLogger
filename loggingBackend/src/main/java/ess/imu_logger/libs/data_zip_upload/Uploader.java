@@ -20,8 +20,10 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
 
+import ess.imu_logger.libs.URIEncoder;
 import ess.imu_logger.libs.Util;
 
 /**
@@ -121,6 +123,10 @@ public class Uploader extends Thread {
                 String name = "default";
                 if (!sharedPrefs.getBoolean("anonymize", true))
                     name = sharedPrefs.getString("name", "default");
+
+
+                name = URIEncoder.encodeURI(name);
+
 
                 String u = sharedPrefs.getString("server_url", "http://192.168.2.50") + ":" +
                         sharedPrefs.getString("server_port", "8080") +
@@ -246,6 +252,7 @@ public class Uploader extends Thread {
         // on exceptions we're nor trying again.
         return false;
     }
+
 
 
     private String getFilenameToUpload() {
