@@ -111,6 +111,8 @@ public class Zipper extends Thread {
             Log.i(TAG, "Zipper Thread exiting gracefully");
         } catch (Throwable t) {
             Log.e(TAG, "Zipper Thread halted due to an error", t);
+        } finally {
+            zus.zipperStopped();
         }
     }
 
