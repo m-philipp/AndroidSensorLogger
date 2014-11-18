@@ -85,7 +85,7 @@ public class ZipUploadService extends Service {
                     editor.commit();
                 }
             }
-        } else if (intent == null || intent.getAction().equals(ACTION_START_ZIPPER_ONLY)) {
+        } else if (intent != null && intent.getAction().equals(ACTION_START_ZIPPER_ONLY)) {
 
             if (!zipperRunning) {
                 Log.d(TAG, "onStartCommand with: " + ACTION_START_SERVICE + " called");

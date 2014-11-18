@@ -206,6 +206,9 @@ public abstract class StartActivity extends Activity implements
             mGoogleApiClient.disconnect();
         }
 
+        unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+
         handler.removeCallbacks(sendUpdatesToUI);
         //sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener);
 

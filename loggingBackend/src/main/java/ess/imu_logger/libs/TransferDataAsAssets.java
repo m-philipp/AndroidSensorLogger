@@ -40,12 +40,14 @@ public class TransferDataAsAssets extends Service implements
     private Boolean stdltRunning = false;
 
 
+
     public TransferDataAsAssets() {
     }
 
     public void onCreate() {
 
         super.onCreate();
+
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -73,9 +75,11 @@ public class TransferDataAsAssets extends Service implements
 
                 Log.d(TAG, ACTION_TRANSFER);
 
-                if(!stdltRunning && !stdlt.isAlive()) { // TODO check that logic
+                if(!stdlt.isAlive()) {
+                // if(!stdltRunning && !stdlt.isAlive()) { // TODO check that logic
+                    //stdltRunning = true;
+                    stdlt = new SendToDataLayerThread();
                     stdlt.start();
-                    stdltRunning = true;
                 }
                 stdlt.queueDataTransfer();
             }
@@ -86,10 +90,13 @@ public class TransferDataAsAssets extends Service implements
     }
 
 
+
     public void transferFinished() {
+        Log.d(TAG, "transfer Finished notice from Thread to Service");
         stdltRunning = false;
         stopSelf();
     }
+
 
     public void onConnected(Bundle connectionHint) {
         Log.i(TAG, "onConnected called ...");
@@ -106,6 +113,9 @@ public class TransferDataAsAssets extends Service implements
 
     @Override
     public void onDestroy() {
+
+        Log.d(TAG, "onDestory");
+
         if (null != mGoogleApiClient && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
@@ -129,6 +139,8 @@ public class TransferDataAsAssets extends Service implements
         private Handler inHandler;
         public static final String MESSAGE_TYPE_ACTION = "ess.imu_logger.libs.data_save.MESSAGE_TYPE_ACTION";
         public static final int MESSAGE_ACTION_TRANSFER_DATA = 0;
+
+        private boolean transferedAsset = false;
 
 
         // Constructor for sending data objects to the data layer
@@ -157,6 +169,8 @@ public class TransferDataAsAssets extends Service implements
                                     return;
                                 }
 
+                                transferedAsset = true;
+
                                 Uri.Builder uri = new Uri.Builder().scheme(PutDataRequest.WEAR_URI_SCHEME).path(Util.GAC_PATH_SENSOR_DATA);
                                 Wearable.DataApi.deleteDataItems(mGoogleApiClient, uri.build()).await();
 
@@ -175,8 +189,12 @@ public class TransferDataAsAssets extends Service implements
                                 // TODO check that on not connected it isn't called every sec
                                 // TODO check that there's no out of memory (closed streams)
 
-                                transferFinished();
+
+
                             }
+
+                            transferFinished();
+                            Looper.myLooper().quit();
 
                         }
                     };
@@ -185,6 +203,7 @@ public class TransferDataAsAssets extends Service implements
 
 
                 Looper.loop();
+
 
                 Log.i(TAG, "Thread exiting gracefully");
             } catch (Throwable t) {
@@ -223,6 +242,8 @@ public class TransferDataAsAssets extends Service implements
                 r = byteStream.toByteArray();
                 fileInputStream.close();
                 byteStream.close();
+                byteStream = null;
+                fileInputStream = null;
 
             } catch (IOException e) {
                 Log.d(TAG, "asset Creation from File failed: " + e.getMessage());
@@ -235,6 +256,9 @@ public class TransferDataAsAssets extends Service implements
         public synchronized void queueDataTransfer() {
 
             Log.d(TAG, "called queueDataTransfer");
+
+            if(transferedAsset)
+                    return;
 
             Message msg = new Message();
             Bundle b = new Bundle();

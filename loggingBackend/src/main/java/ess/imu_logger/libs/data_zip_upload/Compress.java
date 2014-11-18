@@ -12,18 +12,23 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 
 public class Compress {
+
+    private static final String TAG = "ess.imu_logger.libs.data_zip_upload.Compress";
+
+
     private static final int BUFFER = 2048;
 
     private String[] _files;
     private String _zipFile;
 
-    public Compress(String[] files, String zipFile) {
-        _files = files;
+    public Compress(List<String> files, String zipFile) {
+        _files = files.toArray(_files);
         _zipFile = zipFile;
     }
 
@@ -35,6 +40,9 @@ public class Compress {
 
     public boolean zip() {
         try {
+
+            Log.d(TAG, "trying to zip");
+
             BufferedInputStream origin = null;
             FileOutputStream dest = new FileOutputStream(_zipFile);
 

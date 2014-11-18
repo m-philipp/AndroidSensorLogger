@@ -10,7 +10,10 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.PlainFileWriter;
@@ -113,11 +116,14 @@ public class Zipper extends Thread {
 
 
     private String getFilenameToZip() {
+
+        Log.d(TAG, "getFileNameToZip");
+
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + Util.fileDir);
         String[] listOfFiles = dir.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
-                return filename.endsWith(PlainFileWriter.fileExtension) ? true : false;
+                return filename.endsWith(PlainFileWriter.fileExtension);
             }
         });
 
@@ -128,6 +134,37 @@ public class Zipper extends Thread {
         }
 
         return null;
+
+    }
+    private List<String> getFilenamesToZip() {
+
+        Log.d(TAG, "getFileNameToZip");
+
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + Util.fileDir);
+        List<String> listOfFiles = Arrays.asList(dir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.endsWith(PlainFileWriter.fileExtension);
+            }
+        }));
+
+
+        Collections.sort(listOfFiles);
+
+        if (listOfFiles.size() > 1) {
+            listOfFiles.remove(listOfFiles.size() - 1); // tha current file can't be zipped
+
+            for(int i = 0; i < listOfFiles.size(); i++){
+                listOfFiles.set(i, dir.getAbsolutePath() + File.separator + listOfFiles.get(i));
+            }
+
+            return listOfFiles;
+
+
+            // TODO check if we didn't take the newest file.
+        }
+
+        return new ArrayList<String>();
 
     }
 
@@ -152,6 +189,9 @@ public class Zipper extends Thread {
     }
 
     public synchronized void zip() {
+
+        Log.d(TAG, "called zip");
+
         Message msg = new Message();
         Bundle b = new Bundle();
         b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_ZIP);
