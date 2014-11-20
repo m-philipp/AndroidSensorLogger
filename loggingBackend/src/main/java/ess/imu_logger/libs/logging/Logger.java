@@ -102,32 +102,33 @@ public class Logger extends Handler implements SensorEventListener {
 
         logging_frequency = Integer.parseInt(sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "0"));
 
+        int maxBatchReportLatency = 1000;
 
         if (accelerometerSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_ACCELEROMETER, false))
-            mSensorManager.registerListener(this, accelerometerSensor, logging_frequency, this);
+            mSensorManager.registerListener(this, accelerometerSensor, logging_frequency, maxBatchReportLatency, this);
         if (gyroscopeSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_GYROSCOPE, false))
-            mSensorManager.registerListener(this, gyroscopeSensor, logging_frequency, this);
+            mSensorManager.registerListener(this, gyroscopeSensor, logging_frequency, maxBatchReportLatency, this);
         if (magneticFieldSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_MAGNETIC_FIELD, false))
-            mSensorManager.registerListener(this, magneticFieldSensor, logging_frequency, this);
+            mSensorManager.registerListener(this, magneticFieldSensor, logging_frequency, maxBatchReportLatency, this);
         if (ambientLightSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_AMBIENT_LIGHT, false))
-            mSensorManager.registerListener(this, ambientLightSensor, logging_frequency, this);
+            mSensorManager.registerListener(this, ambientLightSensor, logging_frequency, maxBatchReportLatency, this);
         if (proximitySensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_PROXIMITY, false))
-            mSensorManager.registerListener(this, proximitySensor, logging_frequency, this);
+            mSensorManager.registerListener(this, proximitySensor, logging_frequency, maxBatchReportLatency, this);
         if (temperatureSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_TEMPERATURE, false))
-            mSensorManager.registerListener(this, temperatureSensor, logging_frequency, this);
+            mSensorManager.registerListener(this, temperatureSensor, logging_frequency, maxBatchReportLatency, this);
         if (humiditySensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_HUMIDITY, false))
-            mSensorManager.registerListener(this, humiditySensor, logging_frequency, this);
+            mSensorManager.registerListener(this, humiditySensor, logging_frequency, maxBatchReportLatency, this);
         if (pressureSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_PRESSURE, false))
-            mSensorManager.registerListener(this, pressureSensor, 30000, this); // static freq to every 30 Sek cause of some Android Isssues
+            mSensorManager.registerListener(this, pressureSensor, 30000, maxBatchReportLatency, this); // static freq to every 30 Sek cause of some Android Isssues
 
         if (rotationSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_ROTATION, false))
-            mSensorManager.registerListener(this, rotationSensor, logging_frequency, this);
+            mSensorManager.registerListener(this, rotationSensor, logging_frequency, maxBatchReportLatency, this);
         if (gravitySensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_GRAVITY, false))
-            mSensorManager.registerListener(this, gravitySensor, logging_frequency, this);
+            mSensorManager.registerListener(this, gravitySensor, logging_frequency, maxBatchReportLatency, this);
         if (linearAccelerometerSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, false))
-            mSensorManager.registerListener(this, linearAccelerometerSensor, logging_frequency, this);
+            mSensorManager.registerListener(this, linearAccelerometerSensor, logging_frequency, maxBatchReportLatency, this);
         if (stepCountSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_STEPS, false))
-            mSensorManager.registerListener(this, stepCountSensor, logging_frequency, this);
+            mSensorManager.registerListener(this, stepCountSensor, logging_frequency, maxBatchReportLatency, this);
 
     }
 
