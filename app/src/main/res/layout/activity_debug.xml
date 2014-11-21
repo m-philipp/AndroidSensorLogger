@@ -127,6 +127,36 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    tools:context=".StartScreen">
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:text="@string/lighterBluetooth_service"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:layout_weight="9"/>
+
+                    <TextView
+                        android:id="@+id/lighterBluetooth_service_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:text="@string/service_stopped"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:textColor="#ff6000"/>
+
+                </LinearLayout>
+
 
             </LinearLayout>
 
@@ -228,6 +258,25 @@
                     android:clickable="true"
                     android:onClick="onSendDataObjectToWearable"
                     android:text="@string/onSendObjectToWearable"/>
+
+                <TextView
+                    android:id="@+id/startBluetoothService"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/startBluetoothService"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    />
+
+                <Button
+                    android:id="@+id/startBluetoothServiceButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:onClick="onStartBluetoothService"
+                    android:text="@string/startBluetoothService"/>
 
             </LinearLayout>
         </LinearLayout>

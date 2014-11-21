@@ -26,6 +26,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import ess.imu_logger.app.bluetoothLogger.LighterBluetoothService;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
@@ -111,6 +112,15 @@ public class Debug extends Activity implements
                 .putDataItem(mGoogleApiClient, request);
     }
 
+    public void onStartBluetoothService(View v){
+        Log.d(TAG, "onStartBluetoothService");
+
+
+        Intent loggingServiceIntent = new Intent(this, LighterBluetoothService.class);
+        this.startService(loggingServiceIntent);
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -187,6 +197,15 @@ public class Debug extends Activity implements
             t.setTextColor(getResources().getColor(R.color.my_red));
         }
 
+        t = (TextView) findViewById(R.id.lighterBluetooth_service_state);
+        if (isBluetoothServiceRunning()) {
+            t.setText(getResources().getText(R.string.service_running));
+            t.setTextColor(getResources().getColor(R.color.my_green));
+        } else {
+            t.setText(getResources().getText(R.string.service_stopped));
+            t.setTextColor(getResources().getColor(R.color.my_red));
+        }
+
 
 
 
@@ -198,6 +217,10 @@ public class Debug extends Activity implements
 
     private boolean isSensorDataSavingServiceRunning() {
         return isServiceRunning(SensorDataSavingService.class.getName());
+    }
+
+    private boolean isBluetoothServiceRunning() {
+        return isServiceRunning(LighterBluetoothService.class.getName());
     }
 
     private boolean isZipUploadServiceRunning() {

@@ -46,7 +46,8 @@
 					android:layout_width="match_parent"
 					android:layout_height="100dp"
 					android:onClick="annotateSmoking"
-					android:text="@+string/annotateSmoking"/>
+					android:text="@+string/annotateSmoking"
+                    android:elevation="5dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -136,26 +137,8 @@
 				android:layout_alignParentBottom="true"
 				android:layout_alignParentStart="true">
 
-				TextView
-					android:id="@+id/live_view"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:paddingBottom="10dp"
-					android:paddingTop="10dp"
-					android:text="@string/live_view"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					/>
 
-				Button
-					android:id="@+id/startLiveLogging"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center_vertical"
-					android:clickable="true"
-					android:onClick="onStartLiveScreen"
-					android:text="@string/open_live_logging"/>
-
-				<TextView
+                <TextView
 					android:id="@+id/upload_data"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -178,7 +161,8 @@
 						android:layout_height="wrap_content"
 						android:onClick="triggerManualDataUpload"
 						android:layout_weight="1.5"
-						android:text="@string/trigger_manual_data_upload"/>
+						android:text="@string/trigger_manual_data_upload"
+                        android:elevation="5dp"/>
 
 					<LinearLayout
 						android:orientation="vertical"

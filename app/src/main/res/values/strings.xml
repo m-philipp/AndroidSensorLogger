@@ -37,5 +37,8 @@
     <string name="sendObjectToWearable">DataObject an das Wearable</string>
     <string name="onSendObjectToWearable">senden</string>
     <string name="sensor_event">Aufgezeichnete Events:</string>
+    <string name="startBluetoothService">Bluetooth service</string>
+    <string name="onStartBluetoothService">starten</string>
+    <string name="lighterBluetooth_service">Bluetooth service</string>
 
 </resources>

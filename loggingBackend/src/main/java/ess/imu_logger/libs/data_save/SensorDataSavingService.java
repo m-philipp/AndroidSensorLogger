@@ -25,12 +25,7 @@ public class SensorDataSavingService extends Service {
 
     public static final String BROADCAST_LIGHTER = "ess.imu_logger.libs.data_save.annotateLighter";
     public static final String BROADCAST_ANNOTATION = "ess.imu_logger.libs.data_save.annotateSmoking";
-    
-    /* Phills Annotation 
-     * 'de.tud.ess.smoking.NEW_CIGARETTE'
-     * contains a list of Timestamps
-     * 
-     */
+    public static final String BROADCAST_BLE_RSSI = "ess.imu_logger.libs.data_save.bleRssi";
     public static final String BROADCAST_SENSOR_DATA = "ess.imu_logger.libs.data_save.sensorData";
 
 
@@ -38,7 +33,7 @@ public class SensorDataSavingService extends Service {
 
     private static final String TAG = "ess.imu_logger.libs.data_save.SensorDataSavingService";
 
-	private PlainFileWriter plainFileWriter;
+    private PlainFileWriter plainFileWriter;
     private boolean pfwRunning = false;
 
 
