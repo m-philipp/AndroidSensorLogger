@@ -38,8 +38,6 @@ public class LighterBluetoothService extends Service {
 
     public static final String KEY_DEVICEADDR = "device_addr";
 
-    public static final String ACTION_NEW_LIGHTER_ANNOTATION = "ess.imu_logger.app.bluetoothLogger.LIGHTER";
-
     public String KEY_SCANSTARTDELAY = "scan_timeout";
 
     private BluetoothManager mBluetoothManager;
@@ -112,7 +110,10 @@ public class LighterBluetoothService extends Service {
             Date date = new Date(System.currentTimeMillis() - diff);
             Log.w(TAG, "got event at " + date);
 
-            // TODO do something with that Ligher Event
+            // store Lighter Events
+            Intent intent = new Intent(SensorDataSavingService.BROADCAST_LIGHTER);
+            sendBroadcast(intent);
+
         }
     };
 
@@ -168,8 +169,7 @@ public class LighterBluetoothService extends Service {
 
         /** create a handler on the UI thread */
         mHandler = new Handler(Looper.getMainLooper());
-        // mScanStartDelay = PreferenceManager.getDefaultSharedPreferences(this).getLong(KEY_SCANSTARTDELAY, 20 * 1000);
-        mHandler.postDelayed(mStartLEScan, mScanStartDelay); // 10);
+        mHandler.postDelayed(mStartLEScan, mScanStartDelay);
 
         return START_STICKY;
     }
@@ -274,14 +274,12 @@ public class LighterBluetoothService extends Service {
                                 putString(KEY_DEVICEADDR, mBluetoothDeviceAddress).apply();
                     }
 
-                    Log.w(TAG, "stopping the scan, found a device " + device.getAddress() );
-                    //mBluetoothAdapter.stopLeScan(this);
+                    // continue scanning e.g. for Beacons
+                    // Log.w(TAG, "stopping the scan, found a device " + device.getAddress() )
+                    // mBluetoothAdapter.stopLeScan(this);
 
                     connected = connect(mBluetoothDeviceAddress);
 
-
-                    //mHandler.postDelayed(mStartLEScan, mScanStartDelay);
-                    //mHandler.postDelayed(stopLEScan, timeout_ms)
                 }
             };
 }
