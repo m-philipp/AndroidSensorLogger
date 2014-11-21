@@ -1,0 +1,6 @@
+site_name: Android Sensor Logger
+pages:
+- [index.md, Home]
+- [about.md, 'About']
+theme: cerulean
+# cerulean simplex flatly
