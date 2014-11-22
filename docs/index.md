@@ -27,7 +27,5 @@ To deploy the System check [Deployment](deploy)
 
 ## Smartwatch UI
 
-![Screenshot](img/start.png){: style="max-width: 200px"}
-![Screenshot](img/general.png){: style="max-width: 200px"}
-![Screenshot](img/recording.png){: style="max-width: 200px"}
-![Screenshot](img/upload.png){: style="max-width: 200px"}
+![Screenshot](img/wearStart.png){: style="max-width: 200px"}
+![Screenshot](img/wearAnnotate.png){: style="max-width: 200px"}
