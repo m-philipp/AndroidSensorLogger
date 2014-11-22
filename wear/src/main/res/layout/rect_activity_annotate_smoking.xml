@@ -11,6 +11,8 @@
     android:padding="10dp">
 
 
+
+
     <android.support.wearable.view.DelayedConfirmationView
         android:id="@+id/delayed_confirmation"
         android:layout_width="wrap_content"

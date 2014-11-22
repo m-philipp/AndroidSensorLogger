@@ -5,7 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".StartActivity"
-    tools:deviceIds="wear_square">
+    tools:deviceIds="wear_square"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
 
 	<TextView
 		android:id="@+id/text"
@@ -31,14 +33,16 @@
 		android:layout_height="wrap_content"
 		android:text="@string/annotate_smoking"
 		android:id="@+id/startAnnotateSmoking"
-		android:onClick="onStartAnnotateSmoking"/>
+		android:onClick="onStartAnnotateSmoking"
+        android:padding="0dp" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        tools:context=".StartActivity">
+        tools:context=".StartActivity"
+        android:paddingTop="20dp">
 
         <TextView
             android:layout_width="wrap_content"
