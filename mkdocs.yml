@@ -1,6 +1,14 @@
 site_name: Android Sensor Logger
+site_description: Android App for Logging the build-in Android Sensors, with Android Wear Companion App.
+site_author: Martin Zittel
+site_favicon: favicon.ico
+site_dir: site
+site_url: https://mzittel.github.io/AndroidSensorLogger/
+repo_url: https://github.com/mzittel/AndroidSensorLogger
 pages:
 - [index.md, Home]
+- [deploy.md, 'Deployment']
 - [about.md, 'About']
-theme: cerulean
-# cerulean simplex flatly
+theme_dir: codeAmelia
+markdown_extensions: [attr_list, sane_lists]
+# cerulean slate flatly united amelia
