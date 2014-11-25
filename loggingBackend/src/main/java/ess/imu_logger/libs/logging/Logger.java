@@ -171,6 +171,9 @@ public class Logger extends Handler implements SensorEventListener {
 
     }
 
+    /* Saved String format:
+     * System.currentTimeMillis() SystemClock.elapsedRealtime() event.timestamp Sensor.Type Sensor.Value0 Sensor.Value1 Sensor.Value2
+     */
 
     public static String getString(SensorEvent event) {
 

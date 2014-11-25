@@ -110,6 +110,7 @@ public class AnnotateSmoking extends Activity implements
         sendMessageToCompanion(Util.GAC_PATH_ANNOTATED_SMOKING);
 
         Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
+        sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, "smoking");
         sendBroadcast(sendIntent);
 
 		finish();

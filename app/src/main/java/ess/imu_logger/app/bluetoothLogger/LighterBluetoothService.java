@@ -258,6 +258,8 @@ public class LighterBluetoothService extends Service {
 
                     // store BLE Scan results
                     Intent intent = new Intent(SensorDataSavingService.BROADCAST_BLE_RSSI);
+                    intent.putExtra(SensorDataSavingService.EXTRA_BLE_DEVICE_NAME, device.getName());
+                    intent.putExtra(SensorDataSavingService.EXTRA_BLE_RSSI, rssi);
                     sendBroadcast(intent);
 
 

@@ -72,6 +72,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
         } else if (event.getPath().equals(Util.GAC_PATH_ANNOTATED_SMOKING)) {
             Log.d(TAG, "annotating Smoking");
             Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
+            sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, "smoking");
             sendBroadcast(sendIntent);
         }
     }

@@ -141,6 +141,7 @@ public abstract class StartActivity extends Activity implements
         Log.i(TAG, "annotateSmoking called");
 
         Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
+        sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, "smoking");
         sendBroadcast(sendIntent);
 
     }
