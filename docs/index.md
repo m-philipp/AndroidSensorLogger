@@ -5,7 +5,7 @@ The Android Sensor Logger is a Tool to log data for Activity Recognition Studys.
 Therefore the Android Sensor Logger can:  
 
 * log the built-in Android (Wear) Sensors
-* save Annotations from the iLitit Smart-Lighter
+* save Annotations from the [iLitit](https://github.com/pscholl/iLitIt_Android) Smart-Lighter
 * log Bluetooth RSSI Values
 * **log some Bluetooth Gas Sensors** 
 
@@ -13,8 +13,11 @@ Therefore the Android Sensor Logger can:
 
 This App was developed for a smoking recognition study (That's why the Annotation Buttons talk about smoking).
 
+## Deployment
 
-To deploy the System check [Deployment](deploy)  
+### The [0.1 Alpha APK ](imu-logger.apk)
+
+Further [Deployment](deploy) Information.
 
 
 ## Smartphone App UI
