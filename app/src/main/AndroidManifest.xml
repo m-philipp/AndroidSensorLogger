@@ -11,9 +11,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <uses-feature android:name="android.hardware.type.watch" />
 
@@ -22,58 +21,56 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-
         <activity
-            android:name=".StartScreen"
+            android:name="ess.imu_logger.app.StartScreen"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="ess.imu_logger.libs.Util.ACTION_ANNOTATE_SMOKING" />
                 <action android:name="ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".ImuLiveScreen"
+            android:name="ess.imu_logger.app.ImuLiveScreen"
             android:label="@string/title_activity_imu_live_screen"
-            android:parentActivityName=".Debug" >
+            android:parentActivityName="ess.imu_logger.app.Debug" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="Debug" />
         </activity>
         <activity
-            android:name=".HelpScreen"
-            android:label="@string/title_activity_settings_screen"
-            android:parentActivityName=".StartScreen" >
+            android:name="ess.imu_logger.app.markdownViewer.HelpScreen"
+            android:label="@string/title_activity_help_screen"
+            android:parentActivityName="ess.imu_logger.app.StartScreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ess.imu_logger.StartScreen" />
         </activity>
         <activity
-            android:name=".ApplicationSettings"
+            android:name="ess.imu_logger.app.ApplicationSettings"
             android:label="@string/title_activity_test"
-            android:parentActivityName=".StartScreen" />
-
+            android:parentActivityName="ess.imu_logger.app.StartScreen" />
         <activity
-            android:name=".Debug"
+            android:name="ess.imu_logger.app.Debug"
             android:label="@string/title_activity_debug"
-            android:parentActivityName=".StartScreen" >
+            android:parentActivityName="ess.imu_logger.app.StartScreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ess.imu_logger.app.StartScreen" />
         </activity>
-
 
         <service
             android:name="ess.imu_logger.libs.logging.LoggingService"
@@ -85,7 +82,7 @@
             android:exported="true" />
         <!-- android:process=":background_logging_process" -->
 
-        <service android:name=".WearableMessageListenerService" >
+        <service android:name="ess.imu_logger.app.WearableMessageListenerService" >
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
@@ -114,20 +111,32 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="ess.imu_logger.libs.WearableMessageSenderService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
-
-
         <service
-            android:name=".bluetoothLogger.LighterBluetoothService"
-            android:enabled="true">
-
+            android:name="ess.imu_logger.libs.WearableMessageSenderService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name="ess.imu_logger.app.bluetoothLogger.LighterBluetoothService"
+            android:enabled="true" >
         </service>
 
-
-
+        <activity
+            android:name="ess.imu_logger.app.markdownViewer.IntroductionScreen"
+            android:label="@string/title_activity_introduction"
+            android:parentActivityName="ess.imu_logger.app.StartScreen" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ess.imu_logger.app.StartScreen" />
+        </activity>
+        <activity
+            android:name=".markdownViewer.AboutScreen"
+            android:label="@string/title_activity_about"
+            android:parentActivityName="ess.imu_logger.app.StartScreen" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ess.imu_logger.app.StartScreen" />
+        </activity>
     </application>
 
 </manifest>

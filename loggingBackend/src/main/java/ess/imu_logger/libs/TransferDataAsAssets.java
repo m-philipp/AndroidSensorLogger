@@ -299,7 +299,8 @@ public class TransferDataAsAssets extends Service implements
             String[] listOfFiles = dir.list(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String filename) {
-                    return filename.endsWith(".zip") ? true : false;
+                    Log.v(TAG, "filename: " + filename);
+                    return filename.endsWith(".zip");
                 }
             });
 

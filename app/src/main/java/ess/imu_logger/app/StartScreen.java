@@ -11,19 +11,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import ess.imu_logger.app.markdownViewer.AboutScreen;
+import ess.imu_logger.app.markdownViewer.HelpScreen;
+import ess.imu_logger.app.markdownViewer.IntroductionScreen;
+import ess.imu_logger.app.markdownViewer.MarkdownViewerActivity;
 import ess.imu_logger.libs.StartActivity;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
@@ -145,6 +143,15 @@ public class StartScreen extends StartActivity {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, ApplicationSettings.class);
+            startActivity(intent);
+        } else if (id == R.id.action_help) {
+            Intent intent = new Intent(this, HelpScreen.class);
+            startActivity(intent);
+        } else if (id == R.id.action_about) {
+            Intent intent = new Intent(this, AboutScreen.class);
+            startActivity(intent);
+        } else if (id == R.id.action_introduction) {
+            Intent intent = new Intent(this, IntroductionScreen.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

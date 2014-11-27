@@ -35,6 +35,7 @@
 
 		<CustomSwitchPreference
 			android:defaultValue="true"
+            android:enabled="false"
 			android:key="auto_start"
 			android:summary="@string/pref_description_start_on_close"
 			android:title="@string/pref_start_on_close"/>
@@ -42,6 +43,7 @@
 		<CustomSwitchPreference
 			android:defaultValue="true"
 			android:key="start_on_boot"
+            android:enabled="false"
 			android:summary="@string/pref_description_start_on_boot"
 			android:title="@string/pref_start_on_boot"/>
 

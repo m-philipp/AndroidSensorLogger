@@ -27,6 +27,10 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import ess.imu_logger.app.bluetoothLogger.LighterBluetoothService;
+import ess.imu_logger.app.markdownViewer.AboutScreen;
+import ess.imu_logger.app.markdownViewer.HelpScreen;
+import ess.imu_logger.app.markdownViewer.IntroductionScreen;
+import ess.imu_logger.app.markdownViewer.MarkdownViewerActivity;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
@@ -79,7 +83,17 @@ public class Debug extends Activity implements
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            Intent intent = new Intent(this, ApplicationSettings.class);
+            startActivity(intent);
+        } else if (id == R.id.action_help) {
+            Intent intent = new Intent(this, HelpScreen.class);
+            startActivity(intent);
+        } else if (id == R.id.action_about) {
+            Intent intent = new Intent(this, AboutScreen.class);
+            startActivity(intent);
+        } else if (id == R.id.action_introduction) {
+            Intent intent = new Intent(this, IntroductionScreen.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

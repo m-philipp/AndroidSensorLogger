@@ -1,6 +1,7 @@
 package ess.imu_logger.app;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,6 +12,11 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.LinkedList;
+
+import ess.imu_logger.app.markdownViewer.AboutScreen;
+import ess.imu_logger.app.markdownViewer.HelpScreen;
+import ess.imu_logger.app.markdownViewer.IntroductionScreen;
+import ess.imu_logger.app.markdownViewer.MarkdownViewerActivity;
 
 public class ImuLiveScreen extends Activity implements SensorEventListener {
     private SensorManager mSensorManager;
@@ -139,7 +145,17 @@ public class ImuLiveScreen extends Activity implements SensorEventListener {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            Intent intent = new Intent(this, ApplicationSettings.class);
+            startActivity(intent);
+        } else if (id == R.id.action_help) {
+            Intent intent = new Intent(this, HelpScreen.class);
+            startActivity(intent);
+        } else if (id == R.id.action_about) {
+            Intent intent = new Intent(this, AboutScreen.class);
+            startActivity(intent);
+        } else if (id == R.id.action_introduction) {
+            Intent intent = new Intent(this, IntroductionScreen.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

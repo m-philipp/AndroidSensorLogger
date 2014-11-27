@@ -1,9 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="ess.imu_logger.app.HelpScreen">
+    tools:context="ess.imu_logger.app.markdownViewer.MarkdownViewerActivity">
     <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+        android:id="@+id/action_introduction"
+        android:title="@string/title_activity_introduction"
         android:orderInCategory="100"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/action_help"
+        android:title="@string/title_activity_help_screen"
+        android:orderInCategory="200"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="300"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/title_activity_about"
+        android:orderInCategory="400"
         android:showAsAction="never" />
 </menu>

@@ -32,6 +32,7 @@ public class SensorDataSavingService extends Service {
     public static final String EXTRA_SENSOR_DATA = "ess.imu_logger.libs.data_save.extra.sensorData";
     public static final String EXTRA_BLE_RSSI = "ess.imu_logger.libs.data_save.extra.bleRssi";
     public static final String EXTRA_BLE_DEVICE_NAME = "ess.imu_logger.libs.data_save.extra.bleDeviceName";
+    public static final String EXTRA_BLE_DEVICE_ADDRESS = "ess.imu_logger.libs.data_save.extra.bleDeviceAddress";
     public static final String EXTRA_ANNOTATION_NAME = "ess.imu_logger.libs.data_save.extra.annotationName";
 
     private static final String TAG = "ess.imu_logger.libs.data_save.SensorDataSavingService";
@@ -69,7 +70,7 @@ public class SensorDataSavingService extends Service {
 
 
 				} else if (action.equals(BROADCAST_ANNOTATION)) {
-					Toast.makeText(context, "Raucher Annotation erhalten", Toast.LENGTH_SHORT).show();
+					Toast.makeText(context, "Annotation erhalten", Toast.LENGTH_SHORT).show();
 
 					StringBuilder dataString = new StringBuilder();
                     dataString.append(System.currentTimeMillis());
@@ -88,25 +89,25 @@ public class SensorDataSavingService extends Service {
                     dataString.append(System.currentTimeMillis());
                     dataString.append(" ");
                     dataString.append(SystemClock.elapsedRealtime());
-                    dataString.append(" 0 Annotation ");
-                    dataString.append(BROADCAST_LIGHTER);
+                    dataString.append(" 0 Annotation iLitit");
                     dataString.append("\n");
 
                     plainFileWriter.saveString(dataString.toString());
 
                 } else if (action.equals(BROADCAST_BLE_RSSI)) {
                     //Toast.makeText(context, "BLE RSSI Annotation erhalten", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "received BLE RSSI Broadcast. With RSSI: " + intent.getExtras().getInt(EXTRA_BLE_RSSI));
 
                     StringBuilder dataString = new StringBuilder();
                     dataString.append(System.currentTimeMillis());
                     dataString.append(" ");
                     dataString.append(SystemClock.elapsedRealtime());
-                    dataString.append(" 0 Annotation ");
-                    dataString.append(BROADCAST_BLE_RSSI);
-                    dataString.append(" ");
+                    dataString.append(" 0 BLE_RSSI ");
                     dataString.append(intent.getExtras().getString(EXTRA_BLE_DEVICE_NAME));
                     dataString.append(" ");
-                    dataString.append(intent.getExtras().getString(EXTRA_BLE_RSSI));
+                    dataString.append(intent.getExtras().getString(EXTRA_BLE_DEVICE_ADDRESS));
+                    dataString.append(" ");
+                    dataString.append(String.valueOf(intent.getExtras().getInt(EXTRA_BLE_RSSI)));
                     dataString.append("\n");
 
 
@@ -159,6 +160,7 @@ public class SensorDataSavingService extends Service {
         filter.addAction(BROADCAST_SENSOR_DATA);
         filter.addAction(BROADCAST_ANNOTATION);
         filter.addAction(BROADCAST_LIGHTER);
+        filter.addAction(BROADCAST_BLE_RSSI);
 
 		registerReceiver(receiver, filter);
 

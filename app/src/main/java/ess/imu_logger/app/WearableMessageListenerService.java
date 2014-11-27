@@ -118,12 +118,12 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     Asset profileAsset = dataMapItem.getDataMap().getAsset(Util.SENSOR_FILE);
 
                     saveFileFromAsset(fileName, profileAsset);
-                    // Do something with the bitmap
 
 
                     ConnectionResult result =
                             mGoogleApiClient.blockingConnect(1000, TimeUnit.MILLISECONDS);
                     if (!result.isSuccess()) {
+                        Log.d(TAG, "GoogleClientConnect was false");
                         return;
                     }
                     Uri.Builder uri = new Uri.Builder().scheme(PutDataRequest.WEAR_URI_SCHEME).path(Util.GAC_PATH_SENSOR_DATA);
@@ -185,8 +185,11 @@ public class WearableMessageListenerService extends WearableListenerService impl
         Util.checkDirs();
         try {
 
-            // TODO CHECK IF FILE ALREADY EXISTED!! IF THEN DON'T APPEND!
+            // CHECK IF FILE ALREADY EXISTED! IF SO BREAK.
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + Util.fileDir, "wear_" + fileName);
+            if(file.exists())
+                return;
+
             OutputStream out = new FileOutputStream(file, true);
 
             byte[] buffer = new byte[1024];

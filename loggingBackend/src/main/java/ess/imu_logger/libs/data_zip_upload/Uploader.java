@@ -21,7 +21,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
 
 import ess.imu_logger.libs.URIEncoder;
 import ess.imu_logger.libs.Util;
@@ -126,11 +130,15 @@ public class Uploader extends Thread {
 
 
                 name = URIEncoder.encodeURI(name);
+                String samplingRate = sharedPrefs.getString("sampling_rate", "unset");
+
+                String today = new SimpleDateFormat("yyyy-MM-dd", Locale.GERMANY).format(new Date(System.currentTimeMillis()));
+
 
 
                 String u = sharedPrefs.getString("server_url", "http://192.168.2.50") + ":" +
                         sharedPrefs.getString("server_port", "8080") +
-                        "/upload/" + sID + "/" + name;
+                        "/upload/" + sID + "/" + name + "_" + samplingRate + "_" + today;
                 if (!u.startsWith("http://"))
                     u = "http://" + u;
 
