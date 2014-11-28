@@ -92,7 +92,7 @@
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
-                <action android:name="ess.imu_logger.data_export.action.saveData" />
+                <action android:name="ess.imu_logger.libs.data_save.action.saveData" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
