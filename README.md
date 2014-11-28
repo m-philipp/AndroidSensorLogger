@@ -7,6 +7,6 @@ Android Application Logging the Builtin Android Sensors; plus the Sensors on you
 
 Annotation added:
 
-    Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
+    Intent sendIntent = new Intent("ess.imu_logger.libs.data_save.annotate");
     sendIntent.putExtra("ess.imu_logger.libs.data_save.extra.annotationName", "smoking");
     sendBroadcast(sendIntent);
