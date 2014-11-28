@@ -1,6 +1,9 @@
 AndroidSensorLogger
 ===================
 
+![IMU-Logger](
+https://github.com/mzittel/AndroidSensorLogger/blob/master/loggingBackend/src/main/res/drawable-xhdpi/ic_launcher.png?raw=true)
+
 Android Application Logging the Builtin Android Sensors; plus the Sensors on your Android Wear Smartwatch.
 
 ## API: Broadcasted intents
