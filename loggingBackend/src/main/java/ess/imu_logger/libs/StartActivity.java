@@ -142,6 +142,7 @@ public abstract class StartActivity extends Activity implements
 
         Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
         sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, "smoking");
+        sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_VIA, "smartphone_ui");
         sendBroadcast(sendIntent);
 
     }

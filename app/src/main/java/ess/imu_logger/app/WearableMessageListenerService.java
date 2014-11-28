@@ -73,6 +73,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
             Log.d(TAG, "annotating Smoking");
             Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
             sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, "smoking");
+            sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_VIA, "watch_ui");
             sendBroadcast(sendIntent);
         }
     }
@@ -83,25 +84,6 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         Log.d(TAG, "onDataChanged");
 
-        // final List<DataEvent> events = FreezableUtils.freezeIterable(dataEvents);
-
-        /*
-        long token = Binder.clearCallingIdentity();
-        try {
-            performOperationRequiringPermissions();
-        } finally {
-            Binder.restoreCallingIdentity(token);
-        }
-        */
-/*
-        if(!mGoogleApiClient.isConnected()){
-            ConnectionResult connectionResult = mGoogleApiClient.blockingConnect(30, TimeUnit.SECONDS);
-            if (!connectionResult.isSuccess()) {
-                Log.e(TAG, "Failed to connect to GoogleApiClient.");
-                return;
-            }
-        }
-*/
 
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {

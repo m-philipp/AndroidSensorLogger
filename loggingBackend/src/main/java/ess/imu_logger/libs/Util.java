@@ -2,6 +2,7 @@ package ess.imu_logger.libs;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.SystemClock;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,6 +16,14 @@ import java.util.UUID;
  * Created by martin on 15.09.2014.
  */
 public class Util {
+
+
+    public static final String ILITIT_ANNOTATE = "de.unifreiburg.es.iLitIt.LIGHTER_ADD_CIG";
+    public static final String ILITIT_ANNOTATE_REMOVE = "de.unifreiburg.es.iLitIt.REM_CIG";
+    public static final String ILITIT_EXTRA_VIA = "via";
+    public static final String ILITIT_EXTRA_TIMESTAMP = "timestamp";
+    public static final String ILITIT_EXTRA_LAT = "latitude";
+    public static final String ILITIT_EXTRA_LON = "longitude";
 
 
     //public static final String GAC_PATH_ANNOTATE_SMOKING_ACTIVITY = "/ess/imu_logger/annotate-smoking";
@@ -289,4 +298,114 @@ public class Util {
 
         return sb.toString();
     }
+
+
+
+
+    public static String formatLogString(Long unixTimestampInMillis, Long nanosSinceBoot, Long eventNanos, String type, String value0, String value1, String value2) {
+        StringBuilder dataString = new StringBuilder();
+
+        if (unixTimestampInMillis == null){
+            dataString.append(System.currentTimeMillis());
+            dataString.append(" ");
+        } else {
+            dataString.append(unixTimestampInMillis);
+            dataString.append(" ");
+        }
+
+        if (nanosSinceBoot == null) {
+            dataString.append(SystemClock.elapsedRealtime());
+            dataString.append(" ");
+        } else {
+            dataString.append(nanosSinceBoot);
+            dataString.append(" ");
+        }
+
+        if (eventNanos == null) {
+            dataString.append("0 ");
+        } else {
+            dataString.append(eventNanos);
+            dataString.append(" ");
+        }
+
+        if (type == null || type.equals("")) {
+            dataString.append("UNKNOWN_TYPE ");
+        } else {
+            dataString.append(type.replaceAll("\\s+",""));
+            dataString.append(" ");
+        }
+
+        if (!(value0 == null || value0.equals(""))) {
+            dataString.append(value0.replaceAll("\\s+",""));
+            dataString.append(" ");
+        }
+
+        if (!(value1 == null || value1.equals(""))) {
+            dataString.append(value1.replaceAll("\\s+",""));
+            dataString.append(" ");
+        }
+
+        if (!(value2 == null || value2.equals(""))) {
+            dataString.append(value2.replaceAll("\\s+",""));
+            dataString.append(" ");
+        }
+
+        dataString.append("\n");
+        return dataString.toString();
+    }
+    public static String formatLogString(Long unixTimestampInMillis, Long nanosSinceBoot, String type, String value0, String value1, String value2) {
+        return formatLogString(unixTimestampInMillis, nanosSinceBoot, (Long) null, type, value0, value1, value2);
+    }
+    public static String formatLogString(Long unixTimestampInMillis, String type, String value0, String value1, String value2) {
+        return formatLogString(unixTimestampInMillis, (Long) null, type, value0, value1, value2);
+    }
+    public static String formatLogString(String type, String value0, String value1, String value2) {
+        return formatLogString((Long) null, type, value0, value1, value2);
+    }
+
+
+    public static String formatLogString(Long unixTimestampInMillis, Long nanosSinceBoot, Long eventNanos, String type, String value0, String value1) {
+        return formatLogString(unixTimestampInMillis, nanosSinceBoot, eventNanos, type, value0, value1, "");
+    }
+    public static String formatLogString(Long unixTimestampInMillis, Long eventNanos, String type, String value0, String value1) {
+        return formatLogString(unixTimestampInMillis, eventNanos, type, value0, value1, "");
+    }
+    public static String formatLogString(Long unixTimestampInMillis, String type, String value0, String value1) {
+        return formatLogString(unixTimestampInMillis, type, value0, value1, "");
+    }
+    public static String formatLogString(String type, String value0, String value1) {
+        return formatLogString((Long) null, type, value0, value1);
+    }
+
+
+    public static String formatLogString(Long unixTimestampInMillis, Long nanosSinceBoot, Long eventNanos, String type, String value0) {
+        return formatLogString(unixTimestampInMillis, nanosSinceBoot, eventNanos, type, value0, "");
+    }
+    public static String formatLogString(Long unixTimestampInMillis, Long eventNanos, String type, String value0) {
+        return formatLogString(unixTimestampInMillis, eventNanos, type, value0, "");
+    }
+    public static String formatLogString(Long unixTimestampInMillis, String type, String value0) {
+        return formatLogString(unixTimestampInMillis, type, value0, "");
+    }
+    public static String formatLogString(String type, String value0) {
+        return formatLogString((Long) null, type, value0, "");
+    }
+
+
+    public static String formatLogString(Long unixTimestampInMillis, Long nanosSinceBoot, Long eventNanos, String type) {
+        return formatLogString(unixTimestampInMillis, nanosSinceBoot, eventNanos, type, "");
+    }
+    public static String formatLogString(Long unixTimestampInMillis, Long eventNanos, String type) {
+        return formatLogString(unixTimestampInMillis, eventNanos, type, "");
+    }
+    public static String formatLogString(Long unixTimestampInMillis, String type) {
+        return formatLogString(unixTimestampInMillis, type, "");
+    }
+    public static String formatLogString(String type) {
+        return formatLogString((Long) null, type, "");
+    }
+
+
+
+
 }
