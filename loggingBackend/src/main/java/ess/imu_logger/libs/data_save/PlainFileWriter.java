@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import ess.imu_logger.libs.Util;
-import ess.imu_logger.libs.logging.Logger;
 
 /**
  * Created by martin on 28.08.2014.
@@ -34,7 +33,7 @@ public class PlainFileWriter extends Thread {
     public static final String MESSAGE_DATA = "ess.imu_logger.libs.data_save.MESSAGE_DATA";
 
     private Handler inHandler;
-
+    private Boolean polling = false;
 
     private ArrayList<String> data;
 
@@ -71,54 +70,18 @@ public class PlainFileWriter extends Thread {
                         // Act on the message received from my UI thread doing my stuff
 
 
-                        // TODO Buffer Data in Array so file is not opened every single Sensor Event
 
                         if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_POLL) {
+
                             Log.d(TAG, "polling");
                             writeSensorDataToFile();
-                            startPolling();
+                            startPolling(false);
 
                         } else if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_SAVE) {
 
-                            String sensorValue = msg.getData().getString(MESSAGE_DATA);
+                            // TODO This is only for additional Data Generators like the Gas-Sensor
+                            SensorDataSavingService.sensorEvents.add(msg.getData().getString(MESSAGE_DATA));
 
-                            if (data.size() > MAX_BUFFER_SIZE) {
-
-                                Log.v(TAG, "saving some Data");
-
-                                if (!Util.isExternalStorageWritable())
-                                    return; // TODO cry for some help...
-
-                                Util.checkDirs();
-                                File file;
-                                FileOutputStream out = null;
-
-                                try {
-                                    file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + Util.fileDir, getFilename());
-                                    out = new FileOutputStream(file, true);
-                                    for (int i = 0; i < data.size(); i++) {
-                                        out.write(data.get(i).getBytes(), 0, data.get(i).length());
-                                    }
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } finally {
-                                    try {
-                                        if (out != null) {
-                                            out.flush();
-                                            out.close();
-                                        }
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    data = new ArrayList<String>(MAX_BUFFER_SIZE);
-                                }
-
-                                Log.d(TAG, "saved Sensor Values");
-                            } else {
-                                data.add(sensorValue);
-                            }
                         }
                     }
                 };
@@ -148,8 +111,8 @@ public class PlainFileWriter extends Thread {
         try {
             file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + Util.fileDir, getFilename());
             out = new FileOutputStream(file, true);
-            while(!Logger.sensorEvents.isEmpty()){ // TODO check if that condition is ok...  think so...
-                String sensorEvent = Logger.sensorEvents.poll();
+            while(!SensorDataSavingService.sensorEvents.isEmpty()){
+                String sensorEvent = SensorDataSavingService.sensorEvents.poll();
                 out.write(sensorEvent.getBytes(), 0, sensorEvent.length());
             }
         } catch (FileNotFoundException e) {
@@ -165,7 +128,6 @@ public class PlainFileWriter extends Thread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            data = new ArrayList<String>(MAX_BUFFER_SIZE);
         }
         return false;
     }
@@ -210,14 +172,22 @@ public class PlainFileWriter extends Thread {
         getHandler().sendMessage(msg);
     }
 
-    public synchronized void startPolling() {
+    public synchronized void startPolling(Boolean initCall) {
+        if(initCall && polling)
+            return;
+        polling = true;
+
         Message msg = new Message();
         Bundle b = new Bundle();
         b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_POLL);
         msg.setData(b);
 
         // could be a runnable when calling post instead of sendMessage
-        getHandler().sendMessage(msg);
+        getHandler().sendMessageDelayed(msg, 500);
+    }
+
+    public synchronized void startPolling() {
+        startPolling(true);
     }
 
 

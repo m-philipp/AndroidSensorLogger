@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.SimpleTimeZone;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import ess.imu_logger.libs.Util;
 
@@ -43,6 +44,7 @@ public class SensorDataSavingService extends Service {
     public static final String EXTRA_ANNOTATION_VIA = "ess.imu_logger.libs.data_save.extra.annotationVia";
 
     private static final String TAG = "ess.imu_logger.libs.data_save.SensorDataSavingService";
+    public static ConcurrentLinkedQueue<String> sensorEvents = new ConcurrentLinkedQueue<String>();
 
     private PlainFileWriter plainFileWriter;
     private boolean pfwRunning = false;
@@ -145,6 +147,9 @@ public class SensorDataSavingService extends Service {
 
 
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        // TODO check pfw lifecycle
+
         Log.i(TAG, "onStartCommand called.");
         if (intent != null) {
             final String action = intent.getAction();

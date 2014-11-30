@@ -13,11 +13,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
-
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import ess.imu_logger.libs.StartActivity;
 import ess.imu_logger.libs.Util;
@@ -43,8 +39,6 @@ public class Logger extends Handler implements SensorEventListener {
 
     private Context context;
 
-
-    public static ConcurrentLinkedQueue<String> sensorEvents = new ConcurrentLinkedQueue<String>();
 
     public Logger(Looper looper, Service context) {
         super(looper);
@@ -146,11 +140,7 @@ public class Logger extends Handler implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
 
         if (event == null) {
-            if (i % 2000 == 0)
-                Log.d(TAG, "SensorEvent without binding");
-            // Toast.makeText(context, "SensorEvent without binding.", Toast.LENGTH_SHORT).show();
             return;
-
         }
 
         /*
@@ -174,21 +164,7 @@ public class Logger extends Handler implements SensorEventListener {
         i++;
 
 
-        // TODO: THIS IS NOT BACKGROUNDING!! --> DONE registerListener gets Handler now!
-        // SystemClock.sleep(200);
-
-/*
-        if (i % 100 == 0) {
-            Log.d(TAG, "sensorEvent " + i);
-            // Toast.makeText(context, "SensorEvent: " + i, Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(SensorDataSavingService.BROADCAST_SENSOR_DATA);
-            intent.putExtra(SensorDataSavingService.EXTRA_SENSOR_DATA, sensorData);
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-            sensorData = new String();
-        }
-*/
-        sensorEvents.add(getString(event));
+        SensorDataSavingService.sensorEvents.add(getString(event));
 
     }
 

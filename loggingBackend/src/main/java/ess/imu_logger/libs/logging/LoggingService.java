@@ -31,17 +31,10 @@ public class LoggingService extends Service {
 
     private boolean loggingStarted = false;
 
-
-    // TODO: Rename actions, choose action names that describe tasks that this
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     public static final String ACTION_START_LOGGING = "ess.imu_logger.action.startLogging";
     public static final String ACTION_STOP_LOGGING = "ess.imu_logger.action.stopLogging";
 
     private static final String TAG = "ess.imu_logger.libs.logging.LoggingService";
-
-    // TODO: Rename parameters
-    // private static final String EXTRA_GYRO = "ess.imu_logger.extra.GYRO";
-
 
     private WakeLock wl;
 
@@ -95,30 +88,6 @@ public class LoggingService extends Service {
 
         Log.d(TAG, "on onCreate called.");
 
-        /*
-        Intent openIntent = new Intent();
-        openIntent.setAction(Util.ACTION_OPEN_START_ACTIVITY);
-        openIntent.setType("text/plain");
-        PendingIntent open =
-                PendingIntent.getActivity(this,0,openIntent,0);
-
-        Intent smokeIntent = new Intent();
-        smokeIntent.setAction(Util.ACTION_ANNOTATE_SMOKING);
-        //smokeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        smokeIntent.setType("text/plain");
-        PendingIntent annotateSmoking =
-                PendingIntent.getActivity(this,0,smokeIntent,0);
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_action_core_refresh_hd)
-                        .setContentTitle("Raucherstudie") // Title
-                        .setContentText("Aufzeichnung läuft.") // Sub-Title
-                        .setContentIntent(open)
-                        .addAction(R.drawable.ic_action_camera_switch_camera_hd,
-                                getString(R.string.annotate), annotateSmoking);
-        startForeground(1337,  mBuilder.build());
-        */
 
         PendingIntent open =
                 PendingIntent.getActivity(this,0,new Intent(this, StartActivity.class),0);
