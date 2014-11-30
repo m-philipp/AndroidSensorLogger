@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 20
+    compileSdkVersion 19
     buildToolsVersion '21.1.1'
 
     defaultConfig {
         applicationId "ess.imu_logger"
-        minSdkVersion 20
+        minSdkVersion 19
         targetSdkVersion 21
         versionCode 3
         versionName "0.3"
