@@ -25,6 +25,7 @@
 
     <string name="manual_data_upload">Manuell Sensor Daten hochladen</string>
     <string name="trigger_manual_data_upload">jetzt hochladen</string>
+    <string name="uploaded_this_session">hochgeladen:</string>
     <string name="data_to_upload">hochzuladen</string>
     <string name="annotateSmoking">Rauchen annotieren</string>
     <string name="title_activity_debug">Debug</string>
@@ -41,6 +42,7 @@
     <string name="title_activity_help_screen">Hilfe</string>
     <string name="title_activity_introduction">Anleitung</string>
     <string name="title_activity_about">Impressum</string>
+    <string name="messageSender_service">Message Sender</string>
 
 
 </resources>

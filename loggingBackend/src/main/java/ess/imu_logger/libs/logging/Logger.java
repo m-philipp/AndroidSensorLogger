@@ -17,6 +17,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import ess.imu_logger.libs.StartActivity;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
@@ -41,6 +43,8 @@ public class Logger extends Handler implements SensorEventListener {
 
     private Context context;
 
+
+    public static ConcurrentLinkedQueue<String> sensorEvents = new ConcurrentLinkedQueue<String>();
 
     public Logger(Looper looper, Service context) {
         super(looper);
@@ -137,6 +141,7 @@ public class Logger extends Handler implements SensorEventListener {
     }
 
     private Long i = 0L;
+    private String sensorData = "";
 
     public void onSensorChanged(SensorEvent event) {
 
@@ -148,14 +153,22 @@ public class Logger extends Handler implements SensorEventListener {
 
         }
 
+        /*
+        try {
+            Thread.sleep( 5000 );
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        */
+
         if (i % 1000 == 0) {
             Log.d(TAG, "sensorEvent " + i);
             // Toast.makeText(context, "SensorEvent: " + i, Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(StartActivity.BROADCAST_SENSOR_EVENT_NO);
             intent.putExtra(StartActivity.EXTRA_SENSOR_EVENT_NO, i);
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
+            //LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            context.sendBroadcast(intent);
         }
 
         i++;
@@ -164,10 +177,18 @@ public class Logger extends Handler implements SensorEventListener {
         // TODO: THIS IS NOT BACKGROUNDING!! --> DONE registerListener gets Handler now!
         // SystemClock.sleep(200);
 
-        Intent intent = new Intent(SensorDataSavingService.BROADCAST_SENSOR_DATA);
-        intent.putExtra(SensorDataSavingService.EXTRA_SENSOR_DATA, getString(event));
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+/*
+        if (i % 100 == 0) {
+            Log.d(TAG, "sensorEvent " + i);
+            // Toast.makeText(context, "SensorEvent: " + i, Toast.LENGTH_SHORT).show();
 
+            Intent intent = new Intent(SensorDataSavingService.BROADCAST_SENSOR_DATA);
+            intent.putExtra(SensorDataSavingService.EXTRA_SENSOR_DATA, sensorData);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            sensorData = new String();
+        }
+*/
+        sensorEvents.add(getString(event));
 
     }
 

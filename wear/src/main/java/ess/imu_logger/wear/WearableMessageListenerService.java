@@ -87,7 +87,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         } else if(event.getPath().equals(Util.GAC_PATH_CONFIRM_FILE_RECEIVED)){
 
-            Log.d(TAG, "Received GAC_PARH: " + Util.GAC_PATH_CONFIRM_FILE_RECEIVED + " Message Contend was: " + event.getData().toString());
+            Log.d(TAG, "Received GAC_PATH: " + Util.GAC_PATH_CONFIRM_FILE_RECEIVED + " removing File: " + new String(event.getData()));
 
             // delete file
             deleteLogFile(new String(event.getData()));

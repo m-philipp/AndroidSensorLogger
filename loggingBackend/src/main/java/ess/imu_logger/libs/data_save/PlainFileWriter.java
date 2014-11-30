@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import ess.imu_logger.libs.Util;
+import ess.imu_logger.libs.logging.Logger;
 
 /**
  * Created by martin on 28.08.2014.
@@ -28,6 +29,7 @@ public class PlainFileWriter extends Thread {
 
     public static final String MESSAGE_TYPE_ACTION = "ess.imu_logger.libs.data_save.MESSAGE_TYPE_ACTION";
     public static final int MESSAGE_ACTION_SAVE = 0;
+    public static final int MESSAGE_ACTION_POLL = 1;
 
     public static final String MESSAGE_DATA = "ess.imu_logger.libs.data_save.MESSAGE_DATA";
 
@@ -71,8 +73,12 @@ public class PlainFileWriter extends Thread {
 
                         // TODO Buffer Data in Array so file is not opened every single Sensor Event
 
+                        if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_POLL) {
+                            Log.d(TAG, "polling");
+                            writeSensorDataToFile();
+                            startPolling();
 
-                        if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_SAVE) {
+                        } else if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_SAVE) {
 
                             String sensorValue = msg.getData().getString(MESSAGE_DATA);
 
@@ -131,6 +137,39 @@ public class PlainFileWriter extends Thread {
         }
     }
 
+    private boolean writeSensorDataToFile() {
+        if (!Util.isExternalStorageWritable())
+            return false;
+
+        Util.checkDirs();
+        File file;
+        FileOutputStream out = null;
+
+        try {
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + Util.fileDir, getFilename());
+            out = new FileOutputStream(file, true);
+            while(!Logger.sensorEvents.isEmpty()){ // TODO check if that condition is ok...  think so...
+                String sensorEvent = Logger.sensorEvents.poll();
+                out.write(sensorEvent.getBytes(), 0, sensorEvent.length());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.flush();
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            data = new ArrayList<String>(MAX_BUFFER_SIZE);
+        }
+        return false;
+    }
+
     // This method is allowed to be called from any thread
     public synchronized void requestStop() {
         // using the handler, post a Runnable that will quit()
@@ -165,6 +204,16 @@ public class PlainFileWriter extends Thread {
         Bundle b = new Bundle();
         b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_SAVE);
         b.putString(MESSAGE_DATA, data);
+        msg.setData(b);
+
+        // could be a runnable when calling post instead of sendMessage
+        getHandler().sendMessage(msg);
+    }
+
+    public synchronized void startPolling() {
+        Message msg = new Message();
+        Bundle b = new Bundle();
+        b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_POLL);
         msg.setData(b);
 
         // could be a runnable when calling post instead of sendMessage

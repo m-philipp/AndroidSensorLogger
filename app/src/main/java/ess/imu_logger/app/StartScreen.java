@@ -267,6 +267,10 @@ public class StartScreen extends StartActivity {
             t.setTextColor(getResources().getColor(R.color.my_red));
         }
 
+        t = (TextView) findViewById(R.id.num_uploaded);
+        t.setText( sharedPrefs.getInt("uploadedData", 0) +  " Dateien");
+
+
     }
 
 

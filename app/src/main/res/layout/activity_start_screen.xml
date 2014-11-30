@@ -193,8 +193,32 @@
 					</LinearLayout>
 
 				</LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="1">
 
-			</LinearLayout>
+                <TextView
+                    android:id="@+id/uploaded_this_session"
+                    android:layout_weight="0.04"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/uploaded_this_session"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+                <TextView
+                    android:id="@+id/num_uploaded"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:text="0"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+                </LinearLayout>
+
+            </LinearLayout>
 		</LinearLayout>
 	</ScrollView>
 

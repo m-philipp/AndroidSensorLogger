@@ -32,7 +32,7 @@
 
 
 	<string name="pref_server_url">URL</string>
-	<string name="pref_default_server_url">http://google.de</string>
+	<string name="pref_default_server_url">http://srv.zittel.eu</string>
 
 
 	<string name="pref_sync_wlan_only">Nur über WLAN</string>

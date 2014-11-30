@@ -87,8 +87,16 @@ public class Uploader extends Thread {
 
                                 Log.d(TAG, "now trying to upload date while concerning settings and WIFI State");
 
+                                SharedPreferences.Editor editor = sharedPrefs.edit();
+                                editor.putInt("uploadedData", 0);
+                                editor.commit();
+
                                 // Doing Magic
-                                while (doingMagic()) ;
+                                while (doingMagic()) {
+                                    editor = sharedPrefs.edit();
+                                    editor.putInt("uploadedData", sharedPrefs.getInt("uploadedData", 0) + 1);
+                                    editor.commit();
+                                }
 
                             }
                         }

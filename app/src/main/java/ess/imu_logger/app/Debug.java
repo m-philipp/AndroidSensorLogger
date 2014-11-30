@@ -26,12 +26,12 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import ess.imu_logger.app.bluetoothLogger.LighterBluetoothService;
+import ess.imu_logger.app.bluetoothLogger.BluetoothScannerService;
 import ess.imu_logger.app.markdownViewer.AboutScreen;
 import ess.imu_logger.app.markdownViewer.HelpScreen;
 import ess.imu_logger.app.markdownViewer.IntroductionScreen;
-import ess.imu_logger.app.markdownViewer.MarkdownViewerActivity;
 import ess.imu_logger.libs.Util;
+import ess.imu_logger.libs.WearableMessageSenderService;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
 import ess.imu_logger.libs.logging.LoggingService;
@@ -126,14 +126,71 @@ public class Debug extends Activity implements
                 .putDataItem(mGoogleApiClient, request);
     }
 
-    public void onStartBluetoothService(View v){
-        Log.d(TAG, "onStartBluetoothService");
 
 
-        Intent loggingServiceIntent = new Intent(this, LighterBluetoothService.class);
-        this.startService(loggingServiceIntent);
-
+    public void onStartStopBluetoothService(View v){
+        Log.d(TAG, "onStartStopBluetoothService");
+        if(!isBluetoothServiceRunning()) {
+            Intent loggingServiceIntent = new Intent(this, BluetoothScannerService.class);
+            this.startService(loggingServiceIntent);
+        } else {
+            Intent loggingServiceIntent = new Intent(this, BluetoothScannerService.class);
+            loggingServiceIntent.setAction(BluetoothScannerService.ACTION_STOP_SERVICE);
+            this.startService(loggingServiceIntent);
+        }
     }
+    public void onStartStopLoggingService(View v){
+        Log.d(TAG, "onStartStopLoggingService");
+        if(isLoggingServiceRunning()) {
+            Intent loggingServiceIntent = new Intent(this, LoggingService.class);
+            loggingServiceIntent.setAction(LoggingService.ACTION_STOP_LOGGING);
+            this.startService(loggingServiceIntent);
+        } else {
+            Intent loggingServiceIntent = new Intent(this, LoggingService.class);
+            loggingServiceIntent.setAction(LoggingService.ACTION_START_LOGGING);
+            this.startService(loggingServiceIntent);
+        }
+    }
+
+    public void onStartStopSensorDataSavingService(View v){
+        Log.d(TAG, "onStartStopLoggingService");
+        if(isSensorDataSavingServiceRunning()) {
+            Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
+            sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_STOP_SERVICE);
+            this.startService(sensorDataSavingServiceIntent);
+        } else {
+            Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
+            sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
+            this.startService(sensorDataSavingServiceIntent);
+        }
+    }
+
+    public void onStartStopZipUploadService(View v){
+        Log.d(TAG, "onStartStopLoggingService");
+        if(!isSensorDataSavingServiceRunning()) {
+            Intent mServiceIntent = new Intent(this, ZipUploadService.class);
+            mServiceIntent.setAction(ZipUploadService.ACTION_START_SERVICE);
+            startService(mServiceIntent);
+        }
+    }
+
+    public void onStartStopMessageSenderService(View v){
+        Log.d(TAG, "onStartStopMessageSenderService");
+        if(isMessageSenderServiceRunning()) {
+            Intent sensorDataSavingServiceIntent = new Intent(this, WearableMessageSenderService.class);
+            sensorDataSavingServiceIntent.setAction(WearableMessageSenderService.ACTION_STOP_SERVICE);
+            this.startService(sensorDataSavingServiceIntent);
+        } else {
+            Intent sensorDataSavingServiceIntent = new Intent(this, WearableMessageSenderService.class);
+            sensorDataSavingServiceIntent.setAction(WearableMessageSenderService.ACTION_START_SERVICE);
+            this.startService(sensorDataSavingServiceIntent);
+        }
+    }
+
+
+
+
+
 
     @Override
     protected void onResume() {
@@ -220,9 +277,22 @@ public class Debug extends Activity implements
             t.setTextColor(getResources().getColor(R.color.my_red));
         }
 
+        t = (TextView) findViewById(R.id.messageSender_service_state);
+        if (isMessageSenderServiceRunning()) {
+            t.setText(getResources().getText(R.string.service_running));
+            t.setTextColor(getResources().getColor(R.color.my_green));
+        } else {
+            t.setText(getResources().getText(R.string.service_stopped));
+            t.setTextColor(getResources().getColor(R.color.my_red));
+        }
 
 
 
+
+    }
+
+    private boolean isMessageSenderServiceRunning() {
+        return isServiceRunning(WearableMessageSenderService.class.getName());
     }
 
     private boolean isLoggingServiceRunning() {
@@ -234,7 +304,7 @@ public class Debug extends Activity implements
     }
 
     private boolean isBluetoothServiceRunning() {
-        return isServiceRunning(LighterBluetoothService.class.getName());
+        return isServiceRunning(BluetoothScannerService.class.getName());
     }
 
     private boolean isZipUploadServiceRunning() {

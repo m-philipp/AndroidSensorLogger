@@ -71,6 +71,41 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ess.imu_logger.app.StartScreen" />
         </activity>
+        <activity
+            android:name="ess.imu_logger.app.markdownViewer.IntroductionScreen"
+            android:label="@string/title_activity_introduction"
+            android:parentActivityName="ess.imu_logger.app.StartScreen" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ess.imu_logger.app.StartScreen" />
+        </activity>
+        <activity
+            android:name=".markdownViewer.AboutScreen"
+            android:label="@string/title_activity_about"
+            android:parentActivityName="ess.imu_logger.app.StartScreen" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ess.imu_logger.app.StartScreen" />
+        </activity>
+
+
+        <receiver
+            android:name="ess.imu_logger.libs.myReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="ess.imu_logger.data_zip_upload.action.startService" />
+                <action android:name="ess.imu_logger.libs.data_zip_upload.action.startZipperOnly" />
+                <action android:name="ess.imu_logger.libs.TransferDataAsAssets.transfer" />
+
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+
 
         <service
             android:name="ess.imu_logger.libs.logging.LoggingService"
@@ -98,18 +133,6 @@
             </intent-filter>
         </service>
 
-        <receiver
-            android:name="ess.imu_logger.libs.myReceiver"
-            android:enabled="true"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="ess.imu_logger.data_zip_upload.action.startService" />
-                <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
 
         <service
             android:name="ess.imu_logger.libs.WearableMessageSenderService"
@@ -117,26 +140,11 @@
             android:exported="true" >
         </service>
         <service
-            android:name="ess.imu_logger.app.bluetoothLogger.LighterBluetoothService"
+            android:name=".bluetoothLogger.BluetoothScannerService"
             android:enabled="true" >
         </service>
 
-        <activity
-            android:name="ess.imu_logger.app.markdownViewer.IntroductionScreen"
-            android:label="@string/title_activity_introduction"
-            android:parentActivityName="ess.imu_logger.app.StartScreen" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="ess.imu_logger.app.StartScreen" />
-        </activity>
-        <activity
-            android:name=".markdownViewer.AboutScreen"
-            android:label="@string/title_activity_about"
-            android:parentActivityName="ess.imu_logger.app.StartScreen" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="ess.imu_logger.app.StartScreen" />
-        </activity>
+
     </application>
 
 </manifest>

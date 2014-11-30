@@ -94,7 +94,8 @@ public abstract class StartActivity extends Activity implements
         IntentFilter filter = new IntentFilter();
         filter.addAction(BROADCAST_SENSOR_EVENT_NO);
         registerReceiver(receiver, filter);
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+        // LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+        registerReceiver(receiver, filter);
 
 
         List<Sensor> sensors;

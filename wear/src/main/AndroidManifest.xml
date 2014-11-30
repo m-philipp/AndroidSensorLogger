@@ -67,6 +67,7 @@
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
+                <action android:name="ess.imu_logger.data_zip_upload.action.startService" />
                 <action android:name="ess.imu_logger.libs.TransferDataAsAssets.transfer" />
                 <action android:name="ess.imu_logger.libs.data_zip_upload.action.startZipperOnly" />
 

@@ -7,25 +7,15 @@ package ess.imu_logger.app.bluetoothLogger;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.Log;
-
-import java.util.Date;
-import java.util.UUID;
 
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 
@@ -33,8 +23,12 @@ import ess.imu_logger.libs.data_save.SensorDataSavingService;
  * Service for managing connection and data communication with a GATT server hosted on a
  * given Bluetooth LE device.
  */
-public class LighterBluetoothService extends Service {
-    private final static String TAG = LighterBluetoothService.class.getName();
+public class BluetoothScannerService extends Service {
+    private final static String TAG = BluetoothScannerService.class.getName();
+
+    public static final String ACTION_START_SERVICE = "ess.imu_logger.app.bluetoothLogger.BluetoothScannerService.startLogging";
+    public static final String ACTION_STOP_SERVICE = "ess.imu_logger.app.bluetoothLogger.BluetoothScannerService.stopLogging";
+
 
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
@@ -51,8 +45,7 @@ public class LighterBluetoothService extends Service {
     };
 
 
-
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
 
         IntentFilter mif = new IntentFilter();
@@ -67,16 +60,22 @@ public class LighterBluetoothService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(TAG, "onStartCommand called.");
+        if (intent == null || ACTION_START_SERVICE.equals(intent.getAction())) {
+            if (mBluetoothManager == null || mBluetoothAdapter == null) {
+                Log.e(TAG, "Unable to obtain a mBluetoothManager / BluetoothAdapter.");
+                return START_NOT_STICKY;
+            }
 
+            mHandler = new Handler(Looper.getMainLooper());
+            mHandler.postDelayed(mStartLEScan, mScanStartDelay);
+        } else if (ACTION_STOP_SERVICE.equals(intent.getAction())) {
 
-        if (mBluetoothManager == null || mBluetoothAdapter == null) {
-            Log.e(TAG, "Unable to obtain a mBluetoothManager / BluetoothAdapter.");
-            return START_NOT_STICKY;
+            mBluetoothAdapter.stopLeScan(bleScanCallback);
+
+            stopSelf();
         }
 
-        /** create a handler on the UI thread */
-        mHandler = new Handler(Looper.getMainLooper());
-        mHandler.postDelayed(mStartLEScan, mScanStartDelay);
 
         return START_STICKY;
     }
@@ -90,9 +89,9 @@ public class LighterBluetoothService extends Service {
     @Override
     public void onDestroy() {
         Log.e(TAG, "service destroyed");
+        unregisterReceiver(mBluetoothChangeReceiver);
         super.onDestroy();
     }
-
 
 
     private Runnable mStartLEScan = new Runnable() {

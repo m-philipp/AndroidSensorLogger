@@ -63,14 +63,15 @@ public class SensorDataSavingService extends Service {
             if (intent != null) {
                 if (action.equals(BROADCAST_SENSOR_DATA)) {
 
-
-
                      /*
                         * send (Local ?) broadcasts on SensorDataChanged
                         * start Service from StartScreen
                         * ...
                      */
                     // Log.d(TAG, "save SensorData from Broadcast");
+
+                    //SystemClock.sleep(200); // TODO FIX THIS! DOne ?
+
                     saveData(intent);
 
 
@@ -157,6 +158,7 @@ public class SensorDataSavingService extends Service {
                 if (!pfwRunning && !plainFileWriter.isAlive()) {
                     plainFileWriter.start();
                     pfwRunning = true;
+                    plainFileWriter.startPolling();
                 }
             } else if (ACTION_STOP_SERVICE.equals(action)) {
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());

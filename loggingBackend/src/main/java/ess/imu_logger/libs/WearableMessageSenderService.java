@@ -34,7 +34,10 @@ public class WearableMessageSenderService extends Service implements
     private static final String TAG = "ess.imu_logger.app.WearableMessageSenderService";
 
 
-    public static final String ACTION_SEND_MESSAGE = "ess.imu_logger.libs.action.sendMessage";
+    public static final String ACTION_SEND_MESSAGE = "ess.imu_logger.libs.wearableMessageSenderService.sendMessage";
+    public static final String ACTION_START_SERVICE = "ess.imu_logger.libs.wearableMessageSenderService.startLogging";
+    public static final String ACTION_STOP_SERVICE = "ess.imu_logger.libs.wearableMessageSenderService.stopLogging";
+
 
     public static final String EXTRA_PATH = "ess.imu_logger.libs.extra.messagePath";
     public static final String EXTRA_MESSAGE_CONTENT_STRING = "ess.imu_logger.libs.extra.messageContentString";
@@ -79,6 +82,20 @@ public class WearableMessageSenderService extends Service implements
                 }
                 smt.sendMessage(intent.getStringExtra(EXTRA_PATH),
                         intent.getStringExtra(EXTRA_MESSAGE_CONTENT_STRING));
+            } else if (ACTION_START_SERVICE.equals(action)) {
+                Log.d(TAG, ACTION_START_SERVICE);
+                if(!smtRunning && !smt.isAlive()) {
+                    smt.start();
+                    smtRunning = true;
+                }
+            } else if (ACTION_STOP_SERVICE.equals(action)) {
+                Log.d(TAG, ACTION_STOP_SERVICE);
+                if(smtRunning || smt.isAlive()) {
+                    smt.requestStop();
+                    smtRunning = false;
+                    stopSelf();
+                }
+                return START_NOT_STICKY;
             }
         }
 
