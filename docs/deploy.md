@@ -2,7 +2,18 @@
 
 Deployment is pretty easy. Just checkout the GitHub Repository and import the Project in your [Android Studio](https://developer.android.com/sdk/installing/studio.html). 
 
-## The Smartphone App
+## Install from APK
+
+You can download the latest **[APK](imu-logger.apk)** Release and install the App directly on your Smartphone.
+
+Therefore you must enable *untrusted Apps* (*Unbekannte Herkunft*) under the Security Settings.
+
+![Screenshot](img/untrusted-apps.png){: style="max-width: 200px"}
+
+
+## Build with Android Studio
+
+### The Smartphone App
 
 Just Deploy the *app* module to your smartphone. Make sure the loggingBackend Module is properly declared as Dependency.  
 
@@ -12,7 +23,7 @@ You need:
 * sdk Verion 21
 
 
-## The Wearable App
+### The Wearable App
 
 Just Deploy the *wear* module to your smartwatch. Make sure the loggingBackend Module is properly declared as Dependency.  
 
