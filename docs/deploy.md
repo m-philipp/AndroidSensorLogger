@@ -20,7 +20,7 @@ Just Deploy the *app* module to your smartphone. Make sure the loggingBackend Mo
 You need:
 
 * build Tools Version 21.1.1
-* sdk Verion 21
+* min-sdk Verion 20 (aka KitKat)
 
 
 ### The Wearable App
