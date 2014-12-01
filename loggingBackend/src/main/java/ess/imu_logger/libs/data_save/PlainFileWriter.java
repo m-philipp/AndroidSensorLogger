@@ -35,24 +35,13 @@ public class PlainFileWriter extends Thread {
     private Handler inHandler;
     private Boolean polling = false;
 
-    private ArrayList<String> data;
-
-
     public static final String fileExtension = ".log";
 
-
-
     private static final Integer MAX_FILE_SIZE = 1024*1024*1; // 1 MB
-    private static final Integer MAX_BUFFER_SIZE = 1024*1;
 
-
-
-    //private static final Integer MAX_FILE_SIZE = 1024*1024*50; // 50 MB
-    //private static final Integer MAX_BUFFER_SIZE = 1024*8;
 
 
     public PlainFileWriter() {
-        this.data = new ArrayList<String>(MAX_BUFFER_SIZE);
     }
 
 

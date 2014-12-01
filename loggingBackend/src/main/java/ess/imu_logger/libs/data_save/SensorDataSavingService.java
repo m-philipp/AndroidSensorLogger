@@ -55,7 +55,7 @@ public class SensorDataSavingService extends Service {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            //Log.i(TAG, "Broadcast Receiver received a Broadcast");
+            Log.i(TAG, "Broadcast Receiver received a Broadcast");
 
             // TODO check is the extra is really there
 
@@ -64,13 +64,6 @@ public class SensorDataSavingService extends Service {
 
             if (intent != null) {
                 if (action.equals(BROADCAST_SENSOR_DATA)) {
-
-                     /*
-                        * send (Local ?) broadcasts on SensorDataChanged
-                        * start Service from StartScreen
-                        * ...
-                     */
-                    // Log.d(TAG, "save SensorData from Broadcast");
 
                     //SystemClock.sleep(200); // TODO FIX THIS! DOne ?
 
@@ -105,10 +98,10 @@ public class SensorDataSavingService extends Service {
                     String via = intent.getExtras().getString(Util.ILITIT_EXTRA_VIA, "");
 
                     String dataString = "";
-                    if(via.equals("ui"))
-                        dataString = Util.formatLogString(timestamp, "Annotation", "smoking", String.valueOf(latitude), String.valueOf(longitude));
-                    else
+                    if(via.equals("lighter"))
                         dataString = Util.formatLogString(timestamp, "Annotation", "lighter", String.valueOf(latitude), String.valueOf(longitude));
+                    else
+                        dataString = Util.formatLogString(timestamp, "Annotation", "ui", String.valueOf(latitude), String.valueOf(longitude));
 
 
                     plainFileWriter.saveString(dataString);

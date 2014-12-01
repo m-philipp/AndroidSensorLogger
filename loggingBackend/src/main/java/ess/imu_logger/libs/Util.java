@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Util {
 
 
-    public static final String ILITIT_ANNOTATE = "de.unifreiburg.es.iLitIt.LIGHTER_ADD_CIG";
+    public static final String ILITIT_ANNOTATE = "de.unifreiburg.es.iLitIt.ADD_CIG";
     public static final String ILITIT_ANNOTATE_REMOVE = "de.unifreiburg.es.iLitIt.REM_CIG";
     public static final String ILITIT_EXTRA_VIA = "via";
     public static final String ILITIT_EXTRA_TIMESTAMP = "timestamp";
