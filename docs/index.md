@@ -15,7 +15,7 @@ This App was developed for a smoking recognition study (That's why the, configur
 
 ## Deployment
 
-### The [0.4 Alpha APK ](imu-logger.apk)
+### The [0.6 Alpha APK ](imu-logger.apk)
 
 Further [Deployment](deploy) Information.
 
