@@ -53,6 +53,7 @@ public class myReceiver extends BroadcastReceiver {
             }  else if (action.equals(ACTION_PERIODIC_ALARM)) {
 
                 // TODO start smartphone services
+                // TODO maybe first just start the Service, wait an then just start the Action through the Service Handler
 
                 Intent sendPrefsIntent = new Intent(context, WearableMessageSenderService.class);
                 sendPrefsIntent.setAction(WearableMessageSenderService.ACTION_SEND_PREFS_AND_LOGGING);

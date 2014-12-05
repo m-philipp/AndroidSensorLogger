@@ -124,7 +124,10 @@ public class WearableMessageSenderService extends Service implements
             } else if (ACTION_STOP_SERVICE.equals(action)) {
 
                 Log.d(TAG, ACTION_STOP_SERVICE);
-                smt.requestStop();
+                if(smtRunning) {
+                    smt.requestStop();
+                }
+                stopSelf();
                 return START_NOT_STICKY;
 
             }
@@ -134,18 +137,12 @@ public class WearableMessageSenderService extends Service implements
     }
 
     private void startService() {
-        if (!smtRunning) {
+        if (!smtRunning && !smt.isAlive()) {
             smt.start();
             smtRunning = true;
         }
     }
 
-    private void stopService() {
-        if (smtRunning) {
-            //smt.requestStop();
-            stopSelf();
-        }
-    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -298,7 +295,6 @@ public class WearableMessageSenderService extends Service implements
                 public void run() {
                     Log.i(TAG, "Thread loop quitting by request");
                     Looper.myLooper().quit();
-                    stopService();
                 }
             });
         }
@@ -306,7 +302,7 @@ public class WearableMessageSenderService extends Service implements
         private Handler getHandler() {
             while (inHandler == null) {
                 try {
-                    wait();
+                    wait();     // TODO might hold the UI Thread; So this is bad :)
                 } catch (InterruptedException e) {
                     //Ignore and try again.
                 }
