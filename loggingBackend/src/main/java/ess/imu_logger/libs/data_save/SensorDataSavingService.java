@@ -71,7 +71,8 @@ public class SensorDataSavingService extends Service {
 
 
                 } else if (action.equals(BROADCAST_ANNOTATION)) {
-                    Toast.makeText(context, "Annotation erhalten", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Annotation erhalten", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Annotation received");
 
                     String dataString = Util.formatLogString("Annotation",
                             intent.getExtras().getString(EXTRA_ANNOTATION_NAME), intent.getExtras().getString(EXTRA_ANNOTATION_VIA));
@@ -89,7 +90,7 @@ public class SensorDataSavingService extends Service {
                     plainFileWriter.saveString(dataString);
 
                 } else if (action.equals(Util.ILITIT_ANNOTATE)) {
-                    Toast.makeText(context, "Annotation erhalten", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Annotation erhalten", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "received iLitit Annotation Broadcast.");
 
                     Long timestamp = getTimestamp(intent);
@@ -107,7 +108,7 @@ public class SensorDataSavingService extends Service {
                     plainFileWriter.saveString(dataString);
 
                 } else if (action.equals(Util.ILITIT_ANNOTATE_REMOVE)) {
-                    Toast.makeText(context, "Annotation erhalten", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Annotation erhalten", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "received iLitit Annotation Broadcast.");
 
                     Long timestamp = getTimestamp(intent);
@@ -154,16 +155,18 @@ public class SensorDataSavingService extends Service {
             } else if (ACTION_START_SERVICE.equals(action)) {
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
                 if (!pfwRunning && !plainFileWriter.isAlive()) {
-                    plainFileWriter.start();
                     pfwRunning = true;
+                    plainFileWriter.start(); // TODO check already running exception
                     plainFileWriter.startPolling();
                 }
             } else if (ACTION_STOP_SERVICE.equals(action)) {
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
-
-                plainFileWriter.requestStop();
-                pfwRunning = false;
+                if(pfwRunning) {
+                    plainFileWriter.requestStop();
+                    //pfwRunning = false;
+                }
                 stopSelf();
+                return START_NOT_STICKY;
             }
         }
         return START_STICKY;

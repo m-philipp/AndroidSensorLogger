@@ -2,12 +2,14 @@ package ess.imu_logger.libs;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,6 +37,9 @@ public class WearableMessageSenderService extends Service implements
 
 
     public static final String ACTION_SEND_MESSAGE = "ess.imu_logger.libs.wearableMessageSenderService.sendMessage";
+    public static final String ACTION_SEND_PREFERENCES = "ess.imu_logger.libs.wearableMessageSenderService.sendPrefs";
+    public static final String ACTION_SYNC_LOGGING = "ess.imu_logger.libs.wearableMessageSenderService.synchLogging";
+    public static final String ACTION_SEND_PREFS_AND_LOGGING = "ess.imu_logger.libs.wearableMessageSenderService.sendPrefsAndLogging";
     public static final String ACTION_START_SERVICE = "ess.imu_logger.libs.wearableMessageSenderService.startLogging";
     public static final String ACTION_STOP_SERVICE = "ess.imu_logger.libs.wearableMessageSenderService.stopLogging";
 
@@ -44,17 +49,21 @@ public class WearableMessageSenderService extends Service implements
 
 
     private GoogleApiClient mGoogleApiClient;
+    protected SharedPreferences sharedPrefs;
 
     private SendMessageThread smt;
     private Boolean smtRunning = false;
 
-    public WearableMessageSenderService() {
-    }
 
     @Override
     public void onCreate() {
 
         super.onCreate();
+
+        Log.d(TAG, "creating new MessageSenderService");
+
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -75,31 +84,67 @@ public class WearableMessageSenderService extends Service implements
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_SEND_MESSAGE.equals(action)) {
+
                 Log.d(TAG, ACTION_SEND_MESSAGE);
-                if(!smtRunning && !smt.isAlive()) {
-                    smt.start();
-                    smtRunning = true;
-                }
+                startService();
+
                 smt.sendMessage(intent.getStringExtra(EXTRA_PATH),
                         intent.getStringExtra(EXTRA_MESSAGE_CONTENT_STRING));
+
+            } else if (ACTION_SEND_PREFERENCES.equals(action)) {
+
+                Log.d(TAG, ACTION_SEND_PREFERENCES);
+                startService();
+                smt.sendPreferences();
+
+            } else if (ACTION_SYNC_LOGGING.equals(action)) {
+
+                Log.d(TAG, ACTION_SYNC_LOGGING);
+                startService();
+                if (sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false))
+                    smt.sendMessage(Util.GAC_PATH_START_LOGGING, "");
+                else
+                    smt.sendMessage(Util.GAC_PATH_STOP_LOGGING, "");
+
+            } else if (ACTION_SEND_PREFS_AND_LOGGING.equals(action)) {
+
+                Log.d(TAG, ACTION_SEND_PREFS_AND_LOGGING);
+                startService();
+                smt.sendPreferences();
+                if (sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false))
+                    smt.sendMessage(Util.GAC_PATH_START_LOGGING, "");
+                else
+                    smt.sendMessage(Util.GAC_PATH_STOP_LOGGING, "");
+
             } else if (ACTION_START_SERVICE.equals(action)) {
+
                 Log.d(TAG, ACTION_START_SERVICE);
-                if(!smtRunning && !smt.isAlive()) {
-                    smt.start();
-                    smtRunning = true;
-                }
+                startService();
+
             } else if (ACTION_STOP_SERVICE.equals(action)) {
+
                 Log.d(TAG, ACTION_STOP_SERVICE);
-                if(smtRunning || smt.isAlive()) {
-                    smt.requestStop();
-                    smtRunning = false;
-                    stopSelf();
-                }
+                smt.requestStop();
                 return START_NOT_STICKY;
+
             }
         }
 
         return START_STICKY;
+    }
+
+    private void startService() {
+        if (!smtRunning) {
+            smt.start();
+            smtRunning = true;
+        }
+    }
+
+    private void stopService() {
+        if (smtRunning) {
+            //smt.requestStop();
+            stopSelf();
+        }
     }
 
     @Override
@@ -107,8 +152,6 @@ public class WearableMessageSenderService extends Service implements
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
-
-
 
 
     @Override
@@ -131,6 +174,7 @@ public class WearableMessageSenderService extends Service implements
         public static final String MESSAGE_PATH = "ess.imu_logger.libs.data_save.MESSAGE_PATH";
         public static final String MESSAGE_CONTENT = "ess.imu_logger.libs.data_save.MESSAGE_CONTENT";
         public static final int MESSAGE_ACTION_SEND_MESSAGE = 0;
+        public static final int MESSAGE_ACTION_TRANSFER_PREFERENCES = 1;
 
 
         // Constructor for sending data objects to the data layer
@@ -151,12 +195,14 @@ public class WearableMessageSenderService extends Service implements
                         public void handleMessage(Message msg) {
 
 
-                            if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_SEND_MESSAGE){
+                            if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_SEND_MESSAGE) {
 
-                                // TODO Magic
-                                final String  path = msg.getData().getString(MESSAGE_PATH, "/nowhere");
-                                final String  content = msg.getData().getString(MESSAGE_CONTENT, "");
+                                // TODO check if the mGoogleApiClient is still connected
+                                final String path = msg.getData().getString(MESSAGE_PATH, "/nowhere");
+                                final String content = msg.getData().getString(MESSAGE_CONTENT, "");
 
+
+                                Log.d(TAG, "sending path: " + path + " with content: " + content);
 
                                 Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
                                         new ResultCallback<NodeApi.GetConnectedNodesResult>() {
@@ -170,7 +216,42 @@ public class WearableMessageSenderService extends Service implements
                                         }
                                 );
 
+                            } else if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_TRANSFER_PREFERENCES) {
+
+                                Log.d(TAG, "transfering Prefs");
+
+                                PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(Util.GAC_PATH_PREFERENCES);
+
+                                DataMap dataMap = putDataMapRequest.getDataMap();
+
+                                dataMap.putString(Util.PREFERENCES_NAME, sharedPrefs.getString(Util.PREFERENCES_NAME, "Eva Musterfrau"));
+                                dataMap.putString(Util.PREFERENCES_ANNOTATION_NAME, sharedPrefs.getString(Util.PREFERENCES_ANNOTATION_NAME, "smoking"));
+                                dataMap.putBoolean(Util.PREFERENCES_ANONYMIZE, sharedPrefs.getBoolean(Util.PREFERENCES_ANONYMIZE, true));
+
+                                dataMap.putBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false));
+                                dataMap.putString(Util.PREFERENCES_SAMPLING_RATE, sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "3"));
+
+                                dataMap.putBoolean(Util.PREFERENCES_ACCELEROMETER, sharedPrefs.getBoolean(Util.PREFERENCES_ACCELEROMETER, false));
+                                dataMap.putBoolean(Util.PREFERENCES_GYROSCOPE, sharedPrefs.getBoolean(Util.PREFERENCES_GYROSCOPE, false));
+                                dataMap.putBoolean(Util.PREFERENCES_MAGNETIC_FIELD, sharedPrefs.getBoolean(Util.PREFERENCES_MAGNETIC_FIELD, false));
+                                dataMap.putBoolean(Util.PREFERENCES_AMBIENT_LIGHT, sharedPrefs.getBoolean(Util.PREFERENCES_AMBIENT_LIGHT, false));
+                                dataMap.putBoolean(Util.PREFERENCES_PROXIMITY, sharedPrefs.getBoolean(Util.PREFERENCES_PROXIMITY, false));
+                                dataMap.putBoolean(Util.PREFERENCES_TEMPERATURE, sharedPrefs.getBoolean(Util.PREFERENCES_TEMPERATURE, false));
+                                dataMap.putBoolean(Util.PREFERENCES_HUMIDITY, sharedPrefs.getBoolean(Util.PREFERENCES_HUMIDITY, false));
+                                dataMap.putBoolean(Util.PREFERENCES_PRESSURE, sharedPrefs.getBoolean(Util.PREFERENCES_PRESSURE, false));
+
+                                dataMap.putBoolean(Util.PREFERENCES_ROTATION, sharedPrefs.getBoolean(Util.PREFERENCES_ROTATION, false));
+                                dataMap.putBoolean(Util.PREFERENCES_GRAVITY, sharedPrefs.getBoolean(Util.PREFERENCES_GRAVITY, false));
+                                dataMap.putBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, sharedPrefs.getBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, false));
+                                dataMap.putBoolean(Util.PREFERENCES_STEPS, sharedPrefs.getBoolean(Util.PREFERENCES_STEPS, false));
+
+
+                                PutDataRequest request = putDataMapRequest.asPutDataRequest();
+                                PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
+                                        .putDataItem(mGoogleApiClient, request);
+
                             }
+
 
                         }
                     };
@@ -200,6 +281,16 @@ public class WearableMessageSenderService extends Service implements
             getHandler().sendMessage(msg);
         }
 
+        public synchronized void sendPreferences() {
+            Message msg = new Message();
+            Bundle b = new Bundle();
+            b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_TRANSFER_PREFERENCES);
+            msg.setData(b);
+
+            // could be a runnable when calling post instead of sendMessage
+            getHandler().sendMessage(msg);
+        }
+
         // This method is allowed to be called from any thread
         public synchronized void requestStop() {
             getHandler().post(new Runnable() {
@@ -207,6 +298,7 @@ public class WearableMessageSenderService extends Service implements
                 public void run() {
                     Log.i(TAG, "Thread loop quitting by request");
                     Looper.myLooper().quit();
+                    stopService();
                 }
             });
         }

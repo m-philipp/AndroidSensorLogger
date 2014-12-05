@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:text="@string/annotate_smoking"
             android:id="@+id/startAnnotateSmoking"
-            android:onClick="onStartAnnotateSmoking"/>
+            android:onClick="onStartAnnotate"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"

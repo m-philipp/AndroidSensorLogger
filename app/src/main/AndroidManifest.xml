@@ -35,7 +35,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="ess.imu_logger.libs.Util.ACTION_ANNOTATE_SMOKING" />
+                <action android:name="ess.imu_logger.libs.Util.ACTION_ANNOTATE" />
                 <action android:name="ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -80,14 +80,13 @@
                 android:value="ess.imu_logger.app.StartScreen" />
         </activity>
         <activity
-            android:name=".markdownViewer.AboutScreen"
+            android:name="ess.imu_logger.app.markdownViewer.AboutScreen"
             android:label="@string/title_activity_about"
             android:parentActivityName="ess.imu_logger.app.StartScreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ess.imu_logger.app.StartScreen" />
         </activity>
-
 
         <receiver
             android:name="ess.imu_logger.libs.myReceiver"
@@ -97,7 +96,7 @@
                 <action android:name="ess.imu_logger.data_zip_upload.action.startService" />
                 <action android:name="ess.imu_logger.libs.data_zip_upload.action.startZipperOnly" />
                 <action android:name="ess.imu_logger.libs.TransferDataAsAssets.transfer" />
-
+                <action android:name="ess.imu_logger.libs.myReceiver.periodic" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
 
@@ -105,10 +104,8 @@
             </intent-filter>
         </receiver>
 
-
-
         <service
-            android:name="ess.imu_logger.libs.logging.LoggingService"
+            android:name="ess.imu_logger.app.logging.AppLoggingService"
             android:enabled="true"
             android:exported="true" />
         <service
@@ -132,19 +129,20 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
-
-
         <service
             android:name="ess.imu_logger.libs.WearableMessageSenderService"
             android:enabled="true"
             android:exported="true" >
         </service>
         <service
-            android:name=".bluetoothLogger.BluetoothScannerService"
+            android:name="ess.imu_logger.app.bluetoothLogger.BluetoothScannerService"
             android:enabled="true" >
         </service>
-
-
+        <service
+            android:name="ess.imu_logger.app.logging.AppLoggingService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>

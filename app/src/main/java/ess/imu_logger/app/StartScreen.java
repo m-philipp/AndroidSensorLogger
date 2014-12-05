@@ -10,7 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataMap;
@@ -18,22 +20,27 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import ess.imu_logger.app.logging.AppLoggingService;
 import ess.imu_logger.app.markdownViewer.AboutScreen;
 import ess.imu_logger.app.markdownViewer.HelpScreen;
 import ess.imu_logger.app.markdownViewer.IntroductionScreen;
-import ess.imu_logger.app.markdownViewer.MarkdownViewerActivity;
 import ess.imu_logger.libs.StartActivity;
 import ess.imu_logger.libs.Util;
+import ess.imu_logger.libs.WearableMessageSenderService;
+import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
 import ess.imu_logger.libs.myReceiver;
 
-public class StartScreen extends StartActivity {
+public class StartScreen extends StartActivity implements MyDialogFragment.NoticeDialogListener {
 
 
     private static final String TAG = "ess.imu_logger.app.StartScreen";
 
     private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
+
+
+    private static final int DIALOG_TOGGLE = 0;
+    private static final int DIALOG_ANNOTATE = 1;
 
 
     @Override
@@ -41,35 +48,13 @@ public class StartScreen extends StartActivity {
 
         Log.d(TAG, "onCreate");
 
-        if(getIntent() != null && getIntent().getAction().equals(Util.ACTION_ANNOTATE_SMOKING)){
-            Log.d(TAG, "annotate Smoke ACTION");
-            annotateSmoking();
-        }
+        checkIntent(getIntent());
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
 
-        Intent intent = new Intent(this, myReceiver.class);
-        intent.setAction(ZipUploadService.ACTION_START_SERVICE);
-        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
-        if(alarmMgr == null){
-            Log.d(TAG, "AlarmManager was null");
-            alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
-        }
-        else {
-            Log.d(TAG, "AlarmManager was not null. Canceling alarmIntent");
-
-            alarmMgr.cancel(alarmIntent);
-        }
-
-
-        alarmMgr.cancel(alarmIntent);
-
-        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                1000,
-                Util.ZIP_UPLOAD_SERVICE_FREQUENCY, alarmIntent); // TODO make Values static finals
+        alarmManagerSetup();
 
 
         sharedPrefs.registerOnSharedPreferenceChangeListener(listener);
@@ -91,14 +76,58 @@ public class StartScreen extends StartActivity {
 
     }
 
+    private void alarmManagerSetup() {
+        Intent zipUploadAlarmIntent = new Intent(this, myReceiver.class);
+        zipUploadAlarmIntent.setAction(ZipUploadService.ACTION_START_SERVICE);
+        PendingIntent zipUploadAlarmPendingIntent = PendingIntent.getBroadcast(this, 0, zipUploadAlarmIntent, 0);
+
+        Intent periodicAlarmIntent = new Intent(this, myReceiver.class);
+        periodicAlarmIntent.setAction(myReceiver.ACTION_PERIODIC_ALARM);
+        PendingIntent periodicAlarmPendingIntent = PendingIntent.getBroadcast(this, 0, periodicAlarmIntent, 0);
+
+        if(alarmMgr == null){
+            Log.d(TAG, "AlarmManager was null");
+            alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
+        }
+        else {
+            Log.d(TAG, "AlarmManager was not null.");
+        }
+
+        alarmMgr.cancel(zipUploadAlarmPendingIntent);
+        alarmMgr.cancel(periodicAlarmPendingIntent);
+
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                1000,
+                Util.ZIP_UPLOAD_SERVICE_FREQUENCY, zipUploadAlarmPendingIntent);
+
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                1000,
+                myReceiver.PERIODIC_ALARM_CYCLE_TIME, periodicAlarmPendingIntent);
+
+    }
+
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        checkIntent(intent);
+    }
+
+    private void checkIntent(Intent i){
+        if(i != null &&
+                i.getAction() != null &&
+                i.getAction().equals(Util.ACTION_ANNOTATE)){
+
+            //Toast.makeText(this, "Annotate from Intent", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "annotate ACTION");
+            annotate(null);
+        }
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();
 
-        if(getIntent() != null && getIntent().getAction().equals(Util.ACTION_ANNOTATE_SMOKING)){
-            Log.d(TAG, "annotate Smoke ACTION");
-            annotateSmoking();
-        }
+        checkIntent(getIntent());
 
         Log.d(TAG, "resuming");
     }
@@ -158,9 +187,26 @@ public class StartScreen extends StartActivity {
     }
 
 
-    public void annotateSmoking(View v) {
-        annotateSmoking();
+    public void annotate(View v) {
+        Bundle b = new Bundle();
+        b.putString(MyDialogFragment.ARG_MESSAGE, getString(R.string.dialog_sure_annotate));
+        b.putString(MyDialogFragment.ARG_CONFIRM, getString(R.string.confirm_annotate));
+        b.putString(MyDialogFragment.ARG_CANCEL, getString(R.string.cancel));
+        b.putInt(MyDialogFragment.ARG_ID, DIALOG_ANNOTATE);
+
+        MyDialogFragment mdf = new MyDialogFragment();
+        mdf.setArguments(b);
+        mdf.show(getFragmentManager(), TAG);
     }
+
+    public void onDialogPositiveClick(int i){
+        if(i == DIALOG_ANNOTATE)
+            annotate();
+        else if(i == DIALOG_TOGGLE)
+            confirmedToggleClick();
+    };
+
+
 
     public void triggerManualDataUpload(View v) {
 
@@ -175,43 +221,6 @@ public class StartScreen extends StartActivity {
 
     }
 
-    public void sendPreferencesToWearable(){
-        Log.d(TAG, "sending Data Object");
-
-        PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(Util.GAC_PATH_PREFERENCES);
-
-        DataMap dataMap = putDataMapRequest.getDataMap();
-
-        dataMap.putString(Util.PREFERENCES_NAME, sharedPrefs.getString(Util.PREFERENCES_NAME, "Eva Musterfrau"));
-        dataMap.putBoolean(Util.PREFERENCES_ANONYMIZE, sharedPrefs.getBoolean(Util.PREFERENCES_ANONYMIZE, true));
-
-        dataMap.putBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false));
-        dataMap.putString(Util.PREFERENCES_SAMPLING_RATE, sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "3"));
-
-        dataMap.putBoolean(Util.PREFERENCES_ACCELEROMETER, sharedPrefs.getBoolean(Util.PREFERENCES_ACCELEROMETER, false));
-        dataMap.putBoolean(Util.PREFERENCES_GYROSCOPE, sharedPrefs.getBoolean(Util.PREFERENCES_GYROSCOPE, false));
-        dataMap.putBoolean(Util.PREFERENCES_MAGNETIC_FIELD, sharedPrefs.getBoolean(Util.PREFERENCES_MAGNETIC_FIELD, false));
-        dataMap.putBoolean(Util.PREFERENCES_AMBIENT_LIGHT, sharedPrefs.getBoolean(Util.PREFERENCES_AMBIENT_LIGHT, false));
-        dataMap.putBoolean(Util.PREFERENCES_PROXIMITY, sharedPrefs.getBoolean(Util.PREFERENCES_PROXIMITY, false));
-        dataMap.putBoolean(Util.PREFERENCES_TEMPERATURE, sharedPrefs.getBoolean(Util.PREFERENCES_TEMPERATURE, false));
-        dataMap.putBoolean(Util.PREFERENCES_HUMIDITY, sharedPrefs.getBoolean(Util.PREFERENCES_HUMIDITY, false));
-        dataMap.putBoolean(Util.PREFERENCES_PRESSURE, sharedPrefs.getBoolean(Util.PREFERENCES_PRESSURE, false));
-
-        dataMap.putBoolean(Util.PREFERENCES_ROTATION, sharedPrefs.getBoolean(Util.PREFERENCES_ROTATION, false));
-        dataMap.putBoolean(Util.PREFERENCES_GRAVITY, sharedPrefs.getBoolean(Util.PREFERENCES_GRAVITY, false));
-        dataMap.putBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, sharedPrefs.getBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, false));
-        dataMap.putBoolean(Util.PREFERENCES_STEPS, sharedPrefs.getBoolean(Util.PREFERENCES_STEPS, false));
-
-        dataMap.putString(Util.PREFERENCES_SERVER_URL, sharedPrefs.getString(Util.PREFERENCES_SERVER_URL, "http://example.com"));
-        dataMap.putString(Util.PREFERENCES_SERVER_PORT, sharedPrefs.getString(Util.PREFERENCES_SERVER_PORT, "8080"));
-        dataMap.putString(Util.PREFERENCES_UPLOAD_FREQUENCY, sharedPrefs.getString(Util.PREFERENCES_UPLOAD_FREQUENCY, "0"));
-
-
-
-        PutDataRequest request = putDataMapRequest.asPutDataRequest();
-        PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
-                .putDataItem(mGoogleApiClient, request);
-    }
 
 
     SharedPreferences.OnSharedPreferenceChangeListener listener =
@@ -228,17 +237,18 @@ public class StartScreen extends StartActivity {
                         if (sharedPrefs.getBoolean("sensor_activate", false)) {
 
                             startBackgroundLogging();
-                            sendMessageToCompanion(Util.GAC_PATH_START_LOGGING);
+                            syncCompantionLoggingState();
 
                         } else {
 
                             stopBackgroundLogging();
-                            sendMessageToCompanion(Util.GAC_PATH_STOP_LOGGING);
+                            syncCompantionLoggingState();
 
                         }
                     }
                     uiUpdate();
-                    sendPreferencesToWearable();
+
+                    sendPreferencesToCompanion();
 
 
                 }
@@ -249,22 +259,23 @@ public class StartScreen extends StartActivity {
         TextView t = (TextView) findViewById(R.id.welcome_name);
         t.setText("Hi, " + sharedPrefs.getString("name", "Kunibert"));
 
+        t = (TextView) findViewById(R.id.annotate_smoking);
+        t.setText(getString(R.string.annotate) + " " + sharedPrefs.getString(Util.PREFERENCES_ANNOTATION_NAME, "smoking"));
+
         t = (TextView) findViewById(R.id.amaount_of_data_to_upload);
         t.setText(sharedPrefs.getString("amount_of_logged_data", "0.0") +  " MB");
 
         t = (TextView) findViewById(R.id.id_sensor_event);
-        t.setText(Long.toString(sensorEventNo) + " k");
+        t.setText(Long.toString(sharedPrefs.getLong("sensor_events_logged", 0L) / 1000) + " k");
         // Log.d(TAG, "updating Sensor events to: " + sensorEventNo + " k");
 
-        // update logging status
-        t = (TextView) findViewById(R.id.logging_service_state);
 
         if (isLoggingServiceRunning() && isSensorDataSavingServiceRunning()) {
-            t.setText(getResources().getText(R.string.service_running));
-            t.setTextColor(getResources().getColor(R.color.my_green));
+            ToggleButton tb = (ToggleButton) findViewById(R.id.toggleLogging);
+            tb.setChecked(true);
         } else {
-            t.setText(getResources().getText(R.string.service_stopped));
-            t.setTextColor(getResources().getColor(R.color.my_red));
+            ToggleButton tb = (ToggleButton) findViewById(R.id.toggleLogging);
+            tb.setChecked(false);
         }
 
         t = (TextView) findViewById(R.id.num_uploaded);
@@ -274,5 +285,85 @@ public class StartScreen extends StartActivity {
     }
 
 
+
+    public void onToggleClicked(View view) {
+        Bundle b = new Bundle();
+        b.putString(MyDialogFragment.ARG_MESSAGE, getString(R.string.dialog_sure_toggle));
+        b.putString(MyDialogFragment.ARG_CONFIRM, getString(R.string.confirm_toggle));
+        b.putString(MyDialogFragment.ARG_CANCEL, getString(R.string.cancel));
+        b.putInt(MyDialogFragment.ARG_ID, DIALOG_TOGGLE);
+
+        MyDialogFragment mdf = new MyDialogFragment();
+        mdf.setArguments(b);
+        mdf.show(getFragmentManager(), TAG);
+
+    }
+    public void confirmedToggleClick() {
+
+        if (!sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false)) {
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, true);
+            editor.commit();
+        } else {
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false);
+            editor.commit();
+        }
+    }
+
+
+    protected void syncCompantionLoggingState() {
+
+        Log.d(TAG, "starting Message Sender ...");
+
+        Intent messageSenderIntent = new Intent(this, WearableMessageSenderService.class);
+        messageSenderIntent.setAction(WearableMessageSenderService.ACTION_SYNC_LOGGING);
+        this.startService(messageSenderIntent);
+
+    }
+
+    protected void sendPreferencesToCompanion() {
+
+        Log.d(TAG, "starting Message Sender ...");
+
+        Intent messageSenderIntent = new Intent(this, WearableMessageSenderService.class);
+        messageSenderIntent.setAction(WearableMessageSenderService.ACTION_SEND_PREFERENCES);
+        this.startService(messageSenderIntent);
+
+    }
+
+
+    protected void startBackgroundLogging() {
+
+        Log.d(TAG, "starting Background Logging ...");
+
+        Intent loggingServiceIntent = new Intent(this, AppLoggingService.class);
+        loggingServiceIntent.setAction(AppLoggingService.ACTION_START_LOGGING);
+        this.startService(loggingServiceIntent);
+
+        Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
+        sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
+        this.startService(sensorDataSavingServiceIntent);
+
+    }
+
+    protected void stopBackgroundLogging() {
+
+        Log.d(TAG, "stopping Background Logging ...");
+
+        Intent loggingServiceIntent = new Intent(this, AppLoggingService.class);
+        loggingServiceIntent.setAction(AppLoggingService.ACTION_STOP_LOGGING);
+        this.startService(loggingServiceIntent);
+
+        Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
+        sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_STOP_SERVICE);
+        this.startService(sensorDataSavingServiceIntent);
+
+    }
+
+
+    protected boolean isLoggingServiceRunning() {
+        return isServiceRunning(AppLoggingService.class.getName());
+    }
 
 }

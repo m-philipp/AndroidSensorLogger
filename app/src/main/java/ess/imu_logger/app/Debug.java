@@ -110,7 +110,7 @@ public class Debug extends Activity implements
 
     public void sendImplicitIntent(View v) {
         Intent openIntent = new Intent();
-        openIntent.setAction(Util.ACTION_ANNOTATE_SMOKING);
+        openIntent.setAction(Util.ACTION_ANNOTATE);
         openIntent.setType("text/plain");
         startActivity(openIntent);
     }

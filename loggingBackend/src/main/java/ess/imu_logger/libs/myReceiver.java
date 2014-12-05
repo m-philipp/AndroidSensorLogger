@@ -10,6 +10,8 @@ import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
 public class myReceiver extends BroadcastReceiver {
 
     private static final String TAG = "ess.imu_logger.libs.myReceiver";
+    public static final String ACTION_PERIODIC_ALARM = "ess.imu_logger.libs.myReceiver.periodic";
+    public static final int PERIODIC_ALARM_CYCLE_TIME = 3*1000;
 
     public myReceiver() {
     }
@@ -47,6 +49,18 @@ public class myReceiver extends BroadcastReceiver {
                 Intent mServiceIntent = new Intent(context, TransferDataAsAssets.class);
                 mServiceIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
                 context.startService(mServiceIntent);
+
+            }  else if (action.equals(ACTION_PERIODIC_ALARM)) {
+
+                // TODO start smartphone services
+
+                Intent sendPrefsIntent = new Intent(context, WearableMessageSenderService.class);
+                sendPrefsIntent.setAction(WearableMessageSenderService.ACTION_SEND_PREFS_AND_LOGGING);
+                context.startService(sendPrefsIntent);
+
+                Intent stopIntent = new Intent(context, WearableMessageSenderService.class);
+                stopIntent.setAction(WearableMessageSenderService.ACTION_STOP_SERVICE);
+                context.startService(stopIntent);
 
             } else {
                 Log.d(TAG, action);

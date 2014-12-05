@@ -72,7 +72,7 @@ public class Logger extends Handler implements SensorEventListener {
 
 
     @Override
-    public void handleMessage(Message msg) {
+    public synchronized void handleMessage(Message msg) {
         if (msg.what == MESSAGE_START) {
             Log.i(TAG, "Logger started");
 
@@ -154,11 +154,9 @@ public class Logger extends Handler implements SensorEventListener {
         if (i % 1000 == 0) {
             Log.d(TAG, "sensorEvent " + i);
             // Toast.makeText(context, "SensorEvent: " + i, Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(StartActivity.BROADCAST_SENSOR_EVENT_NO);
-            intent.putExtra(StartActivity.EXTRA_SENSOR_EVENT_NO, i);
-            //LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-            context.sendBroadcast(intent);
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putLong("sensor_events_logged", i);
+            editor.commit();
         }
 
         i++;

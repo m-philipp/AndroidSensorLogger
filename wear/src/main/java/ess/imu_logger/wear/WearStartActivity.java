@@ -8,16 +8,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
-import com.google.android.gms.wearable.Wearable;
-
 import ess.imu_logger.libs.*;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
+import ess.imu_logger.wear.logging.WearLoggingService;
 
-public class StartActivity extends ess.imu_logger.libs.StartActivity {
+public class WearStartActivity extends StartActivity {
 
     //private TextView mTextView;
 
@@ -33,24 +28,14 @@ public class StartActivity extends ess.imu_logger.libs.StartActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_start);
-        /*
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
 
 
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-            @Override
-            public void onLayoutInflated(WatchViewStub stub) {
-                mTextView = (TextView) stub.findViewById(R.id.text);
-            }
-        });
-        */
 
-
-        Intent transferDataIntent = new Intent(this, ess.imu_logger.libs.myReceiver.class);
+        Intent transferDataIntent = new Intent(this, myReceiver.class);
         transferDataIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
         transferDataAlarmIntent = PendingIntent.getBroadcast(this, 0, transferDataIntent, 0);
 
-        Intent zipDataIntent = new Intent(this, ess.imu_logger.libs.myReceiver.class);
+        Intent zipDataIntent = new Intent(this, myReceiver.class);
         zipDataIntent.setAction(ZipUploadService.ACTION_START_ZIPPER_ONLY);
         zipDataAlarmIntent = PendingIntent.getBroadcast(this, 0, zipDataIntent, 0);
 
@@ -76,22 +61,7 @@ public class StartActivity extends ess.imu_logger.libs.StartActivity {
 
     }
 
-    public void sendObjectToWearable(){
-            Log.d(TAG, "sending Data Object");
-            PutDataMapRequest dataMap = PutDataMapRequest.create("/count");
-            dataMap.getDataMap().putInt("/count", 42);
-            PutDataRequest request = dataMap.asPutDataRequest();
-            PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
-                    .putDataItem(mGoogleApiClient, request);
-        }
 
-    public void onStartLiveScreen_ORIGINAL(View v) {
-
-        Intent intent = new Intent(this, ImuLiveScreen.class);
-        startActivity(intent);
-
-
-    }
 
 
     public void onStartLiveScreen(View v){
@@ -100,8 +70,8 @@ public class StartActivity extends ess.imu_logger.libs.StartActivity {
         startActivity(intent);
     }
 
-    public void onStartAnnotateSmoking(View v) {
-        Intent intent = new Intent(this, AnnotateSmoking.class);
+    public void onStartAnnotate(View v) {
+        Intent intent = new Intent(this, Annotate.class);
         startActivity(intent);
     }
 
@@ -129,11 +99,11 @@ public class StartActivity extends ess.imu_logger.libs.StartActivity {
     protected void uiUpdate() {
 
         TextView t = (TextView) findViewById(R.id.id_mb_to_upload);
-        t.setText(sharedPrefs.getString("amount_of_logged_data", "0.0") +  " MB");
+        if(sharedPrefs != null)
+            t.setText(sharedPrefs.getString("amount_of_logged_data", "0.0") +  " MB"); // TODO check (SONY ?) Null Pointer Exception
 
         t = (TextView) findViewById(R.id.id_sensor_event);
-        t.setText(Long.toString(sensorEventNo) + " k");
-        // Log.d(TAG, "updating Sensor events to: " + sensorEventNo + " k");
+        t.setText(Long.toString(sharedPrefs.getLong("sensor_events_logged", 0L) / 1000) + " k");
 
         // update logging status
         t = (TextView) findViewById(R.id.id_logging_running);
@@ -150,5 +120,9 @@ public class StartActivity extends ess.imu_logger.libs.StartActivity {
 
     }
 
+
+    protected boolean isLoggingServiceRunning() {
+        return isServiceRunning(WearLoggingService.class.getName());
+    }
 
 }

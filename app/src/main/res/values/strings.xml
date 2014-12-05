@@ -44,5 +44,13 @@
     <string name="title_activity_about">Impressum</string>
     <string name="messageSender_service">Message Sender</string>
 
+    <string name="toggle_log_on">Aufzeichnung ist eingeschaltet</string>
+    <string name="toggle_log_off">Aufzeichnung ist ausgeschaltet</string>
+    <string name="dialog_sure_annotate">Annotation Speichern?</string>
+    <string name="confirm_annotate">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="dialog_sure_toggle">Loggingmodus verändern?</string>
+    <string name="confirm_toggle">bestätigen</string>
+
 
 </resources>

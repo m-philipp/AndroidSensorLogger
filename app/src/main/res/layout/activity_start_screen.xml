@@ -45,11 +45,11 @@
 					android:id="@+id/annotate_smoking"
 					android:layout_width="match_parent"
 					android:layout_height="100dp"
-					android:onClick="annotateSmoking"
+					android:onClick="annotate"
 					android:text="@+string/annotateSmoking" />
                     <!-- android:elevation="5dp" -->
 
-
+                <!--
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -80,6 +80,17 @@
                         android:textColor="#ff6000"/>
 
                 </LinearLayout>
+                -->
+
+                <ToggleButton
+                    android:id="@+id/toggleLogging"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textOn="@string/toggle_log_on"
+                    android:textOff="@string/toggle_log_off"
+                    android:onClick="onToggleClicked"/>
+
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -112,9 +123,11 @@
                 </LinearLayout>
 
 
+
+
             </LinearLayout>
 
-			<TextView
+            <TextView
 				android:id="@+id/textView4"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -130,7 +143,7 @@
 			      android:background="#ff6000" />
 			-->
 
-			<LinearLayout
+            <LinearLayout
 				android:orientation="vertical"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"

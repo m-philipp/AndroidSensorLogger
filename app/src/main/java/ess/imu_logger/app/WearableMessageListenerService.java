@@ -7,32 +7,25 @@ package ess.imu_logger.app;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMapItem;
-import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import ess.imu_logger.libs.Util;
@@ -69,7 +62,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
         Log.d(TAG, "onMessageReceived");
         if (event.getPath().equals(Util.GAC_PATH_TEST_ACTIVITY)) {
             Toast.makeText(this, "Hello from Wearable!", Toast.LENGTH_LONG).show();
-        } else if (event.getPath().equals(Util.GAC_PATH_ANNOTATED_SMOKING)) {
+        } else if (event.getPath().equals(Util.GAC_PATH_ANNOTATED)) {
             Log.d(TAG, "annotating Smoking");
             Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
             sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, "smoking");
@@ -81,6 +74,10 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
+
+        // TODO TODO TODO check that
+        // final List<DataEvent> events = FreezableUtils.freezeIterable(dataEvents);
+        // dataEvents.close();
 
         Log.d(TAG, "onDataChanged");
 

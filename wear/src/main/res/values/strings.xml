@@ -11,26 +11,22 @@
     <string name="live_sensor_acceleration">Beschleunigung</string>
     <string name="live_sensor_gyro">Gyroskop</string>
     <string name="live_sensor_magn">Magnetometer</string>
-
-
     <string name="annotate_smoking">starte Rauchen</string>
     <string name="title_logging_running">Aufzeichnung</string>
     <string name="title_sensor_event">Event No.</string>
     <string name="title_mb_to_upload">hochzuladen</string>
-
     <string name="stopped">angehalten</string>
     <string name="running">läuft</string>
-
     <string name="title_activity_annotate_smoking">Rauchen</string>
-
     <string name="start_timer">Start Timer (5 seconds)</string>
-
-    <string name="annotateSmoking_finished_notification_title">Rauchannotation</string>
+    <string name="annotateSmoking_finished_notification_title">Annotation</string>
     <string name="annotateSmoking_finished_notification_timer_selected">Annotation verworfen</string>
     <string name="annotateSmoking_finished_notification_timer_finished">Annotation gespeichert</string>
 
-
     <item name="my_red" type="color">#ff6000</item>
     <item name="my_green" type="color">#ff00c600</item>
+
+    <string name="title_activity_notification_start_screen">NotificationStartScreen</string>
+    <string name="title_activity_notification_init_annotate_screen">NotificationInitAnnotateScreen</string>
 
 </resources>

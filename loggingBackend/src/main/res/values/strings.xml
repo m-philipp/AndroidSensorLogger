@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">LoggingBackend</string>
 
-    <string name="annotate">Rauchen annotieren</string>
+    <string name="annotate">Annotiere</string>
     <string name="startStartActivity">IMU-Logger öffnen</string>
+    <string name="pref_default_annotation_name">smoking</string>
+    <string name="pref_title_annotation_name">Annotations Name</string>
 </resources>

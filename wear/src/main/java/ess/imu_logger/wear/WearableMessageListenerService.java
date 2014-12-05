@@ -5,13 +5,19 @@ package ess.imu_logger.wear;
  */
 
 import android.app.ActivityManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -19,6 +25,7 @@ import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
 import java.io.File;
@@ -26,17 +33,15 @@ import java.io.File;
 import ess.imu_logger.libs.TransferDataAsAssets;
 import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
-import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
 import ess.imu_logger.libs.logging.LoggingService;
+import ess.imu_logger.wear.logging.WearLoggingService;
 
 
 /**
  * Listens for a message telling it to start the Wearable MainActivity.
  */
 public class WearableMessageListenerService extends WearableListenerService implements
-        GoogleApiClient.OnConnectionFailedListener{
-
-
+        GoogleApiClient.OnConnectionFailedListener {
 
 
     SharedPreferences sharedPrefs;
@@ -45,20 +50,10 @@ public class WearableMessageListenerService extends WearableListenerService impl
     private static final String TAG = "ess.imu_logger.wear.WearableMessageListenerService";
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-
-        // TODO reimplement
-
-        /*
-        Intent mServiceIntent = new Intent(this, TransferDataAsAssets.class);
-        mServiceIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
-        this.startService(mServiceIntent);
-        */
-
 
 
     }
@@ -71,13 +66,17 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         if (event.getPath().equals(Util.GAC_PATH_TEST_ACTIVITY)) {
 
-            Toast.makeText(this, "Hello from Phone!", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Message: " + Util.GAC_PATH_TEST_ACTIVITY);
+            Toast.makeText(this, "Hello from Phone!", Toast.LENGTH_SHORT).show();
+
+            //note();
 
         } else if (event.getPath().equals(Util.GAC_PATH_START_LOGGING)) {
 
             Log.d(TAG, "GAC Start Logging");
-            if(!isLoggingServiceRunning() || !isSensorDataSavingServiceRunning())
-                startBackgroundLogging();
+            // TODO start Main Activity
+            // if (!isLoggingServiceRunning() || !isSensorDataSavingServiceRunning())
+            startBackgroundLogging();
 
 
         } else if (event.getPath().equals(Util.GAC_PATH_STOP_LOGGING)) {
@@ -85,7 +84,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
             Log.d(TAG, "GAC Stop Logging");
             stopBackgroundLogging();
 
-        } else if(event.getPath().equals(Util.GAC_PATH_CONFIRM_FILE_RECEIVED)){
+        } else if (event.getPath().equals(Util.GAC_PATH_CONFIRM_FILE_RECEIVED)) {
 
             Log.d(TAG, "Received GAC_PATH: " + Util.GAC_PATH_CONFIRM_FILE_RECEIVED + " removing File: " + new String(event.getData()));
 
@@ -112,7 +111,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
                 Log.d(TAG, "DataItem changed: " + event.getDataItem().getUri());
 
                 String eventUri = event.getDataItem().getUri().toString();
-                if (eventUri.contains (Util.GAC_PATH_PREFERENCES)) {
+                if (eventUri.contains(Util.GAC_PATH_PREFERENCES)) {
 
                     SharedPreferences.Editor editor = sharedPrefs.edit();
                     DataMapItem dataItem = DataMapItem.fromDataItem(event.getDataItem());
@@ -167,17 +166,13 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     editor.putBoolean(Util.PREFERENCES_STEPS, data);
 
 
-                    String dataString = dataItem.getDataMap().getString(Util.PREFERENCES_SERVER_URL);
-                    Log.d(TAG, "server url = " + dataString);
-                    editor.putString(Util.PREFERENCES_SERVER_URL, dataString);
-
-                    dataString = dataItem.getDataMap().getString(Util.PREFERENCES_SERVER_PORT);
-                    Log.d(TAG, "port = " + dataString);
-                    editor.putString(Util.PREFERENCES_SERVER_PORT, dataString);
-
-                    dataString = dataItem.getDataMap().getString(Util.PREFERENCES_NAME);
+                    String dataString = dataItem.getDataMap().getString(Util.PREFERENCES_NAME);
                     Log.d(TAG, "name = " + dataString);
                     editor.putString(Util.PREFERENCES_NAME, dataString);
+
+                    dataString = dataItem.getDataMap().getString(Util.PREFERENCES_ANNOTATION_NAME);
+                    Log.d(TAG, "name = " + dataString);
+                    editor.putString(Util.PREFERENCES_ANNOTATION_NAME, dataString);
 
                     data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_ANONYMIZE);
                     Log.d(TAG, "anonymize = " + dataString);
@@ -192,7 +187,8 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
 
                     // start home screen
-                    startStartActivity();
+                    // TODO remove this
+                    // startStartActivity();
                 }
 
             }
@@ -204,23 +200,27 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         Log.d(TAG, "starting Start Activity ...");
 
-        Intent startActivityIntent = new Intent(this, StartActivity.class);
+        Intent startActivityIntent = new Intent(this, WearStartActivity.class);
         startActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         this.startActivity(startActivityIntent);
 
     }
 
+
     private void startBackgroundLogging() {
 
         Log.d(TAG, "starting Background Logging ...");
 
-        Intent loggingServiceIntent = new Intent(this, LoggingService.class);
+
+        Intent loggingServiceIntent = new Intent(this, WearLoggingService.class);
         loggingServiceIntent.setAction(LoggingService.ACTION_START_LOGGING);
         this.startService(loggingServiceIntent);
+
 
         Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
         sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
         this.startService(sensorDataSavingServiceIntent);
+
 
     }
 
@@ -228,7 +228,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         Log.d(TAG, "stopping Background Logging ...");
 
-        Intent loggingServiceIntent = new Intent(this, LoggingService.class);
+        Intent loggingServiceIntent = new Intent(this, WearLoggingService.class);
         loggingServiceIntent.setAction(LoggingService.ACTION_STOP_LOGGING);
         this.startService(loggingServiceIntent);
 
@@ -238,12 +238,14 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
     }
 
-    private void deleteLogFile(String filename){
+    private void deleteLogFile(String filename) {
+
+        // TODO do this in another thread.
 
         Util.checkDirs();
         Log.d(TAG, "original filename: " + filename);
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-        String absFileName = dir.getAbsolutePath()  + File.separator + Util.fileDir + File.separator + filename;
+        String absFileName = dir.getAbsolutePath() + File.separator + Util.fileDir + File.separator + filename;
 
         Log.d(TAG, "deleting: " + absFileName);
 
@@ -297,4 +299,6 @@ public class WearableMessageListenerService extends WearableListenerService impl
         }
     });
     */
+
+
 }

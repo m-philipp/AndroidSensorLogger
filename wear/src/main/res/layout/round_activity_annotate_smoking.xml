@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="ess.imu_logger.wear.AnnotateSmoking"
+    tools:context="ess.imu_logger.wear.Annotate"
     tools:deviceIds="wear_round"
     android:weightSum="1"
     android:padding="10dp">

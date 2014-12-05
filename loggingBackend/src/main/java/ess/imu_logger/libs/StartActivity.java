@@ -45,33 +45,12 @@ public abstract class StartActivity extends Activity implements
     private final Handler handler = new Handler();
 
     protected GoogleApiClient mGoogleApiClient;
-    protected Long sensorEventNo = 0L;
 
     private static final String TAG = "ess.imu_logger.libs.StartActivity";
 
     public static final String BROADCAST_SENSOR_EVENT_NO = "ess.imu_logger.libs.sensorEventNo";
     public static final String EXTRA_SENSOR_EVENT_NO = "ess.imu_logger.libs.sensorEventNo.Extra";
 
-
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            Log.d(TAG, "Broadcast Receiver received a Broadcast");
-
-            // TODO check is the extra is really there
-
-            if (intent != null) {
-                if (action.equals(BROADCAST_SENSOR_EVENT_NO)) {
-
-                    Long seo  = intent.getLongExtra(EXTRA_SENSOR_EVENT_NO, 0L);
-                    sensorEventNo = seo / 1000;
-
-                }
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +69,6 @@ public abstract class StartActivity extends Activity implements
         handler.removeCallbacks(sendUpdatesToUI);
         handler.postDelayed(sendUpdatesToUI, 100); // 0,1 second
 
-        // register broadcast receiver
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BROADCAST_SENSOR_EVENT_NO);
-        registerReceiver(receiver, filter);
-        // LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
-        registerReceiver(receiver, filter);
 
 
         List<Sensor> sensors;
@@ -106,22 +79,6 @@ public abstract class StartActivity extends Activity implements
         }
     }
 
-
-    protected void sendMessageToCompanion(final String path) {
-
-        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
-                new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-                    @Override
-                    public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
-                        for (final Node node : getConnectedNodesResult.getNodes()) {
-                            Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path,
-                                    new byte[0]).setResultCallback(getSendMessageResultCallback());
-                        }
-                    }
-                }
-        );
-
-    }
 
     public void triggerManualDataUpload(View v) {
 
@@ -137,44 +94,17 @@ public abstract class StartActivity extends Activity implements
 
     }
 
-    public void annotateSmoking() {
+    public void annotate() {
 
-        Log.i(TAG, "annotateSmoking called");
+        Log.i(TAG, "annotate called");
 
         Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
-        sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, "smoking");
+        sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, sharedPrefs.getString(Util.PREFERENCES_ANNOTATION_NAME, "smoking"));
         sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_VIA, "smartphone_ui");
         sendBroadcast(sendIntent);
 
     }
 
-    protected void startBackgroundLogging() {
-
-        Log.d(TAG, "starting Background Logging ...");
-
-        Intent loggingServiceIntent = new Intent(this, LoggingService.class);
-        loggingServiceIntent.setAction(LoggingService.ACTION_START_LOGGING);
-        this.startService(loggingServiceIntent);
-
-        Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
-        sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
-        this.startService(sensorDataSavingServiceIntent);
-
-    }
-
-    protected void stopBackgroundLogging() {
-
-        Log.d(TAG, "stopping Background Logging ...");
-
-        Intent loggingServiceIntent = new Intent(this, LoggingService.class);
-        loggingServiceIntent.setAction(LoggingService.ACTION_STOP_LOGGING);
-        this.startService(loggingServiceIntent);
-
-        Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
-        sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_STOP_SERVICE);
-        this.startService(sensorDataSavingServiceIntent);
-
-    }
 
 
     @Override
@@ -209,11 +139,9 @@ public abstract class StartActivity extends Activity implements
             mGoogleApiClient.disconnect();
         }
 
-        unregisterReceiver(receiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
         handler.removeCallbacks(sendUpdatesToUI);
-        //sharedPrefs.unregisterOnSharedPreferenceChangeListener(listener);
+
 
 
         super.onDestroy();
@@ -243,9 +171,6 @@ public abstract class StartActivity extends Activity implements
 
 
 
-    protected boolean isLoggingServiceRunning() {
-        return isServiceRunning(LoggingService.class.getName());
-    }
 
     protected boolean isSensorDataSavingServiceRunning() {
         return isServiceRunning(SensorDataSavingService.class.getName());

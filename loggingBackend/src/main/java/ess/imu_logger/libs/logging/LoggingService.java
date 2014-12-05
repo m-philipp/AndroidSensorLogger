@@ -1,20 +1,25 @@
 package ess.imu_logger.libs.logging;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.Process;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import ess.imu_logger.R;
 import ess.imu_logger.libs.StartActivity;
 import ess.imu_logger.libs.Util;
+
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.NotificationCompat.WearableExtender;
 
 /**
  * An {@link Service} subclass for handling asynchronous task requests.
@@ -22,7 +27,7 @@ import ess.imu_logger.libs.Util;
  * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
-public class LoggingService extends Service {
+public abstract class LoggingService extends Service {
 
     private Logger serviceHandler;
     private HandlerThread thread;
@@ -55,6 +60,7 @@ public class LoggingService extends Service {
 
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
                 stopRecording();
+                return START_NOT_STICKY;
 
             }
         } else {
@@ -78,7 +84,7 @@ public class LoggingService extends Service {
         stopForeground(true);
         wl.release();
 
-        stopRecording();
+        //stopRecording();
 
         thread.quit();
     }
@@ -88,19 +94,10 @@ public class LoggingService extends Service {
 
         Log.d(TAG, "on onCreate called.");
 
-
-        PendingIntent open =
-                PendingIntent.getActivity(this,0,new Intent(this, StartActivity.class),0);
+        Notification n = getNotificationIntent();
 
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_action_core_refresh_hd)
-                        .setContentTitle("Raucherstudie") // Title
-                        .setContentText("Aufzeichnung läuft.") // Sub-Title
-                        .setContentIntent(open);
-
-        startForeground(1337,  mBuilder.build());
+        startForeground(1337,  n);
 
 
         PowerManager pm = (PowerManager)getApplicationContext().getSystemService(
@@ -120,6 +117,8 @@ public class LoggingService extends Service {
 
     }
 
+    protected abstract Notification getNotificationIntent();
+
 
     private synchronized void startRecording() {
 
@@ -137,7 +136,7 @@ public class LoggingService extends Service {
             loggingStarted = false;
         }
 
-        this.stopSelf();
+        stopSelf();
     }
 
 }

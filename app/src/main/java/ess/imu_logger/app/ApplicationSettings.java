@@ -238,18 +238,16 @@ public class ApplicationSettings extends PreferenceActivity {
 
 			//findPreference("accelerometer").setEnabled(false);//Disabling
 
-			bindPreferenceSummaryToValue(findPreference("name"));
-
-			bindPreferenceSummaryToValue(findPreference("sampling_rate"));
-
-			bindPreferenceSummaryToValue(findPreference("server_url"));
-
-			bindPreferenceSummaryToValue(findPreference("server_port"));
-
-			bindPreferenceSummaryToValue(findPreference("upload_frequency"));
 
 
-            bindPreferenceSummaryToValue(findPreference("last_upload"));
+            bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_SERVER_PORT));
+            bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_SERVER_URL));
+            bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_SAMPLING_RATE));
+            bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_NAME));
+            bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_LAST_UPLOAD));
+            bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_ANNOTATION_NAME));
+
+
 
 		}
 
