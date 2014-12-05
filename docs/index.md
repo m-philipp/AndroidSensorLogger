@@ -11,11 +11,11 @@ Therefore the Android Sensor Logger can:
 
 
 
-This App was developed for a smoking recognition study (That's why the Annotation Buttons talk about smoking).
+This App was developed for a smoking recognition study (That's why the, configurable, Annotation Buttons talk about smoking).
 
 ## Deployment
 
-### The [0.3 Alpha APK ](imu-logger.apk)
+### The [0.4 Alpha APK ](imu-logger.apk)
 
 Further [Deployment](deploy) Information.
 
