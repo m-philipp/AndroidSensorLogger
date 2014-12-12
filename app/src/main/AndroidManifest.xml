@@ -31,7 +31,10 @@
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="com.package.name.MyActivity"/>
+                <category android:name="ess.imu_logger.app.StartScreen" />
 
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -57,7 +60,7 @@
             android:parentActivityName="ess.imu_logger.app.StartScreen" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ess.imu_logger.StartScreen" />
+                android:value="ess.imu_logger.app.StartScreen" />
         </activity>
         <activity
             android:name="ess.imu_logger.app.ApplicationSettings"
