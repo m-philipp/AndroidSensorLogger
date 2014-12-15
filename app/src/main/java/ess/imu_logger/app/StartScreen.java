@@ -20,6 +20,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import ess.imu_logger.app.bluetoothLogger.BluetoothScannerService;
 import ess.imu_logger.app.logging.AppLoggingService;
 import ess.imu_logger.app.markdownViewer.AboutScreen;
 import ess.imu_logger.app.markdownViewer.HelpScreen;
@@ -345,6 +346,13 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
         this.startService(sensorDataSavingServiceIntent);
 
+        if(sharedPrefs.getBoolean(Util.PREFERENCES_BLUETOOTH_RSSI, false)){
+            Intent bluetoothServiceIntent = new Intent(this, BluetoothScannerService.class);
+            this.startService(bluetoothServiceIntent);
+        }
+
+
+
     }
 
     protected void stopBackgroundLogging() {
@@ -359,11 +367,19 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_STOP_SERVICE);
         this.startService(sensorDataSavingServiceIntent);
 
+        if(isBluetoothServiceRunning()) {
+            Intent bluetoothServiceIntent = new Intent(this, BluetoothScannerService.class);
+            bluetoothServiceIntent.setAction(BluetoothScannerService.ACTION_STOP_SERVICE);
+            this.startService(bluetoothServiceIntent);
+        }
     }
 
 
     protected boolean isLoggingServiceRunning() {
         return isServiceRunning(AppLoggingService.class.getName());
+    }
+    protected boolean isBluetoothServiceRunning() {
+        return isServiceRunning(BluetoothScannerService.class.getName());
     }
 
 }

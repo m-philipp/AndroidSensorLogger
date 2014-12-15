@@ -141,11 +141,6 @@
             android:name="ess.imu_logger.app.bluetoothLogger.BluetoothScannerService"
             android:enabled="true" >
         </service>
-        <service
-            android:name="ess.imu_logger.app.logging.AppLoggingService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
     </application>
 
 </manifest>

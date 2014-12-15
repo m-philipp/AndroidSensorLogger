@@ -27,6 +27,7 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import ess.imu_logger.app.bluetoothLogger.BluetoothScannerService;
+import ess.imu_logger.app.logging.AppLoggingService;
 import ess.imu_logger.app.markdownViewer.AboutScreen;
 import ess.imu_logger.app.markdownViewer.HelpScreen;
 import ess.imu_logger.app.markdownViewer.IntroductionScreen;
@@ -142,12 +143,12 @@ public class Debug extends Activity implements
     public void onStartStopLoggingService(View v){
         Log.d(TAG, "onStartStopLoggingService");
         if(isLoggingServiceRunning()) {
-            Intent loggingServiceIntent = new Intent(this, LoggingService.class);
-            loggingServiceIntent.setAction(LoggingService.ACTION_STOP_LOGGING);
+            Intent loggingServiceIntent = new Intent(this, AppLoggingService.class);
+            loggingServiceIntent.setAction(AppLoggingService.ACTION_STOP_LOGGING);
             this.startService(loggingServiceIntent);
         } else {
-            Intent loggingServiceIntent = new Intent(this, LoggingService.class);
-            loggingServiceIntent.setAction(LoggingService.ACTION_START_LOGGING);
+            Intent loggingServiceIntent = new Intent(this, AppLoggingService.class);
+            loggingServiceIntent.setAction(AppLoggingService.ACTION_START_LOGGING);
             this.startService(loggingServiceIntent);
         }
     }
@@ -296,7 +297,7 @@ public class Debug extends Activity implements
     }
 
     private boolean isLoggingServiceRunning() {
-        return isServiceRunning(LoggingService.class.getName());
+        return isServiceRunning(AppLoggingService.class.getName());
     }
 
     private boolean isSensorDataSavingServiceRunning() {

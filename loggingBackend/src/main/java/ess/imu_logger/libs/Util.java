@@ -65,6 +65,9 @@ public class Util {
     public static final String PREFERENCES_LINEAR_ACCELEROMETER = "linearAccelerometer";
     public static final String PREFERENCES_STEPS = "steps";
 
+
+    public static final String PREFERENCES_BLUETOOTH_RSSI = "bluetooth_rssi";
+
     public static final String PREFERENCES_SERVER_URL = "server_url";
     public static final String PREFERENCES_SERVER_PORT = "server_port";
     public static final String PREFERENCES_UPLOAD_FREQUENCY = "upload_frequency";
@@ -82,7 +85,6 @@ public class Util {
 
     public static final String ACTION_ANNOTATE = "ess.imu_logger.libs.Util.ACTION_ANNOTATE";
     public static final String ACTION_OPEN_START_ACTIVITY = "ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY";
-
 
 
     public static boolean isExternalStorageWritable() {

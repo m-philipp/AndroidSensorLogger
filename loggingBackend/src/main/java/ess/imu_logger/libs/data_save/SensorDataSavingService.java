@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.SimpleTimeZone;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import ess.imu_logger.R;
 import ess.imu_logger.libs.Util;
 
 public class SensorDataSavingService extends Service {
@@ -71,7 +72,8 @@ public class SensorDataSavingService extends Service {
 
 
                 } else if (action.equals(BROADCAST_ANNOTATION)) {
-                    //Toast.makeText(context, "Annotation erhalten", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, getString(R.string.annotation_received), Toast.LENGTH_SHORT).show();
+
                     Log.d(TAG, "Annotation received");
 
                     String dataString = Util.formatLogString("Annotation",
@@ -90,7 +92,7 @@ public class SensorDataSavingService extends Service {
                     plainFileWriter.saveString(dataString);
 
                 } else if (action.equals(Util.ILITIT_ANNOTATE)) {
-                    //Toast.makeText(context, "Annotation erhalten", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, getString(R.string.annotation_received), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "received iLitit Annotation Broadcast.");
 
                     Long timestamp = getTimestamp(intent);
@@ -108,7 +110,7 @@ public class SensorDataSavingService extends Service {
                     plainFileWriter.saveString(dataString);
 
                 } else if (action.equals(Util.ILITIT_ANNOTATE_REMOVE)) {
-                    //Toast.makeText(context, "Annotation erhalten", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, getString(R.string.remove_annotation), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "received iLitit Annotation Broadcast.");
 
                     Long timestamp = getTimestamp(intent);

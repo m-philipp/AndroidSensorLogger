@@ -5,4 +5,6 @@
     <string name="startStartActivity">IMU-Logger öffnen</string>
     <string name="pref_default_annotation_name">smoking</string>
     <string name="pref_title_annotation_name">Annotations Name</string>
+    <string name="annotation_received">Annotation erhalten</string>
+    <string name="remove_annotation">entferne Annotation(en)</string>
 </resources>

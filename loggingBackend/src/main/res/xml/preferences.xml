@@ -178,6 +178,18 @@
 
 
 		</PreferenceCategory>
+
+        <PreferenceCategory
+            android:key="pref_key_sensor_bluetooth"
+            android:title="@string/pref_header_sensor_bluetooth">
+
+            <CustomSwitchPreference
+                android:defaultValue="false"
+                android:dependency="sensor_activate"
+                android:key="bluetooth_rssi"
+                android:title="@string/pref_sensor_bluetooth" />
+
+        </PreferenceCategory>
 	</PreferenceScreen>
 
 	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"

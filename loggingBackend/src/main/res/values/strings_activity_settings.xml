@@ -63,6 +63,9 @@
     <string name="pref_default_last_upload">0</string>
 
 
+    <string name="pref_header_sensor_bluetooth">Bluetooth Advertisement Logging</string>
+    <string name="pref_sensor_bluetooth">Bluetooth RSSI</string>
+
 
 	<string name="pref_server_port">Server Port</string>
 	<string-array name="pref_server_port_titles">
@@ -93,10 +96,10 @@
 
 	<string name="pref_sampling_rate">Sampling Rate</string>
 	<string-array name="pref_sampling_rate_titles">
-		<item>Fastest</item>
-		<item>Game</item>
-		<item>Normal</item>
-		<item>UI</item>
+		<item>Fastest (200Hz)</item>
+		<item>Game (50 Hz)</item>
+		<item>Normal (5 Hz)</item>
+		<item>UI (17 Hz)</item>
 	</string-array>
 	<string-array name="pref_sampling_rate_values">
 		<item>0</item>
