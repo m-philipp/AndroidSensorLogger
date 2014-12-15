@@ -9,7 +9,8 @@ pages:
 - [index.md, Home]
 - [api.md, 'API']
 - [deploy.md, 'Deployment']
-- [about.md, 'About']
+- [about.md, 'Impressum']
+- [privacy.md, 'Datenschutzerkl&auml;rung']
 theme_dir: codeAmelia
 markdown_extensions: [attr_list, sane_lists]
 # cerulean slate flatly united amelia

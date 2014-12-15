@@ -1,4 +1,4 @@
-# About
+# Impressum
 
 ** Martin Zittel **
 
