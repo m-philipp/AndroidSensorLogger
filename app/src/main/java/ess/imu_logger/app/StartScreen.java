@@ -2,6 +2,7 @@ package ess.imu_logger.app;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,16 +13,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
-import com.google.android.gms.wearable.Wearable;
-
-import ess.imu_logger.app.bluetoothLogger.BluetoothScannerService;
-import ess.imu_logger.app.logging.AppLoggingService;
 import ess.imu_logger.app.markdownViewer.AboutScreen;
 import ess.imu_logger.app.markdownViewer.HelpScreen;
 import ess.imu_logger.app.markdownViewer.IntroductionScreen;
@@ -30,7 +21,9 @@ import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.WearableMessageSenderService;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
-import ess.imu_logger.libs.myReceiver;
+
+import static ess.imu_logger.app.PhoneUtil.*;
+import static ess.imu_logger.libs.Util.isSensorDataSavingServiceRunning;
 
 public class StartScreen extends StartActivity implements MyDialogFragment.NoticeDialogListener {
 
@@ -42,6 +35,8 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
 
     private static final int DIALOG_TOGGLE = 0;
     private static final int DIALOG_ANNOTATE = 1;
+
+    private Context c = this;
 
 
     @Override
@@ -62,7 +57,7 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
 
 
         if (sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false))
-            startBackgroundLogging();
+            startBackgroundLogging(this, sharedPrefs);
 
         TextView t = (TextView) findViewById(R.id.amaount_of_data_to_upload);
         t.setOnLongClickListener(new View.OnLongClickListener() {
@@ -78,12 +73,12 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
     }
 
     private void alarmManagerSetup() {
-        Intent zipUploadAlarmIntent = new Intent(this, myReceiver.class);
+        Intent zipUploadAlarmIntent = new Intent(this, PhoneReceiver.class);
         zipUploadAlarmIntent.setAction(ZipUploadService.ACTION_START_SERVICE);
         PendingIntent zipUploadAlarmPendingIntent = PendingIntent.getBroadcast(this, 0, zipUploadAlarmIntent, 0);
 
-        Intent periodicAlarmIntent = new Intent(this, myReceiver.class);
-        periodicAlarmIntent.setAction(myReceiver.ACTION_PERIODIC_ALARM);
+        Intent periodicAlarmIntent = new Intent(this, PhoneReceiver.class);
+        periodicAlarmIntent.setAction(Util.ACTION_PERIODIC_ALARM);
         PendingIntent periodicAlarmPendingIntent = PendingIntent.getBroadcast(this, 0, periodicAlarmIntent, 0);
 
         if(alarmMgr == null){
@@ -103,7 +98,7 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 1000,
-                myReceiver.PERIODIC_ALARM_CYCLE_TIME, periodicAlarmPendingIntent);
+                Util.PERIODIC_ALARM_FREQUENCY, periodicAlarmPendingIntent);
 
     }
 
@@ -188,6 +183,19 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
     }
 
 
+    public void annotate() {
+
+        Log.i(TAG, "annotate called");
+
+        Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
+        sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, sharedPrefs.getString(Util.PREFERENCES_ANNOTATION_NAME, "smoking"));
+        sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_VIA, "smartphone_ui");
+        sendBroadcast(sendIntent);
+
+    }
+
+
+
     public void annotate(View v) {
         Bundle b = new Bundle();
         b.putString(MyDialogFragment.ARG_MESSAGE, getString(R.string.dialog_sure_annotate));
@@ -199,6 +207,8 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         mdf.setArguments(b);
         mdf.show(getFragmentManager(), TAG);
     }
+
+
 
     public void onDialogPositiveClick(int i){
         if(i == DIALOG_ANNOTATE)
@@ -237,13 +247,11 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
                         // start/stop the Logging Service
                         if (sharedPrefs.getBoolean("sensor_activate", false)) {
 
-                            startBackgroundLogging();
-                            syncCompantionLoggingState();
+                            startBackgroundLogging(c, sharedPrefs);
 
                         } else {
 
-                            stopBackgroundLogging();
-                            syncCompantionLoggingState();
+                            stopBackgroundLogging(c);
 
                         }
                     }
@@ -271,7 +279,7 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         // Log.d(TAG, "updating Sensor events to: " + sensorEventNo + " k");
 
 
-        if (isLoggingServiceRunning() && isSensorDataSavingServiceRunning()) {
+        if (isLoggingServiceRunning(c) && isSensorDataSavingServiceRunning(c)) {
             ToggleButton tb = (ToggleButton) findViewById(R.id.toggleLogging);
             tb.setChecked(true);
         } else {
@@ -313,15 +321,6 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
     }
 
 
-    protected void syncCompantionLoggingState() {
-
-        Log.d(TAG, "starting Message Sender ...");
-
-        Intent messageSenderIntent = new Intent(this, WearableMessageSenderService.class);
-        messageSenderIntent.setAction(WearableMessageSenderService.ACTION_SYNC_LOGGING);
-        this.startService(messageSenderIntent);
-
-    }
 
     protected void sendPreferencesToCompanion() {
 
@@ -334,52 +333,7 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
     }
 
 
-    protected void startBackgroundLogging() {
-
-        Log.d(TAG, "starting Background Logging ...");
-
-        Intent loggingServiceIntent = new Intent(this, AppLoggingService.class);
-        loggingServiceIntent.setAction(AppLoggingService.ACTION_START_LOGGING);
-        this.startService(loggingServiceIntent);
-
-        Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
-        sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
-        this.startService(sensorDataSavingServiceIntent);
-
-        if(sharedPrefs.getBoolean(Util.PREFERENCES_BLUETOOTH_RSSI, false)){
-            Intent bluetoothServiceIntent = new Intent(this, BluetoothScannerService.class);
-            this.startService(bluetoothServiceIntent);
-        }
 
 
-
-    }
-
-    protected void stopBackgroundLogging() {
-
-        Log.d(TAG, "stopping Background Logging ...");
-
-        Intent loggingServiceIntent = new Intent(this, AppLoggingService.class);
-        loggingServiceIntent.setAction(AppLoggingService.ACTION_STOP_LOGGING);
-        this.startService(loggingServiceIntent);
-
-        Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
-        sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_STOP_SERVICE);
-        this.startService(sensorDataSavingServiceIntent);
-
-        if(isBluetoothServiceRunning()) {
-            Intent bluetoothServiceIntent = new Intent(this, BluetoothScannerService.class);
-            bluetoothServiceIntent.setAction(BluetoothScannerService.ACTION_STOP_SERVICE);
-            this.startService(bluetoothServiceIntent);
-        }
-    }
-
-
-    protected boolean isLoggingServiceRunning() {
-        return isServiceRunning(AppLoggingService.class.getName());
-    }
-    protected boolean isBluetoothServiceRunning() {
-        return isServiceRunning(BluetoothScannerService.class.getName());
-    }
 
 }

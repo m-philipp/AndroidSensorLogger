@@ -16,6 +16,9 @@ import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.logging.LoggingService;
 import ess.imu_logger.wear.logging.WearLoggingService;
 
+import static ess.imu_logger.libs.Util.isSensorDataSavingServiceRunning;
+import static ess.imu_logger.wear.WearUtil.isLoggingServiceRunning;
+
 public class WearNotificationStartScreen extends Activity {
 
     private static final String TAG = WearNotificationStartScreen.class.getSimpleName();
@@ -79,7 +82,7 @@ public class WearNotificationStartScreen extends Activity {
         mTextView.setText("Sensor Event: " + Long.toString(sharedPrefs.getLong("sensor_events_logged", 0L) / 1000) + " k");
 
         mTextView = (TextView) wvs.findViewById(R.id.id_logging_running);
-        if(isLoggingServiceRunning() && isSensorDataSavingServiceRunning()) {
+        if(isLoggingServiceRunning(this) && isSensorDataSavingServiceRunning(this)) {
             mTextView.setText("läuft.");
             mTextView.setTextColor(getResources().getColor(R.color.my_green));
         } else {
@@ -89,25 +92,6 @@ public class WearNotificationStartScreen extends Activity {
 
     }
 
-
-    protected boolean isLoggingServiceRunning() {
-        return isServiceRunning(WearLoggingService.class.getName());
-    }
-
-    protected boolean isSensorDataSavingServiceRunning() {
-        return isServiceRunning(SensorDataSavingService.class.getName());
-    }
-
-
-    protected boolean isServiceRunning(String classname) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (classname.equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
 
     private int updateRequest = 0;

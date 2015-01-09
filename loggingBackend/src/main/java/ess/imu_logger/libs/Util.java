@@ -1,5 +1,6 @@
 package ess.imu_logger.libs;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -12,10 +13,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import ess.imu_logger.libs.data_save.SensorDataSavingService;
+import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
+
 /**
  * Created by martin on 15.09.2014.
  */
 public class Util {
+
+    public static final int ZIP_UPLOAD_SERVICE_FREQUENCY = 10*1000;
+    public static final int TRANSFER_SERVICE_FREQUENCY = 60*1000;
+    public static final int PERIODIC_ALARM_FREQUENCY = 5*1000;
 
 
     public static final String ILITIT_ANNOTATE = "de.unifreiburg.es.iLitIt.ADD_CIG";
@@ -51,6 +59,9 @@ public class Util {
     public static final String PREFERENCES_SENSOR_ACTIVATE = "sensor_activate";
     public static final String PREFERENCES_SAMPLING_RATE = "sampling_rate";
 
+    public static final String PREFERENCES_WEAR_TEMP_LOGGING = "wear_temp_logging";
+    public static final String PREFERENCES_WEAR_TEMP_LOGGING_DURATION = "wear_temp_logging_duration";
+
     public static final String PREFERENCES_ACCELEROMETER = "accelerometer";
     public static final String PREFERENCES_GYROSCOPE = "gyroscope";
     public static final String PREFERENCES_MAGNETIC_FIELD = "magneticField";
@@ -72,19 +83,41 @@ public class Util {
     public static final String PREFERENCES_SERVER_PORT = "server_port";
     public static final String PREFERENCES_UPLOAD_FREQUENCY = "upload_frequency";
     public static final String PREFERENCES_LAST_UPLOAD = "last_upload";
+    public static final String PREFERENCES_LAST_ANNOTATION = "last_annotation";
     public static final String PREFERENCES_WIFI_ONLY = "wifi_only";
 
     public static final String SENSOR_FILE_NAME = "fileName";
     public static final String SENSOR_FILE = "file";
-    public static final String SENSOR_SENT_TIMESTAMP = "timestamp";
-
-    public static final int ZIP_UPLOAD_SERVICE_FREQUENCY = 10000;
+    public static final String SENT_TIMESTAMP = "timestamp";
 
     public static final String fileDir = "actiReconStudy";
 
-
     public static final String ACTION_ANNOTATE = "ess.imu_logger.libs.Util.ACTION_ANNOTATE";
     public static final String ACTION_OPEN_START_ACTIVITY = "ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY";
+    public static final String ACTION_PERIODIC_ALARM = "ess.imu_logger.app.myReceiver.periodic";
+
+
+    public static boolean isSensorDataSavingServiceRunning(Context context) {
+        return isServiceRunning(context, SensorDataSavingService.class.getName());
+    }
+
+    public static boolean isZipUploadServiceRunning(Context context) {
+        return isServiceRunning(context, ZipUploadService.class.getName());
+    }
+
+    public static boolean isMessageSenderServiceRunning(Context context) {
+        return isServiceRunning(context, WearableMessageSenderService.class.getName());
+    }
+
+    public static boolean isServiceRunning(Context context, String classname) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (classname.equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     public static boolean isExternalStorageWritable() {

@@ -1,12 +1,12 @@
 # Impressum
 
-## Martin Zittel
+## Martin Philipp
 
 Im Grundsee 57
 65428 Rüsselsheim
 
-Web: [martin-zittel.de][2]
-E-Mail: martin.zittel@gmail.com
+Web: [martin-philipp.de][2]
+E-Mail: mail@martin-philipp.de
 
 ## ESS TU-Darmstadt
 

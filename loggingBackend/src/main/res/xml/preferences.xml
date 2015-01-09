@@ -43,7 +43,7 @@
 		<CustomSwitchPreference
 			android:defaultValue="false"
 			android:key="start_on_boot"
-            android:enabled="false"
+            android:enabled="true"
 			android:summary="@string/pref_description_start_on_boot"
 			android:title="@string/pref_start_on_boot"/>
 
@@ -92,6 +92,38 @@
 				android:positiveButtonText="@null"
 				android:title="@string/pref_sampling_rate"/>
 		</PreferenceCategory>
+
+        <PreferenceCategory
+            android:key="pref_key_wear_temp_logging"
+            android:title="@string/pref_header_temp_logging">
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="wear_temp_logging"
+                android:disableDependentsState="true"
+                android:title="@string/pref_wear_temp_logging"/>
+
+            <ListPreference
+                android:defaultValue="600"
+                android:entries="@array/pref_wear_temp_logging_duration_titles"
+                android:entryValues="@array/pref_wear_temp_logging_duration_values"
+                android:dependency="sensor_activate"
+                android:key="wear_temp_logging_duration"
+                android:negativeButtonText="@null"
+                android:positiveButtonText="@null"
+                android:title="@string/pref_wear_temp_logging_duration"/>
+
+            <EditTextPreference
+                android:defaultValue="@string/default_timestamp"
+                android:ellipsize="end"
+                android:enabled="false"
+                android:key="last_annotation"
+                android:maxLines="1"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="@string/pref_title_last_annotation"/>
+
+        </PreferenceCategory>
 
 		<PreferenceCategory
 			android:key="pref_key_sensor_sensors"
@@ -243,7 +275,7 @@
 				android:title="@string/pref_title_upload_frequency"/>
 
             <EditTextPreference
-                android:defaultValue="@string/pref_default_last_upload"
+                android:defaultValue="@string/default_timestamp"
                 android:ellipsize="end"
                 android:enabled="false"
                 android:key="last_upload"

@@ -94,16 +94,6 @@ public abstract class StartActivity extends Activity implements
 
     }
 
-    public void annotate() {
-
-        Log.i(TAG, "annotate called");
-
-        Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
-        sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, sharedPrefs.getString(Util.PREFERENCES_ANNOTATION_NAME, "smoking"));
-        sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_VIA, "smartphone_ui");
-        sendBroadcast(sendIntent);
-
-    }
 
 
 
@@ -172,23 +162,6 @@ public abstract class StartActivity extends Activity implements
 
 
 
-    protected boolean isSensorDataSavingServiceRunning() {
-        return isServiceRunning(SensorDataSavingService.class.getName());
-    }
-
-    protected boolean isZipUploadServiceRunning() {
-        return isServiceRunning(ZipUploadService.class.getName());
-    }
-
-    protected boolean isServiceRunning(String classname) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (classname.equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {

@@ -94,6 +94,7 @@
             android:layout_height="wrap_content"
             android:text="0.0 MB"
             android:id="@+id/id_mb_to_upload"
-            android:gravity="right" />
+            android:gravity="right"
+            android:longClickable="true" />
     </LinearLayout>
 </LinearLayout>

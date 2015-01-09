@@ -48,7 +48,7 @@
         </activity>
         <activity
             android:name="ess.imu_logger.app.ImuLiveScreen"
-            android:label="@string/title_activity_imu_live_screen"
+            android:label="@string/live_view"
             android:parentActivityName="ess.imu_logger.app.Debug" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -92,7 +92,7 @@
         </activity>
 
         <receiver
-            android:name="ess.imu_logger.libs.myReceiver"
+            android:name=".PhoneReceiver"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>

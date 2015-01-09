@@ -36,6 +36,8 @@ import ess.imu_logger.libs.data_save.SensorDataSavingService;
 import ess.imu_logger.libs.logging.LoggingService;
 import ess.imu_logger.wear.logging.WearLoggingService;
 
+import static ess.imu_logger.wear.WearUtil.*;
+
 
 /**
  * Listens for a message telling it to start the Wearable MainActivity.
@@ -45,7 +47,6 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
 
     SharedPreferences sharedPrefs;
-
 
     private static final String TAG = "ess.imu_logger.wear.WearableMessageListenerService";
 
@@ -70,19 +71,6 @@ public class WearableMessageListenerService extends WearableListenerService impl
             Toast.makeText(this, "Hello from Phone!", Toast.LENGTH_SHORT).show();
 
             //note();
-
-        } else if (event.getPath().equals(Util.GAC_PATH_START_LOGGING)) {
-
-            Log.d(TAG, "GAC Start Logging");
-            // TODO start Main Activity
-            // if (!isLoggingServiceRunning() || !isSensorDataSavingServiceRunning())
-            startBackgroundLogging();
-
-
-        } else if (event.getPath().equals(Util.GAC_PATH_STOP_LOGGING)) {
-
-            Log.d(TAG, "GAC Stop Logging");
-            stopBackgroundLogging();
 
         } else if (event.getPath().equals(Util.GAC_PATH_CONFIRM_FILE_RECEIVED)) {
 
@@ -117,7 +105,30 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     DataMapItem dataItem = DataMapItem.fromDataItem(event.getDataItem());
 
 
-                    Boolean data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_ACCELEROMETER);
+
+                    Boolean data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE);
+                    Log.d(TAG, "Sensor activate = " + data);
+                    editor.putBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, data);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_START_ON_BOOT);
+                    Log.d(TAG, "start on boot = " + data);
+                    editor.putBoolean(Util.PREFERENCES_START_ON_BOOT, data);
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_WEAR_TEMP_LOGGING);
+                    Log.d(TAG, "temp logging = " + data);
+                    editor.putBoolean(Util.PREFERENCES_WEAR_TEMP_LOGGING, data);
+
+                    String dataString = dataItem.getDataMap().getString(Util.PREFERENCES_WEAR_TEMP_LOGGING_DURATION);
+                    Log.d(TAG, "temp logging duration = " + dataString);
+                    editor.putString(Util.PREFERENCES_WEAR_TEMP_LOGGING_DURATION, dataString);
+
+                    dataString = dataItem.getDataMap().getString(Util.PREFERENCES_LAST_ANNOTATION);
+                    Log.d(TAG, "last annotation = " + dataString);
+                    editor.putString(Util.PREFERENCES_LAST_ANNOTATION, dataString);
+
+
+
+                    data = dataItem.getDataMap().getBoolean(Util.PREFERENCES_ACCELEROMETER);
                     Log.d(TAG, "Acc = " + data);
                     editor.putBoolean(Util.PREFERENCES_ACCELEROMETER, data);
 
@@ -166,7 +177,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     editor.putBoolean(Util.PREFERENCES_STEPS, data);
 
 
-                    String dataString = dataItem.getDataMap().getString(Util.PREFERENCES_NAME);
+                    dataString = dataItem.getDataMap().getString(Util.PREFERENCES_NAME);
                     Log.d(TAG, "name = " + dataString);
                     editor.putString(Util.PREFERENCES_NAME, dataString);
 
@@ -183,18 +194,25 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     editor.putString(Util.PREFERENCES_SAMPLING_RATE, dataString);
 
 
+                    dataString = dataItem.getDataMap().getString(Util.PREFERENCES_SAMPLING_RATE);
+                    Log.d(TAG, "sampling rate = " + dataString);
+                    editor.putString(Util.PREFERENCES_SAMPLING_RATE, dataString);
+
+
                     editor.commit();
 
+                    updateLoggingState(this, sharedPrefs);
 
-                    // start home screen
-                    // TODO remove this
-                    // startStartActivity();
+
+                    // TODO start WearStartActivity ONCE!
+
                 }
 
             }
 
         }
     }
+
 
     private void startStartActivity() {
 
@@ -207,36 +225,6 @@ public class WearableMessageListenerService extends WearableListenerService impl
     }
 
 
-    private void startBackgroundLogging() {
-
-        Log.d(TAG, "starting Background Logging ...");
-
-
-        Intent loggingServiceIntent = new Intent(this, WearLoggingService.class);
-        loggingServiceIntent.setAction(LoggingService.ACTION_START_LOGGING);
-        this.startService(loggingServiceIntent);
-
-
-        Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
-        sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
-        this.startService(sensorDataSavingServiceIntent);
-
-
-    }
-
-    public void stopBackgroundLogging() {
-
-        Log.d(TAG, "stopping Background Logging ...");
-
-        Intent loggingServiceIntent = new Intent(this, WearLoggingService.class);
-        loggingServiceIntent.setAction(LoggingService.ACTION_STOP_LOGGING);
-        this.startService(loggingServiceIntent);
-
-        Intent sensorDataSavingServiceIntent = new Intent(this, SensorDataSavingService.class);
-        sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_STOP_SERVICE);
-        this.startService(sensorDataSavingServiceIntent);
-
-    }
 
     private void deleteLogFile(String filename) {
 
@@ -265,40 +253,6 @@ public class WearableMessageListenerService extends WearableListenerService impl
         Log.e(TAG, "Failed to connect to Google Api Client");
     }
 
-    protected boolean isLoggingServiceRunning() {
-        return isServiceRunning(LoggingService.class.getName());
-    }
-
-    protected boolean isSensorDataSavingServiceRunning() {
-        return isServiceRunning(SensorDataSavingService.class.getName());
-    }
-
-    protected boolean isServiceRunning(String classname) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (classname.equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-    /*
-    PendingResult<DataItemBuffer> results = Wearable.DataApi.getDataItems(mGoogleApiClient);
-    results.setResultCallback(new ResultCallback<DataItemBuffer>() {
-        @Override
-        public void onResult(DataItemBuffer dataItems) {
-            if (dataItems.getCount() != 0) {
-                DataMapItem dataMapItem = DataMapItem.fromDataItem(dataItems.get(0));
-
-                // This should read the correct value.
-                Boolean value = dataMapItem.getDataMap().getBoolean(Util.PREFERENCES_ACCELEROMETER);
-                Log.d(TAG, "Acc = " + value);
-            }
-
-            dataItems.release();
-        }
-    });
-    */
 
 
 }

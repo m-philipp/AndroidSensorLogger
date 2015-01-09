@@ -9,8 +9,8 @@ android {
         applicationId "ess.imu_logger"
         minSdkVersion 20
         targetSdkVersion 20
-        versionCode 8
-        versionName "0.8"
+        versionCode 10
+        versionName "0.10"
     }
     buildTypes {
         release {

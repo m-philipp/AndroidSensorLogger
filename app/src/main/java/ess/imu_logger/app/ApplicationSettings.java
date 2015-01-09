@@ -47,7 +47,8 @@ public class ApplicationSettings extends PreferenceActivity {
 	final static String ACTION_PREFS_GENERAL = "ess.imu_logger.action.prefs_general";
 	final static String ACTION_PREFS_DATA_SYNC = "ess.imu_logger.action.prefs_data_sync";
 	final static String ACTION_PREFS_SENSOR = "ess.imu_logger.action.prefs_sensor";
-*/
+    */
+
     private static final String TAG = "ess.imu_logger.app.ApplicationSettings";
 
 	private static HashMap<String, Boolean> activeSensors = new HashMap<String, Boolean>();
@@ -134,7 +135,7 @@ public class ApplicationSettings extends PreferenceActivity {
 		/*
 		SensorManager mgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 		sensors = mgr.getSensorList(Sensor.TYPE_ALL);
-*/
+        */
 
 
 		// Display the fragment as the main content.
@@ -246,6 +247,8 @@ public class ApplicationSettings extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_NAME));
             bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_LAST_UPLOAD));
             bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_ANNOTATION_NAME));
+            bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_WEAR_TEMP_LOGGING_DURATION));
+            bindPreferenceSummaryToValue(findPreference(Util.PREFERENCES_LAST_ANNOTATION));
 
 
 
@@ -277,7 +280,7 @@ public class ApplicationSettings extends PreferenceActivity {
 				);
 
 			} else if(preference instanceof EditTextPreference &&
-                    preference.getKey().equals("last_upload")) {
+                    (preference.getKey().equals(Util.PREFERENCES_LAST_UPLOAD) || preference.getKey().equals(Util.PREFERENCES_LAST_ANNOTATION))) {
 
                 preference.setSummary(Util.getFriendlyTime(Long.parseLong(stringValue), System.currentTimeMillis()));
 

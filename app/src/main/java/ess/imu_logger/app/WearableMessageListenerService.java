@@ -32,6 +32,8 @@ import ess.imu_logger.libs.Util;
 import ess.imu_logger.libs.WearableMessageSenderService;
 import ess.imu_logger.libs.data_save.SensorDataSavingService;
 
+import static ess.imu_logger.libs.WearableMessageSenderService.sendMessage;
+
 /**
  * Listens for a message telling it to start the Wearable MainActivity.
  */
@@ -96,7 +98,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     String fileName = dataMapItem.getDataMap().getString(Util.SENSOR_FILE_NAME);
                     Asset profileAsset = dataMapItem.getDataMap().getAsset(Util.SENSOR_FILE);
 
-                    saveFileFromAsset(fileName, profileAsset);
+                    saveFileFromAsset(fileName, profileAsset);  // TODO error handling
 
 
                     ConnectionResult result =
@@ -107,10 +109,12 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     }
                     Uri.Builder uri = new Uri.Builder().scheme(PutDataRequest.WEAR_URI_SCHEME).path(Util.GAC_PATH_SENSOR_DATA);
                     Wearable.DataApi.deleteDataItems(mGoogleApiClient, uri.build()).await();
+
+
+                    sendMessage(this, Util.GAC_PATH_CONFIRM_FILE_RECEIVED, fileName);
+
+
                     mGoogleApiClient.disconnect();
-
-
-                    sendMessage(Util.GAC_PATH_CONFIRM_FILE_RECEIVED, fileName);
 
                     Log.d(TAG, "SensorDataFileName: " + fileName);
                 }
@@ -121,19 +125,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
     }
 
 
-    private void sendMessage(String path, String content) {
 
-        Log.d(TAG, "starting Message Sender ...");
-
-        Intent messageSenderIntent = new Intent(this, WearableMessageSenderService.class);
-        messageSenderIntent.setAction(WearableMessageSenderService.ACTION_SEND_MESSAGE);
-        messageSenderIntent.putExtra(WearableMessageSenderService.EXTRA_PATH, path);
-        messageSenderIntent.putExtra(WearableMessageSenderService.EXTRA_MESSAGE_CONTENT_STRING, content);
-
-
-        this.startService(messageSenderIntent);
-
-    }
 
 
     private void saveFileFromAsset(String fileName, Asset asset) {

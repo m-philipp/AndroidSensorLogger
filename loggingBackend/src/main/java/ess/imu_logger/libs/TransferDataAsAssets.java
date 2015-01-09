@@ -27,13 +27,12 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
-import ess.imu_logger.libs.Util;
-
 public class TransferDataAsAssets extends Service implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "ess.imu_logger.libs.TransferDataAsAssets";
     public static final String ACTION_TRANSFER = "ess.imu_logger.libs.TransferDataAsAssets.transfer";
+
 
     protected GoogleApiClient mGoogleApiClient;
     private SendToDataLayerThread stdlt;
@@ -178,7 +177,7 @@ public class TransferDataAsAssets extends Service implements
 
                                 PutDataMapRequest dataMap = PutDataMapRequest.create(Util.GAC_PATH_SENSOR_DATA);
                                 dataMap.getDataMap().putString(Util.SENSOR_FILE_NAME, fileName);
-                                dataMap.getDataMap().putString(Util.SENSOR_SENT_TIMESTAMP, "" + System.currentTimeMillis());
+                                dataMap.getDataMap().putString(Util.SENT_TIMESTAMP, "" + System.currentTimeMillis());
                                 dataMap.getDataMap().putAsset(Util.SENSOR_FILE, asset);
 
                                 //dataMap.getDataMap().putInt(COUNT_KEY, count++);

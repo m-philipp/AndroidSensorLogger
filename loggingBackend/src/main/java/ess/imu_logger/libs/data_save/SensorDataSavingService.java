@@ -6,10 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -18,7 +15,6 @@ import android.widget.Toast;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.SimpleTimeZone;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import ess.imu_logger.R;
@@ -49,6 +45,7 @@ public class SensorDataSavingService extends Service {
 
     private PlainFileWriter plainFileWriter;
     private boolean pfwRunning = false;
+    private SharedPreferences sharedPrefs;
 
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -72,12 +69,14 @@ public class SensorDataSavingService extends Service {
 
 
                 } else if (action.equals(BROADCAST_ANNOTATION)) {
-                    Toast.makeText(context, getString(R.string.annotation_received), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, getString(R.string.annotation_received), Toast.LENGTH_SHORT).show();
 
                     Log.d(TAG, "Annotation received");
 
                     String dataString = Util.formatLogString("Annotation",
                             intent.getExtras().getString(EXTRA_ANNOTATION_NAME), intent.getExtras().getString(EXTRA_ANNOTATION_VIA));
+
+                    triggerPeriodicWearSync();
 
                     plainFileWriter.saveString(dataString);
 
@@ -106,6 +105,7 @@ public class SensorDataSavingService extends Service {
                     else
                         dataString = Util.formatLogString(timestamp, "Annotation", "ui", String.valueOf(latitude), String.valueOf(longitude));
 
+                    triggerPeriodicWearSync();
 
                     plainFileWriter.saveString(dataString);
 
@@ -123,6 +123,19 @@ public class SensorDataSavingService extends Service {
         }
     };
 
+    // to start the Watch Logging if temp logging
+    private void triggerPeriodicWearSync() {
+
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putString(Util.PREFERENCES_LAST_ANNOTATION, String.valueOf(System.currentTimeMillis()));
+        editor.commit();
+
+        Intent intent = new Intent();
+        intent.setAction(Util.ACTION_PERIODIC_ALARM);
+        sendBroadcast(intent);
+    }
+    
+    
     private Long getTimestamp(Intent intent) {
         Long timestamp = null;
         try {
@@ -176,6 +189,8 @@ public class SensorDataSavingService extends Service {
 
     public void onCreate() {
         Log.d(TAG, "SensorDataSavingService onCreate ...");
+
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 
         // register broadcast receiver

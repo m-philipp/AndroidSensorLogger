@@ -1,6 +1,6 @@
 # Anleitung
 
-Damit Sie erfolgreich an der Studie teilnehmen können haben wir eine kurze Anleitung zusammengestellt.
+Damit Sie erfolgreich an der ESS-Raucherstudie teilnehmen können haben wir eine kurze Anleitung zusammengestellt.
 
 ## Umfrage
 
@@ -30,7 +30,9 @@ Für alle Studienteilnehmer die eine Woche lang an der Studie teilnehmen sind di
 * Server URL: **srv.zittel.eu**
 * Server Port: **8080**
 * Sampling Rate: **Game**
-* Sensoren: nur **Beschleunigung**
+* Sensoren: alle außer Barometer
+* Temporäres Loggen: **aktivieren**
+* Dauer des Temporären Loggens: **10 Minuten**
 
 ## Datei Upload
 

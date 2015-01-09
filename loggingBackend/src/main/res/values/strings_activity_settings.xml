@@ -60,7 +60,7 @@
 	</string-array>
 
     <string name="pref_title_last_upload">Letzter Upload</string>
-    <string name="pref_default_last_upload">0</string>
+    <string name="default_timestamp">0</string>
 
 
     <string name="pref_header_sensor_bluetooth">Bluetooth Advertisement Logging</string>
@@ -107,6 +107,28 @@
 		<item>3</item>
 		<item>2</item>
 	</string-array>
+
+    <string name="pref_header_temp_logging">Temporäres Loggen (Smartwatch)</string>
+    <string name="pref_wear_temp_logging">Aktivieren</string>
+    <string name="pref_wear_temp_logging_duration">Dauer</string>
+    <string name="pref_title_last_annotation">Letzte Annotation</string>
+
+    <string-array name="pref_wear_temp_logging_duration_titles">
+        <item>15 Sekunden</item>
+        <item>5 Minuten</item>
+        <item>10 Minuten</item>
+        <item>15 Minuten</item>
+        <item>30 Minuten</item>
+        <item>1 Stunde</item>
+    </string-array>
+    <string-array name="pref_wear_temp_logging_duration_values">
+        <item>15</item>
+        <item>300</item>
+        <item>600</item>
+        <item>900</item>
+        <item>1800</item>
+        <item>3600</item>
+    </string-array>
 
 	<string name="pref_sensor_accelerometer">Beschleunigung</string>
 	<string name="pref_sensor_gyroscope">Gyroskop</string>

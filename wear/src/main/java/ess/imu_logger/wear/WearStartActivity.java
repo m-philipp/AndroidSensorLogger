@@ -4,21 +4,26 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import ess.imu_logger.libs.*;
 import ess.imu_logger.libs.data_zip_upload.ZipUploadService;
-import ess.imu_logger.wear.logging.WearLoggingService;
+
+import static ess.imu_logger.libs.Util.isSensorDataSavingServiceRunning;
+import static ess.imu_logger.wear.WearUtil.*;
 
 public class WearStartActivity extends StartActivity {
 
     //private TextView mTextView;
 
     private AlarmManager alarmMgr;
-    private PendingIntent transferDataAlarmIntent;
-    private PendingIntent zipDataAlarmIntent;
+    private PendingIntent transferDataAlarmIntent, zipDataAlarmIntent, periodicAlarmIntent;
+
+
+    WatchViewStub wvs;
 
     private static final String TAG = "ess.imu_logger.wear.StartScreen";
 
@@ -30,14 +35,51 @@ public class WearStartActivity extends StartActivity {
         setContentView(R.layout.activity_start);
 
 
+        alarmManagerSetup();
 
-        Intent transferDataIntent = new Intent(this, myReceiver.class);
+        updateLoggingState(this, sharedPrefs);
+
+
+        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+            @Override
+            public void onLayoutInflated(WatchViewStub stub) {
+                wvs = stub;
+
+
+                TextView t = (TextView) wvs.findViewById(R.id.id_mb_to_upload);
+                t.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        onStartDebug();
+                        return true;
+                    }
+                });
+
+                uiUpdate();
+
+
+
+            }
+
+        });
+
+
+
+    }
+
+    private void alarmManagerSetup() {
+        Intent transferDataIntent = new Intent(this, WearReceiver.class);
         transferDataIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
         transferDataAlarmIntent = PendingIntent.getBroadcast(this, 0, transferDataIntent, 0);
 
-        Intent zipDataIntent = new Intent(this, myReceiver.class);
+        Intent zipDataIntent = new Intent(this, WearReceiver.class);
         zipDataIntent.setAction(ZipUploadService.ACTION_START_ZIPPER_ONLY);
         zipDataAlarmIntent = PendingIntent.getBroadcast(this, 0, zipDataIntent, 0);
+
+        Intent periodicIntent = new Intent(this, WearReceiver.class);
+        periodicIntent.setAction(Util.ACTION_PERIODIC_ALARM);
+        periodicAlarmIntent = PendingIntent.getBroadcast(this, 0, periodicIntent, 0);
 
         if(alarmMgr == null){
             Log.d(TAG, "AlarmManager was null");
@@ -47,21 +89,25 @@ public class WearStartActivity extends StartActivity {
 
         alarmMgr.cancel(transferDataAlarmIntent);
         alarmMgr.cancel(zipDataAlarmIntent);
+        alarmMgr.cancel(periodicAlarmIntent);
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 1000,
-                Util.ZIP_UPLOAD_SERVICE_FREQUENCY, transferDataAlarmIntent);
+                Util.TRANSFER_SERVICE_FREQUENCY, transferDataAlarmIntent);
 
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 1000,
                 Util.ZIP_UPLOAD_SERVICE_FREQUENCY, zipDataAlarmIntent);
 
-
-
-
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                1000,
+                Util.PERIODIC_ALARM_FREQUENCY, periodicAlarmIntent);
     }
 
-
+    private void onStartDebug() {
+        Intent intent = new Intent(this, DebugActivity.class);
+        startActivity(intent);
+    }
 
 
     public void onStartLiveScreen(View v){
@@ -98,17 +144,19 @@ public class WearStartActivity extends StartActivity {
     @Override
     protected void uiUpdate() {
 
-        TextView t = (TextView) findViewById(R.id.id_mb_to_upload);
-        if(sharedPrefs != null)
-            t.setText(sharedPrefs.getString("amount_of_logged_data", "0.0") +  " MB"); // TODO check (SONY ?) Null Pointer Exception
+        if(sharedPrefs == null || wvs == null)
+            return;
 
-        t = (TextView) findViewById(R.id.id_sensor_event);
+        TextView t = (TextView) wvs.findViewById(R.id.id_mb_to_upload);
+        t.setText(sharedPrefs.getString("amount_of_logged_data", "0.0") +  " MB"); // TODO check (SONY ?) Null Pointer Exception
+
+        t = (TextView) wvs.findViewById(R.id.id_sensor_event);
         t.setText(Long.toString(sharedPrefs.getLong("sensor_events_logged", 0L) / 1000) + " k");
 
         // update logging status
-        t = (TextView) findViewById(R.id.id_logging_running);
+        t = (TextView) wvs.findViewById(R.id.id_logging_running);
 
-        if (isLoggingServiceRunning() && isSensorDataSavingServiceRunning()) {
+        if (isLoggingServiceRunning(this) && isSensorDataSavingServiceRunning(this)) {
             //Log.d(TAG, "uiUpdate said running");
             t.setText(getResources().getText(R.string.running));
             t.setTextColor(getResources().getColor(R.color.my_green));
@@ -121,8 +169,6 @@ public class WearStartActivity extends StartActivity {
     }
 
 
-    protected boolean isLoggingServiceRunning() {
-        return isServiceRunning(WearLoggingService.class.getName());
-    }
+
 
 }

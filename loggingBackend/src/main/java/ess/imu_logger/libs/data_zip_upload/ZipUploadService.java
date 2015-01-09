@@ -8,6 +8,8 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import ess.imu_logger.libs.Util;
+
 //import ess.imu_logger.myReceiver;
 
 public class ZipUploadService extends Service {
@@ -67,8 +69,8 @@ public class ZipUploadService extends Service {
             }
             // TODO check upload cycle
 
-            Long freq = Long.parseLong(sharedPrefs.getString("upload_frequency", "0"));
-            Long last = Long.parseLong(sharedPrefs.getString("last_upload", "0"));
+            Long freq = Long.parseLong(sharedPrefs.getString(Util.PREFERENCES_UPLOAD_FREQUENCY, "0"));
+            Long last = Long.parseLong(sharedPrefs.getString(Util.PREFERENCES_LAST_UPLOAD, "0"));
             Long now = System.currentTimeMillis();
 
             if (!(intent == null) && intent.getAction().equals(ACTION_MANUAL_UPLOAD_DATA)

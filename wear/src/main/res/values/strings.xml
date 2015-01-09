@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">IMU-Logger</string>
+    <string name="app_name">Android Sensor Logger</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
     <string name="title_activity_imu_live_screen">ImuLiveScreen</string>
@@ -28,5 +28,10 @@
 
     <string name="title_activity_notification_start_screen">NotificationStartScreen</string>
     <string name="title_activity_notification_init_annotate_screen">NotificationInitAnnotateScreen</string>
+    <string name="title_activity_debug">DebugActivity</string>
+    <string name="sendMessageToPhone">Nachricht an das Phone senden</string>
+    <string name="onSendMessageToPhone">senden</string>
+    <string name="onSendObjectToPhone">senden</string>
+    <string name="sendObjectToPhone">Objekt an das Phone senden</string>
 
 </resources>

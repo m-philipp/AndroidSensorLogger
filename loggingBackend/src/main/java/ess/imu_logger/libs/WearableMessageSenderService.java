@@ -1,10 +1,10 @@
 package ess.imu_logger.libs;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -25,12 +25,10 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class WearableMessageSenderService extends Service implements
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks,  GoogleApiClient.OnConnectionFailedListener {
 
 
     private static final String TAG = "ess.imu_logger.app.WearableMessageSenderService";
@@ -38,8 +36,6 @@ public class WearableMessageSenderService extends Service implements
 
     public static final String ACTION_SEND_MESSAGE = "ess.imu_logger.libs.wearableMessageSenderService.sendMessage";
     public static final String ACTION_SEND_PREFERENCES = "ess.imu_logger.libs.wearableMessageSenderService.sendPrefs";
-    public static final String ACTION_SYNC_LOGGING = "ess.imu_logger.libs.wearableMessageSenderService.synchLogging";
-    public static final String ACTION_SEND_PREFS_AND_LOGGING = "ess.imu_logger.libs.wearableMessageSenderService.sendPrefsAndLogging";
     public static final String ACTION_START_SERVICE = "ess.imu_logger.libs.wearableMessageSenderService.startLogging";
     public static final String ACTION_STOP_SERVICE = "ess.imu_logger.libs.wearableMessageSenderService.stopLogging";
 
@@ -68,6 +64,7 @@ public class WearableMessageSenderService extends Service implements
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .addOnConnectionFailedListener(this)
+                .addConnectionCallbacks(this)
                 .build();
 
         mGoogleApiClient.connect();
@@ -80,6 +77,11 @@ public class WearableMessageSenderService extends Service implements
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand called ...");
+
+        if (mGoogleApiClient.isConnected())
+            onConnected(null);
+        else
+            mGoogleApiClient.connect();
 
         if (intent != null) {
             final String action = intent.getAction();
@@ -97,25 +99,6 @@ public class WearableMessageSenderService extends Service implements
                 startService();
                 smt.sendPreferences();
 
-            } else if (ACTION_SYNC_LOGGING.equals(action)) {
-
-                Log.d(TAG, ACTION_SYNC_LOGGING);
-                startService();
-                if (sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false))
-                    smt.sendMessage(Util.GAC_PATH_START_LOGGING, "");
-                else
-                    smt.sendMessage(Util.GAC_PATH_STOP_LOGGING, "");
-
-            } else if (ACTION_SEND_PREFS_AND_LOGGING.equals(action)) {
-
-                Log.d(TAG, ACTION_SEND_PREFS_AND_LOGGING);
-                startService();
-                smt.sendPreferences();
-                if (sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false))
-                    smt.sendMessage(Util.GAC_PATH_START_LOGGING, "");
-                else
-                    smt.sendMessage(Util.GAC_PATH_STOP_LOGGING, "");
-
             } else if (ACTION_START_SERVICE.equals(action)) {
 
                 Log.d(TAG, ACTION_START_SERVICE);
@@ -124,7 +107,7 @@ public class WearableMessageSenderService extends Service implements
             } else if (ACTION_STOP_SERVICE.equals(action)) {
 
                 Log.d(TAG, ACTION_STOP_SERVICE);
-                if(smtRunning) {
+                if (smtRunning) {
                     smt.requestStop();
                 }
                 stopSelf();
@@ -135,6 +118,20 @@ public class WearableMessageSenderService extends Service implements
 
         return START_STICKY;
     }
+
+    public static void sendMessage(Context context, String path, String content) {
+
+        Log.d(TAG, "starting Message Sender ...");
+
+        Intent messageSenderIntent = new Intent(context, WearableMessageSenderService.class);
+        messageSenderIntent.setAction(WearableMessageSenderService.ACTION_SEND_MESSAGE);
+        messageSenderIntent.putExtra(WearableMessageSenderService.EXTRA_PATH, path);
+        messageSenderIntent.putExtra(WearableMessageSenderService.EXTRA_MESSAGE_CONTENT_STRING, content);
+
+        context.startService(messageSenderIntent);
+
+    }
+
 
     private void startService() {
         if (!smtRunning && !smt.isAlive()) {
@@ -157,6 +154,15 @@ public class WearableMessageSenderService extends Service implements
             mGoogleApiClient.disconnect();
 
         super.onDestroy();
+    }
+
+
+    public void onConnected(Bundle connectionHint) {
+        Log.i(TAG, "onConnected called ...");
+    }
+    // Placeholders for required connection callbacks
+    @Override
+    public void onConnectionSuspended(int cause) {
     }
 
     @Override
@@ -192,6 +198,14 @@ public class WearableMessageSenderService extends Service implements
                         public void handleMessage(Message msg) {
 
 
+                            if(!mGoogleApiClient.isConnected()){
+                                ConnectionResult result = mGoogleApiClient.blockingConnect(1000, TimeUnit.MILLISECONDS);
+                                if (!result.isSuccess()) {
+                                    Log.d(TAG, "GoogleClientConnect was false");
+                                    return;
+                                }
+                            }
+
                             if (msg.getData().getInt(MESSAGE_TYPE_ACTION) == MESSAGE_ACTION_SEND_MESSAGE) {
 
                                 // TODO check if the mGoogleApiClient is still connected
@@ -221,6 +235,13 @@ public class WearableMessageSenderService extends Service implements
 
                                 DataMap dataMap = putDataMapRequest.getDataMap();
 
+                                dataMap.putBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, true));
+                                dataMap.putBoolean(Util.PREFERENCES_WEAR_TEMP_LOGGING, sharedPrefs.getBoolean(Util.PREFERENCES_WEAR_TEMP_LOGGING, true));
+                                dataMap.putString(Util.PREFERENCES_WEAR_TEMP_LOGGING_DURATION, sharedPrefs.getString(Util.PREFERENCES_WEAR_TEMP_LOGGING_DURATION, "0"));
+                                dataMap.putString(Util.PREFERENCES_LAST_ANNOTATION, sharedPrefs.getString(Util.PREFERENCES_LAST_ANNOTATION, "0"));
+
+                                dataMap.putBoolean(Util.PREFERENCES_START_ON_BOOT, sharedPrefs.getBoolean(Util.PREFERENCES_START_ON_BOOT, true));
+
                                 dataMap.putString(Util.PREFERENCES_NAME, sharedPrefs.getString(Util.PREFERENCES_NAME, "Eva Musterfrau"));
                                 dataMap.putString(Util.PREFERENCES_ANNOTATION_NAME, sharedPrefs.getString(Util.PREFERENCES_ANNOTATION_NAME, "smoking"));
                                 dataMap.putBoolean(Util.PREFERENCES_ANONYMIZE, sharedPrefs.getBoolean(Util.PREFERENCES_ANONYMIZE, true));
@@ -242,6 +263,7 @@ public class WearableMessageSenderService extends Service implements
                                 dataMap.putBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, sharedPrefs.getBoolean(Util.PREFERENCES_LINEAR_ACCELEROMETER, false));
                                 dataMap.putBoolean(Util.PREFERENCES_STEPS, sharedPrefs.getBoolean(Util.PREFERENCES_STEPS, false));
 
+                                dataMap.putString(Util.SENT_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
 
                                 PutDataRequest request = putDataMapRequest.asPutDataRequest();
                                 PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi

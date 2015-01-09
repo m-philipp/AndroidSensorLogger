@@ -7,4 +7,52 @@
     <string name="pref_title_annotation_name">Annotations Name</string>
     <string name="annotation_received">Annotation erhalten</string>
     <string name="remove_annotation">entferne Annotation(en)</string>
+
+    <string name="welcome_placeholer">Hi, Kunibert</string>
+    <string name="view">anzeigen</string>
+    <string name="live_view">Echtzeit Daten</string>
+    <string name="live_sensor_title">Live Sensor View</string>
+    <string name="live_sensor_acceleration">Beschleunigung</string>
+    <string name="live_sensor_gyro">Gyroskop</string>
+    <string name="live_sensor_magn">Magnetometer</string>
+    <string name="live_sensor_prox">Näherungssensor</string>
+    <string name="live_sensor_light">Umgebungslicht</string>
+    <string name="title_activity_settings_screen">Einstellungen</string>
+    <string name="logging_service">Aufzeichnung:</string>
+    <string name="service_running">läuft</string>
+    <string name="service_stopped">angehalten</string>
+    <string name="zipUpload_service">Zip / Uploader:</string>
+    <string name="sensorDataSaving_service">Speichern:</string>
+
+    <item name="my_red" type="color">#ff6000</item>
+    <item name="my_green" type="color">#ff00c600</item>
+
+    <string name="manual_data_upload">Manuell Sensor Daten hochladen</string>
+    <string name="trigger_manual_data_upload">jetzt hochladen</string>
+    <string name="uploaded_this_session">hochgeladen:</string>
+    <string name="data_to_upload">hochzuladen</string>
+    <string name="annotateSmoking">Rauchen annotieren</string>
+    <string name="title_activity_debug">Debug</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="sendMessageToWearable">Nachricht an das Wearable</string>
+    <string name="onSendMessageToWearable">senden</string>
+    <string name="sendObjectToWearable">DataObject an das Wearable</string>
+    <string name="onSendObjectToWearable">senden</string>
+    <string name="sensor_event">Aufgezeichnete Events:</string>
+    <string name="startBluetoothService">Bluetooth service</string>
+    <string name="onStartBluetoothService">starten</string>
+    <string name="lighterBluetooth_service">Bluetooth service</string>
+
+    <string name="title_activity_help_screen">Hilfe</string>
+    <string name="title_activity_introduction">Anleitung</string>
+    <string name="title_activity_about">Impressum</string>
+    <string name="messageSender_service">Message Sender</string>
+
+    <string name="toggle_log_on">Aufzeichnung ist eingeschaltet</string>
+    <string name="toggle_log_off">Aufzeichnung ist ausgeschaltet</string>
+    <string name="dialog_sure_annotate">Annotation Speichern?</string>
+    <string name="confirm_annotate">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="dialog_sure_toggle">Loggingmodus verändern?</string>
+    <string name="confirm_toggle">bestätigen</string>
 </resources>

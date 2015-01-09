@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ess.imu_logger.wear">
+    package="ess.imu_logger.wear" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -18,15 +18,15 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Light">
+        android:theme="@android:style/Theme.Light" >
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="ess.imu_logger.wear.WearStartActivity"
+            android:name=".WearStartActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,11 +41,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="ess.imu_logger.wear.ImuLiveScreen"
-            android:label="@string/title_activity_imu_live_screen"></activity>
+            android:name=".ImuLiveScreen"
+            android:label="@string/title_activity_imu_live_screen" />
         <activity
-            android:name="ess.imu_logger.wear.Annotate"
-            android:label="@string/title_activity_annotate_smoking">
+            android:name=".Annotate"
+            android:label="@string/title_activity_annotate_smoking" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -64,18 +64,21 @@
             android:allowEmbedded="true"
             android:exported="true"
             android:taskAffinity=""
-            android:theme="@android:style/Theme.DeviceDefault.Light">
+            android:theme="@android:style/Theme.DeviceDefault.Light" >
 
             <!-- android:label="@string/title_activity_notification_start_screen" -->
         </activity>
-        <activity android:name="android.support.wearable.activity.ConfirmationActivity"></activity>
+        <activity android:name="android.support.wearable.activity.ConfirmationActivity" />
+        <activity
+            android:name=".DebugActivity"
+            android:label="@string/title_activity_debug" >
+        </activity>
 
         <receiver
-            android:name="ess.imu_logger.libs.myReceiver"
+            android:name="ess.imu_logger.wear.WearReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
-                <action android:name="ess.imu_logger.libs.data_zip_upload.action.startService" />
                 <action android:name="ess.imu_logger.libs.data_zip_upload.action.startZipperOnly" />
                 <action android:name="ess.imu_logger.libs.TransferDataAsAssets.transfer" />
                 <action android:name="android.intent.action.TIME_SET" />
@@ -85,13 +88,13 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="ess.imu_logger.wear.WearableMessageListenerService">
+        <service android:name=".WearableMessageListenerService" >
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
         </service>
         <service
-            android:name="ess.imu_logger.wear.logging.WearLoggingService"
+            android:name=".logging.WearLoggingService"
             android:enabled="true"
             android:exported="true" />
         <service
@@ -103,18 +106,18 @@
         <service
             android:name="ess.imu_logger.libs.data_save.SensorDataSavingService"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="ess.imu_logger.data_export.action.saveData" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
-        <service android:name="ess.imu_logger.libs.DataCollectorService"></service>
+        <service android:name="ess.imu_logger.libs.DataCollectorService" />
         <service
             android:name="ess.imu_logger.libs.TransferDataAsAssets"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
     </application>
 
