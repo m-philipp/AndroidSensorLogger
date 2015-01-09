@@ -15,7 +15,7 @@ This App was developed for a smoking recognition study (That's why the, configur
 
 ## Deployment
 
-### Directly download the [0.7 Alpha APK ](imu-logger.apk)
+### Directly download the [0.10 Alpha APK ](imu-logger.apk)
 
 ### Get it from the [Google Play Store](https://play.google.com/store/apps/details?id=ess.imu_logger)
 
