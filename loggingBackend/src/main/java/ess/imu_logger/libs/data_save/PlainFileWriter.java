@@ -171,7 +171,7 @@ public class PlainFileWriter extends Thread {
         b.putInt(MESSAGE_TYPE_ACTION, MESSAGE_ACTION_POLL);
         msg.setData(b);
 
-        // could be a runnable when calling post instead of sendMessage
+        // TODO make this a constant
         getHandler().sendMessageDelayed(msg, 500);
     }
 

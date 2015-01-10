@@ -7,6 +7,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="1024"
@@ -14,20 +15,29 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="funktiosgrafik.svg">
+   sodipodi:docname="funktiosgrafik.png">
   <defs
      id="defs4">
     <linearGradient
        id="linearGradient3804">
       <stop
-         style="stop-color:#466582;stop-opacity:1;"
+         style="stop-color:#0f5291;stop-opacity:1;"
          offset="0"
          id="stop3806" />
       <stop
-         style="stop-color:#000000;stop-opacity:0.74301678;"
+         style="stop-color:#377daf;stop-opacity:0.74301678;"
          offset="1"
          id="stop3808" />
     </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3804"
+       id="linearGradient3797"
+       x1="-0.72673529"
+       y1="125"
+       x2="1023.9999"
+       y2="125"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -37,7 +47,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.70710678"
-     inkscape:cx="383.52006"
+     inkscape:cx="606.42138"
      inkscape:cy="115.38243"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -86,7 +96,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -96,78 +106,84 @@
      id="layer1"
      transform="translate(-20.726735,-166.64625)">
     <rect
-       style="fill:#c7e2f8;fill-opacity:1;stroke:none"
+       style="fill:url(#linearGradient3797);fill-opacity:1.0;stroke:none"
        id="rect3830"
        width="1024.7267"
        height="250"
        x="-0.72673529"
        y="0"
        transform="translate(20.726735,166.64625)" />
-    <rect
-       style="fill:#002647;fill-opacity:1;stroke:none"
-       id="rect3001"
-       width="1024.7266"
-       height="249.99998"
-       x="20"
-       y="416.64624" />
-    <path
-       sodipodi:type="star"
-       style="fill:#185186;fill-opacity:1;stroke:none;stroke-opacity:1;stroke-width:19.94745163000000000;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:miter;stroke-linecap:butt"
-       id="path2987"
-       sodipodi:sides="6"
-       sodipodi:cx="242.85715"
-       sodipodi:cy="238.07648"
-       sodipodi:r1="307.63083"
-       sodipodi:r2="266.41611"
-       sodipodi:arg1="1.5707963"
-       sodipodi:arg2="2.0943951"
-       inkscape:flatsided="true"
-       inkscape:rounded="0"
-       inkscape:randomized="0"
-       d="M 242.85716,545.70731 -23.558961,391.8919 l -9e-6,-307.63083 266.41611,-153.815422 266.41612,153.815407 0,307.630825 z"
-       transform="matrix(0.50131717,0,0,0.50131717,410.97828,307.23479)" />
-    <path
-       sodipodi:type="star"
-       style="fill:#46afea;fill-opacity:1;stroke:none"
-       id="path2987-4"
-       sodipodi:sides="6"
-       sodipodi:cx="242.85715"
-       sodipodi:cy="238.07648"
-       sodipodi:r1="307.63083"
-       sodipodi:r2="266.41611"
-       sodipodi:arg1="1.5707963"
-       sodipodi:arg2="2.0943951"
-       inkscape:flatsided="true"
-       inkscape:rounded="0"
-       inkscape:randomized="0"
-       d="M 242.85716,545.70731 -23.558961,391.8919 l -9e-6,-307.63083 266.41611,-153.815422 266.41612,153.815407 0,307.630825 z"
-       transform="matrix(0.50131717,0,0,0.50131717,411.33013,290.53685)" />
+    <g
+       id="g3768"
+       transform="translate(-319.61227,-10.53494)">
+      <g
+         id="g3784"
+         transform="translate(-14.142136,55.704879)">
+        <path
+           sodipodi:type="star"
+           style="fill:#185186;fill-opacity:1;stroke:none"
+           id="path2987"
+           sodipodi:sides="6"
+           sodipodi:cx="242.85715"
+           sodipodi:cy="238.07648"
+           sodipodi:r1="307.63083"
+           sodipodi:r2="266.41611"
+           sodipodi:arg1="1.5707963"
+           sodipodi:arg2="2.0943951"
+           inkscape:flatsided="true"
+           inkscape:rounded="0"
+           inkscape:randomized="0"
+           d="M 242.85716,545.70731 -23.558961,391.8919 l -9e-6,-307.63083 266.41611,-153.815422 266.41612,153.815407 0,307.630825 z"
+           transform="matrix(0.50131717,0,0,0.50131717,410.97828,307.23479)" />
+        <path
+           sodipodi:type="star"
+           style="fill:#46afea;fill-opacity:1;stroke:none"
+           id="path2987-4"
+           sodipodi:sides="6"
+           sodipodi:cx="242.85715"
+           sodipodi:cy="238.07648"
+           sodipodi:r1="307.63083"
+           sodipodi:r2="266.41611"
+           sodipodi:arg1="1.5707963"
+           sodipodi:arg2="2.0943951"
+           inkscape:flatsided="true"
+           inkscape:rounded="0"
+           inkscape:randomized="0"
+           d="M 242.85716,545.70731 -23.558961,391.8919 l -9e-6,-307.63083 266.41611,-153.815422 266.41612,153.815407 0,307.630825 z"
+           transform="matrix(0.50131717,0,0,0.50131717,411.33013,290.53685)" />
+        <text
+           xml:space="preserve"
+           style="font-size:150.39515686px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:FontAwesome;-inkscape-font-specification:FontAwesome"
+           x="459.82092"
+           y="469.80209"
+           id="text3777"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan3779"
+             x="459.82092"
+             y="469.80209"></tspan></text>
+        <path
+           style="fill:#7ec4f8;fill-opacity:1;stroke:none"
+           d="m 533.07504,255.66806 -23.21725,13.41024 156.77128,158.10289 0,-94.38862 -133.55403,-77.12451 z"
+           id="path2987-4-2"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
     <text
        xml:space="preserve"
-       style="font-size:150.39515686px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:FontAwesome;-inkscape-font-specification:FontAwesome"
-       x="459.82092"
-       y="469.80209"
-       id="text3777"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#163f64;fill-opacity:1;stroke:none;font-family:DINPro-Light;-inkscape-font-specification:DINPro-Light Light"
+       x="375.10855"
+       y="489.62692"
+       id="text3775"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan3779"
-         x="459.82092"
-         y="469.80209"></tspan></text>
-    <path
-       style="fill:#7ec4f8;fill-opacity:1;stroke:none"
-       d="m 533.07504,255.66806 -23.21725,13.41024 156.77128,158.10289 0,-94.38862 -133.55403,-77.12451 z"
-       id="path2987-4-2"
-       inkscape:connector-curvature="0" />
-    <text
-       xml:space="preserve"
-       style="font-size:60px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#003d51;fill-opacity:1;stroke:none;font-family:Microsoft Yi Baiti;-inkscape-font-specification:Microsoft Yi Baiti"
-       x="532.72675"
-       y="225.41162"
-       id="text3783"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan3785"
-         x="532.72675"
-         y="225.41162">Android Sensor Logger</tspan></text>
+         id="tspan3777"
+         x="375.10855"
+         y="489.62692"
+         style="font-size:50px;fill:#163f64;fill-opacity:1;-inkscape-font-specification:DINPro-Light Light;font-family:DINPro-Light;font-weight:300;font-style:normal;font-stretch:normal;font-variant:normal"><tspan
+           style="font-size:65px;fill:#163f64;fill-opacity:1;-inkscape-font-specification:DINPro-Light Light;font-family:DINPro-Light;font-weight:300;font-style:normal;font-stretch:normal;font-variant:normal"
+           id="tspan3782">Smart Sense</tspan><tspan
+           style="font-size:40px;fill:#163f64;fill-opacity:1;-inkscape-font-specification:DINPro-Light Light;font-family:DINPro-Light;font-weight:300;font-style:normal;font-stretch:normal;font-variant:normal"
+           id="tspan3780"> Tracker</tspan></tspan></text>
   </g>
 </svg>

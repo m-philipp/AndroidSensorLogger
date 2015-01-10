@@ -21,6 +21,7 @@ import android.support.v4.app.NotificationManagerCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.data.FreezableUtils;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMapItem;
@@ -29,6 +30,7 @@ import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
 import java.io.File;
+import java.util.List;
 
 import ess.imu_logger.libs.TransferDataAsAssets;
 import ess.imu_logger.libs.Util;
@@ -92,7 +94,11 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
         Log.d(TAG, "onDataChanged");
 
-        for (DataEvent event : dataEvents) {
+        final List<DataEvent> events = FreezableUtils
+                .freezeIterable(dataEvents);
+        dataEvents.close();
+
+        for (DataEvent event : events) {
             if (event.getType() == DataEvent.TYPE_DELETED) {
                 Log.d(TAG, "DataItem deleted: " + event.getDataItem().getUri());
             } else if (event.getType() == DataEvent.TYPE_CHANGED) {
@@ -203,9 +209,6 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
                     updateLoggingState(this, sharedPrefs);
 
-
-                    // TODO start WearStartActivity ONCE!
-
                 }
 
             }
@@ -213,16 +216,6 @@ public class WearableMessageListenerService extends WearableListenerService impl
         }
     }
 
-
-    private void startStartActivity() {
-
-        Log.d(TAG, "starting Start Activity ...");
-
-        Intent startActivityIntent = new Intent(this, WearStartActivity.class);
-        startActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        this.startActivity(startActivityIntent);
-
-    }
 
 
 

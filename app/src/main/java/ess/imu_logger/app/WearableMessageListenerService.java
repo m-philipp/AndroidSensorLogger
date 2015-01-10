@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.data.FreezableUtils;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -26,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import ess.imu_logger.libs.Util;
@@ -78,13 +80,14 @@ public class WearableMessageListenerService extends WearableListenerService impl
     public void onDataChanged(DataEventBuffer dataEvents) {
 
         // TODO TODO TODO check that
-        // final List<DataEvent> events = FreezableUtils.freezeIterable(dataEvents);
-        // dataEvents.close();
+        // it's for usage outside the callscope
+        final List<DataEvent> events = FreezableUtils.freezeIterable(dataEvents);
+        dataEvents.close();
 
         Log.d(TAG, "onDataChanged");
 
 
-        for (DataEvent event : dataEvents) {
+        for (DataEvent event : events) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
 
                 Log.d(TAG, "DataItem changed: " + event.getDataItem().getUri());

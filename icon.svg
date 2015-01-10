@@ -36,9 +36,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="11.313708"
-     inkscape:cx="314.69676"
-     inkscape:cy="-9.3600621"
+     inkscape:zoom="0.70710675"
+     inkscape:cx="690.54799"
+     inkscape:cy="322.78473"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -69,6 +69,14 @@
        orientation="1,0"
        position="325,325"
        id="guide2994" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="58.875,492.00002"
+       id="guide2995" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="591.125,183.87501"
+       id="guide2997" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -102,7 +110,7 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="M 242.85716,545.70731 -23.558961,391.8919 l -9e-6,-307.63083 266.41611,-153.815422 266.41612,153.815407 0,307.630825 z"
-       transform="translate(102.16776,120.25872)" />
+       transform="matrix(0.99890735,0,0,1,103.13495,120.25872)" />
     <path
        sodipodi:type="star"
        style="fill:#46afea;fill-opacity:1;stroke:none"
@@ -118,7 +126,7 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="M 242.85716,545.70731 -23.558961,391.8919 l -9e-6,-307.63083 266.41611,-153.815422 266.41612,153.815407 0,307.630825 z"
-       transform="translate(102.8696,86.950597)" />
+       transform="matrix(0.99890735,0,0,1,103.13495,86.950597)" />
     <text
        xml:space="preserve"
        style="font-size:300px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:FontAwesome;-inkscape-font-specification:FontAwesome"
@@ -132,7 +140,7 @@
          y="444.53906"></tspan></text>
     <path
        style="fill:#7ec4f8;fill-opacity:1;stroke:none"
-       d="m 345.71968,17.396246 -46.3125,26.75 312.71874,315.374984 0,-188.28125 L 345.71968,17.396246 z"
+       d="m 345.76698,16.475685 -46.25661,26.893953 312.34136,317.072152 0,-189.29447 L 345.76698,16.475685 z"
        id="path2987-4-2"
        inkscape:connector-curvature="0" />
   </g>

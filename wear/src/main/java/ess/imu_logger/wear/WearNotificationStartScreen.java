@@ -37,10 +37,12 @@ public class WearNotificationStartScreen extends Activity {
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 
+        /*
         Intent intent = getIntent();
         if (intent != null) {
             intent.getAction();
         }
+        */
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -70,14 +72,15 @@ public class WearNotificationStartScreen extends Activity {
         handler.postDelayed(sendUpdatesToUI, 100); // 0,1 second
 
 
-        if(wvs == null)
-            return;
-
         uiUpdate();
     }
 
 
     private void uiUpdate(){
+
+        if(wvs == null) // TODO check that
+            return;
+
         TextView mTextView = (TextView) wvs.findViewById(R.id.id_sensor_event);
         mTextView.setText("Sensor Event: " + Long.toString(sharedPrefs.getLong("sensor_events_logged", 0L) / 1000) + " k");
 

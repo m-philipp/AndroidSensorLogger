@@ -17,7 +17,7 @@
 	<string name="pref_description_start_on_close">Beim schließen der App automatisch neustarten</string>
 
 	<string name="pref_start_on_boot">Autostart</string>
-	<string name="pref_description_start_on_boot">Nach dem Booten von Android Logging App starten.</string>
+	<string name="pref_description_start_on_boot">Nach dem Booten von Android App starten.</string>
 
 
 

@@ -113,7 +113,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
-        <service android:name="ess.imu_logger.libs.DataCollectorService" />
+
         <service
             android:name="ess.imu_logger.libs.TransferDataAsAssets"
             android:enabled="true"
