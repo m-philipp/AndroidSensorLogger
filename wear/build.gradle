@@ -6,7 +6,7 @@ android {
     buildToolsVersion '21.1.1'
 
     defaultConfig {
-        applicationId "ess.imu_logger"
+        applicationId "de.smart_sense.tracker"
         minSdkVersion 20
         targetSdkVersion 20
         versionCode 11

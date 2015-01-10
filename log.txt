@@ -1,7 +1,7 @@
-10-09 11:44:06.174      745-791/? W/BroadcastQueue﹕ Unable to launch app ess.imu_logger/10094 for broadcast Intent { act=ess.imu_logger.data_zip_upload.action.startService flg=0x14 cmp=ess.imu_logger/.myReceiver (has extras) }: process is bad
+10-09 11:44:06.174      745-791/? W/BroadcastQueue﹕ Unable to launch app de.smart_sense.tracker/10094 for broadcast Intent { act=de.smart_sense.tracker.data_zip_upload.action.startService flg=0x14 cmp=de.smart_sense.tracker/.myReceiver (has extras) }: process is bad
 
 
-10-09 12:08:32.314      745-791/? W/ActivityManager﹕ Timeout executing service: ServiceRecord{431ea8a8 u0 ess.imu_logger/.data_zip_upload.ZipUploadService}
+10-09 12:08:32.314      745-791/? W/ActivityManager﹕ Timeout executing service: ServiceRecord{431ea8a8 u0 de.smart_sense.tracker/.data_zip_upload.ZipUploadService}
 
 
 

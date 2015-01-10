@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ess.imu_logger.wear" >
+    package="de.smart_sense.tracker.wear" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="ess.imu_logger.libs.Util.ACTION_OPEN_START_ACTIVITY" />
+                <action android:name="de.smart_sense.tracker.libs.Util.ACTION_OPEN_START_ACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
@@ -52,7 +52,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="ess.imu_logger.libs.Util.ACTION_ANNOTATE_SMOKING" />
+                <action android:name="de.smart_sense.tracker.libs.Util.ACTION_ANNOTATE_SMOKING" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
@@ -75,12 +75,12 @@
         </activity>
 
         <receiver
-            android:name="ess.imu_logger.wear.WearReceiver"
+            android:name="de.smart_sense.tracker.wear.WearReceiver"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
-                <action android:name="ess.imu_logger.libs.data_zip_upload.action.startZipperOnly" />
-                <action android:name="ess.imu_logger.libs.TransferDataAsAssets.transfer" />
+                <action android:name="de.smart_sense.tracker.libs.data_zip_upload.action.startZipperOnly" />
+                <action android:name="de.smart_sense.tracker.libs.TransferDataAsAssets.transfer" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
 
@@ -98,24 +98,24 @@
             android:enabled="true"
             android:exported="true" />
         <service
-            android:name="ess.imu_logger.libs.data_zip_upload.ZipUploadService"
+            android:name="de.smart_sense.tracker.libs.data_zip_upload.ZipUploadService"
             android:enabled="true"
             android:exported="true" />
         <!-- android:process=":background_logging_process" -->
 
         <service
-            android:name="ess.imu_logger.libs.data_save.SensorDataSavingService"
+            android:name="de.smart_sense.tracker.libs.data_save.SensorDataSavingService"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
-                <action android:name="ess.imu_logger.data_export.action.saveData" />
+                <action android:name="de.smart_sense.tracker.data_export.action.saveData" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
 
         <service
-            android:name="ess.imu_logger.libs.TransferDataAsAssets"
+            android:name="de.smart_sense.tracker.libs.TransferDataAsAssets"
             android:enabled="true"
             android:exported="true" />
 

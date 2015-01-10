@@ -6,5 +6,5 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     app:rectLayout="@layout/rect_activity_notification_start_screen"
     app:roundLayout="@layout/round_activity_notification_start_screen"
-    tools:context="ess.imu_logger.wear.WearNotificationStartScreen"
+    tools:context="de.smart_sense.tracker.wear.WearNotificationStartScreen"
     tools:deviceIds="wear"></android.support.wearable.view.WatchViewStub>

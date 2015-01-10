@@ -2879,7 +2879,7 @@ com_sensors_hal﹕ hal_sam_ped_activate: Unable to enable ped
 09-29 00:17:00.912      193-193/? E/Sensors﹕ sns_acm_mr.c(625):Error allocating response message
 09-29 00:17:00.912      749-762/? E/qcom_sensors_hal﹕ hal_sam_rotv_activate: Unable to enable rotv
 09-29 00:17:00.912      193-193/? E/Sensors﹕ sns_acm_mr.c(625):Error allocating response message
-09-29 00:17:00.922  22614-22628/ess.imu_logger:background_logging_process I/ess.imu_logger.data_zip_upload.Zipper﹕ ZIPPPPING some Data!!
+09-29 00:17:00.922  22614-22628/de.smart_sense.tracker:background_logging_process I/de.smart_sense.tracker.data_zip_upload.Zipper﹕ ZIPPPPING some Data!!
 09-29 00:17:00.922      749-762/? E/qcom_sensors_hal﹕ hal_acquire_resources: Failed for handle 0 @ samp 200 Hz rpt 0 Hz WuFF 0 batched 0
 09-29 00:17:00.922    749-20778/? E/qcom_sensors_hal﹕ hal_process_buffering_resp: Result: 1, Error: 2
 09-29 00:17:00.922      193-193/? E/Sensors﹕ sns_main.c(1257):Error writing request. sns_err 2 error 0 qmi_err 0

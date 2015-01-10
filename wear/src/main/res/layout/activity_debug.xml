@@ -5,5 +5,5 @@
     xmlns:tools="http://schemas.android.com/tools" android:id="@+id/watch_view_stub"
     android:layout_width="match_parent" android:layout_height="match_parent"
     app:rectLayout="@layout/rect_activity_debug" app:roundLayout="@layout/round_activity_debug"
-    tools:context="ess.imu_logger.wear.DebugActivity"
+    tools:context="de.smart_sense.tracker.wear.DebugActivity"
     tools:deviceIds="wear"></android.support.wearable.view.WatchViewStub>

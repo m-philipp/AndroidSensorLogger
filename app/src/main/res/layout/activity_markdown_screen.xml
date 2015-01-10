@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ess.imu_logger.app.markdownViewer.MarkdownViewerActivity">
+    tools:context="de.smart_sense.tracker.app.markdownViewer.MarkdownViewerActivity">
 
     <WebView
         android:layout_width="wrap_content"

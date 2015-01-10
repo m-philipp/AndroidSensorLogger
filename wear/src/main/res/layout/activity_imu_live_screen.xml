@@ -7,5 +7,5 @@
     android:layout_height="match_parent"
     app:rectLayout="@layout/rect_activity_imu_live_screen"
     app:roundLayout="@layout/round_activity_imu_live_screen"
-    tools:context="ess.imu_logger.app.ImuLiveScreen"
+    tools:context="de.smart_sense.tracker.app.ImuLiveScreen"
     tools:deviceIds="wear"></android.support.wearable.view.WatchViewStub>
