@@ -1,8 +1,8 @@
-# Welcome to the Android Sensor Logger Docs
+# Welcome to the Smart Sense Tracker Docs
 
-The Android Sensor Logger is a Tool to log data for Activity Recognition Studys.
+The Smart Sense Tracker is a Tool to log data for Activity Recognition Studys.
 
-Therefore the Android Sensor Logger can:  
+Therefore the Smart Sense Tracker can:  
 
 * log the built-in Android (Wear) Sensors
 * save Annotations from the [iLitit](https://github.com/pscholl/iLitIt_Android) Smart-Lighter
@@ -15,7 +15,7 @@ This App was developed for a smoking recognition study (That's why the, configur
 
 ## Deployment
 
-### Directly download the [0.10 Alpha APK ](imu-logger.apk)
+### Directly download the [0.12 Alpha APK ](smart_sense_tracker.apk)
 
 ### Get it from the [Google Play Store](https://play.google.com/store/apps/details?id=ess.imu_logger)
 
@@ -28,9 +28,13 @@ Further [Deployment](deploy) Information.
 ![Screenshot](img/general.png){: style="max-width: 200px"}
 ![Screenshot](img/recording.png){: style="max-width: 200px"}
 ![Screenshot](img/upload.png){: style="max-width: 200px"}
+![Screenshot](img/notification.png){: style="max-width: 200px"}
 
 
 ## Smartwatch UI
 
-![Screenshot](img/wearStart.png){: style="max-width: 200px"}
-![Screenshot](img/wearAnnotate.png){: style="max-width: 200px"}
+![Screenshot](img/wear-anot.png){: style="max-width: 200px"}
+![Screenshot](img/wear-card.png){: style="max-width: 200px"}
+![Screenshot](img/wear-not-anot.png){: style="max-width: 200px"}
+![Screenshot](img/wear-not-start.png){: style="max-width: 200px"}
+![Screenshot](img/wear-start.png){: style="max-width: 200px"}

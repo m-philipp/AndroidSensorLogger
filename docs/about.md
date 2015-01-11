@@ -1,13 +1,13 @@
 # Impressum
 
-** Martin Zittel **
+** Martin Philipp **
 
 65428 Ruesselsheim  
 Im Grundsee 57
 
 
-Mail: martin.zittel@gmail.com  
-Web: [www.martin-zittel.de](http://martin-zittel.de)
+Mail: mail@martin-philipp.de  
+Web: [www.martin-philipp.de](http://www.martin-philipp.de)
 
 Tel: 06142 - 3304050  
 Fax: 06142 - 3304052

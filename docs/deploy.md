@@ -4,7 +4,7 @@ Deployment is pretty easy. Just checkout the GitHub Repository and import the Pr
 
 ## Install from APK
 
-You can download the latest **[APK](imu-logger.apk)** Release and install the App directly on your Smartphone.
+You can download the latest **[APK](smart_sense_tracker.apk)** Release and install the App directly on your Smartphone.
 
 Therefore you must enable *untrusted Apps* (*Unbekannte Herkunft*) under the Security Settings.
 
