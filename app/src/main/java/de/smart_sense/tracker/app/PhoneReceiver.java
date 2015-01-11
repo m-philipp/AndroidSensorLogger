@@ -28,6 +28,11 @@ public class PhoneReceiver extends BroadcastReceiver {
         if (intent != null) {
             String action = intent.getAction();
 
+            if(context == null)
+                return;
+
+            sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+
             if (action.equals(intent.ACTION_BOOT_COMPLETED)) {
 
                 Log.d(TAG, "received boot complete");
@@ -52,7 +57,6 @@ public class PhoneReceiver extends BroadcastReceiver {
 
                 Log.d(TAG, "received ACTION_PERIODIC_ALARM");
 
-                sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
                 PhoneUtil.updateLoggingState(context, sharedPrefs);
 
 
