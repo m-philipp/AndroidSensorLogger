@@ -44,7 +44,7 @@ public class WearLoggingService extends LoggingService {
         Notification.Builder notificationBuilder =
                 new Notification.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("Android Sensor Logger")
+                        .setContentTitle("Smart Sense Tracker") // TODO get this from constants
                         .setOngoing(true)
                         .setLocalOnly(true)
                         .extend(new Notification.WearableExtender()

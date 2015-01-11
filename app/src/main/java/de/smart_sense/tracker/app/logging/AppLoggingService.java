@@ -43,7 +43,7 @@ public class AppLoggingService extends LoggingService {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(de.smart_sense.tracker.R.drawable.ic_action_core_refresh_hd)
                         .setLocalOnly(true)
-                        .setContentTitle("Android Sensor Logger") // Title
+                        .setContentTitle("Smart Sense Tracker") // Title // TODO get this from constants
                         .setContentText("Aufzeichnung läuft.") // Sub-Title
                         .setContentIntent(pendingOpenIntent)
                         .addAction(de.smart_sense.tracker.R.drawable.ic_cigarette_white,
