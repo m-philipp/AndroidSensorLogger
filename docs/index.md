@@ -15,7 +15,7 @@ This App was developed for a smoking recognition study (That's why the, configur
 
 ## Deployment
 
-### Directly download the [0.12 Alpha APK ](smart_sense_tracker.apk)
+### Directly download the [0.13 Alpha APK ](smart_sense_tracker.apk)
 
 ### Get it from the [Google Play Store](https://play.google.com/store/apps/details?id=ess.imu_logger)
 
