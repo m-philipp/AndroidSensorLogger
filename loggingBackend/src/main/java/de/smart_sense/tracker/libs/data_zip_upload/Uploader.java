@@ -285,7 +285,7 @@ public class Uploader extends Thread {
 
         Arrays.sort(listOfFiles);
 
-        if (listOfFiles.length > 1) {
+        if (listOfFiles.length > 0) {
             if (full)
                 return dir.getAbsolutePath() + File.separator + listOfFiles[0]; // TODO check if we didn't take the newest file.
             return listOfFiles[0];

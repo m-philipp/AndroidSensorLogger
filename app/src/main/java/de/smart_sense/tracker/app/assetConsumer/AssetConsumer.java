@@ -117,10 +117,12 @@ public class AssetConsumer extends Service {
 
             Log.d(TAG, "created AssetSaveThread");
 
-            mGoogleApiClient = new GoogleApiClient.Builder(ac)
-                    .addApi(Wearable.API)
-                    .addOnConnectionFailedListener(this)
-                    .build();
+
+        }
+
+        @Override
+        public void onConnectionFailed(ConnectionResult connectionResult) {
+            Log.e(TAG, "Failed to connect to Google Api Client");
         }
 
         public void run() {
@@ -136,10 +138,18 @@ public class AssetConsumer extends Service {
                     inHandler = new Handler() {
                         public void handleMessage(Message msg) {
                             // Act on the message received from my UI thread doing my stuff
+
+                            mGoogleApiClient = new GoogleApiClient.Builder(ac)
+                                    .addApi(Wearable.API)
+                                    .addOnConnectionFailedListener(ast)
+                                    .build();
+
                             ConnectionResult conResult =
                                     mGoogleApiClient.blockingConnect(1, TimeUnit.SECONDS);
                             if (!conResult.isSuccess()) {
                                 Log.d(TAG, "GoogleClientConnect was false");
+                                assetThreadStopped();
+                                Looper.myLooper().quit();
                                 return;
                             }
 
@@ -154,8 +164,12 @@ public class AssetConsumer extends Service {
 
                             Result result = pr.await(3, TimeUnit.SECONDS);
 
-                            if (result == null)
+                            if (result == null) {
+                                mGoogleApiClient.disconnect();
+                                assetThreadStopped();
+                                Looper.myLooper().quit();
                                 return;
+                            }
 
                             DataApi.DataItemResult r = (DataApi.DataItemResult) result;
                             DataItem di = r.getDataItem();
@@ -168,6 +182,7 @@ public class AssetConsumer extends Service {
 
 
                                 assetSaved = saveFileFromAsset(fileName, profileAsset);  // TODO error handling
+
 
 
                                 Log.d(TAG, "SensorDataFileName: " + fileName);
@@ -315,10 +330,7 @@ public class AssetConsumer extends Service {
             getHandler().sendMessage(msg);
         }
 
-        @Override
-        public void onConnectionFailed(ConnectionResult connectionResult) {
-            Log.e(TAG, "Failed to connect to Google Api Client");
-        }
+
     }
 
 }
