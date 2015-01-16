@@ -98,7 +98,7 @@ public class Logger extends Handler implements SensorEventListener {
 
         // TODO evtl. check if getDefaultSensor() == null
 
-        logging_frequency = Integer.parseInt(sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "0"));
+        logging_frequency = Integer.parseInt(sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "2"));
 
         int maxBatchReportLatency = 1000;
 

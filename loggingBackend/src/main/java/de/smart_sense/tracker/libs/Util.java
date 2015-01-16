@@ -2,13 +2,21 @@ package de.smart_sense.tracker.libs;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.SystemClock;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -107,6 +115,10 @@ public class Util {
 
     public static boolean isMessageSenderServiceRunning(Context context) {
         return isServiceRunning(context, WearableMessageSenderService.class.getName());
+    }
+
+    public static boolean isTransferDataAsAssetsServiceRunning(Context context) {
+        return isServiceRunning(context, TransferDataAsAssets.class.getName());
     }
 
     public static boolean isServiceRunning(Context context, String classname) {
@@ -442,6 +454,22 @@ public class Util {
     }
 
 
+
+    public static  String getLocalNodeId(GoogleApiClient mGoogleApiClient) {
+        NodeApi.GetLocalNodeResult nodeResult = Wearable.NodeApi.getLocalNode(mGoogleApiClient).await();
+        return nodeResult.getNode().getId();
+    }
+
+    public static  String getRemoteNodeId(GoogleApiClient mGoogleApiClient) {
+        HashSet<String> results = new HashSet<String>();
+        NodeApi.GetConnectedNodesResult nodesResult =
+                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+        List<Node> nodes = nodesResult.getNodes();
+        if (nodes.size() > 0) {
+            return nodes.get(0).getId();
+        }
+        return null;
+    }
 
 
 }

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import de.smart_sense.tracker.app.assetConsumer.AssetConsumer;
 import de.smart_sense.tracker.libs.Util;
 import de.smart_sense.tracker.libs.WearableMessageSenderService;
 import de.smart_sense.tracker.libs.data_zip_upload.ZipUploadService;
@@ -70,6 +71,11 @@ public class PhoneReceiver extends BroadcastReceiver {
                 Intent stopIntent = new Intent(context, WearableMessageSenderService.class);
                 stopIntent.setAction(WearableMessageSenderService.ACTION_STOP_SERVICE);
                 context.startService(stopIntent);
+
+
+                Intent mServiceIntent = new Intent(context, AssetConsumer.class);
+                mServiceIntent.setAction(AssetConsumer.ACTION_START_SERVICE);
+                context.startService(mServiceIntent);
 
             } else {
 

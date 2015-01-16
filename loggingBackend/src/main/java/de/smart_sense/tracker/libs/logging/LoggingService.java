@@ -54,6 +54,9 @@ public abstract class LoggingService extends Service {
             if (ACTION_START_LOGGING.equals(action)) {
 
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
+
+
+
                 startRecording();
 
             } else if (ACTION_STOP_LOGGING.equals(action)) {
@@ -81,12 +84,14 @@ public abstract class LoggingService extends Service {
     public void onDestroy() {
 
         Log.d(TAG, "on Destroy called.");
+
         stopForeground(true);
-        wl.release();
 
-        //stopRecording();
+        if(wl != null)
+            wl.release();
 
-        thread.quit();
+        if(thread != null)
+            thread.quit();
     }
 
 
@@ -94,6 +99,10 @@ public abstract class LoggingService extends Service {
 
         Log.d(TAG, "on onCreate called.");
 
+
+    }
+
+    private void setup() {
         Notification n = getNotificationIntent();
 
 
@@ -110,11 +119,9 @@ public abstract class LoggingService extends Service {
         //thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_MORE_FAVORABLE)m;
 
 
-
         thread.start();
         serviceLooper = thread.getLooper();
         serviceHandler = new Logger(serviceLooper, this);
-
     }
 
     protected abstract Notification getNotificationIntent();
@@ -123,8 +130,9 @@ public abstract class LoggingService extends Service {
     private synchronized void startRecording() {
 
         if(!loggingStarted) {
-            serviceHandler.sendEmptyMessage(Logger.MESSAGE_START);
             loggingStarted = true;
+            setup();
+            serviceHandler.sendEmptyMessage(Logger.MESSAGE_START);
         }
     }
 
@@ -132,8 +140,8 @@ public abstract class LoggingService extends Service {
     private synchronized void stopRecording() {
 
         if (loggingStarted) {
-            serviceHandler.sendEmptyMessage(Logger.MESSAGE_STOP);
             loggingStarted = false;
+            serviceHandler.sendEmptyMessage(Logger.MESSAGE_STOP);
         }
 
         stopSelf();

@@ -1,6 +1,7 @@
 package de.smart_sense.tracker.libs;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,11 +10,15 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Result;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
@@ -26,18 +31,19 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class TransferDataAsAssets extends Service implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "de.smart_sense.tracker.libs.TransferDataAsAssets";
     public static final String ACTION_TRANSFER = "de.smart_sense.tracker.libs.TransferDataAsAssets.transfer";
+    public static final String ACTION_STOP_SERVICE = "de.smart_sense.tracker.libs.TransferDataAsAssets.stopService";
 
 
     protected GoogleApiClient mGoogleApiClient;
     private SendToDataLayerThread stdlt;
     private Boolean stdltRunning = false;
-
 
 
     public TransferDataAsAssets() {
@@ -58,7 +64,6 @@ public class TransferDataAsAssets extends Service implements
     }
 
 
-
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand called ...");
 
@@ -74,20 +79,28 @@ public class TransferDataAsAssets extends Service implements
 
                 Log.d(TAG, ACTION_TRANSFER);
 
-                if(!stdlt.isAlive()) {
-                // if(!stdltRunning && !stdlt.isAlive()) { // TODO check that logic
+                if (!stdlt.isAlive()) {
+                    // if(!stdltRunning && !stdlt.isAlive()) { // TODO check that logic
                     //stdltRunning = true;
                     stdlt = new SendToDataLayerThread();
                     stdlt.start();
                 }
                 stdlt.queueDataTransfer();
+            } else if (ACTION_STOP_SERVICE.equals(action)) {
+
+                Log.d(TAG, ACTION_STOP_SERVICE);
+
+                if (stdlt.isAlive()) {
+                    stdlt.requestStop();
+                }
+
+                transferFinished();
             }
         }
 
 
         return START_STICKY;
     }
-
 
 
     public void transferFinished() {
@@ -106,8 +119,6 @@ public class TransferDataAsAssets extends Service implements
     @Override
     public void onConnectionSuspended(int cause) {
     }
-
-
 
 
     @Override
@@ -140,6 +151,7 @@ public class TransferDataAsAssets extends Service implements
         public static final int MESSAGE_ACTION_TRANSFER_DATA = 0;
 
         private boolean transferedAsset = false;
+        private String fileName;
 
 
         // Constructor for sending data objects to the data layer
@@ -162,7 +174,7 @@ public class TransferDataAsAssets extends Service implements
 
                                 Log.d(TAG, "trying to transfer data to phone");
 
-                                String fileName = getFilenameToUpload(false);
+                                fileName = getFilenameToUpload(false);
                                 if (fileName == null) {
                                     Log.d(TAG, "there's no file to transfer");
                                     return;
@@ -170,24 +182,23 @@ public class TransferDataAsAssets extends Service implements
 
                                 transferedAsset = true;
 
-                                Uri.Builder uri = new Uri.Builder().scheme(PutDataRequest.WEAR_URI_SCHEME).path(Util.GAC_PATH_SENSOR_DATA);
-                                Wearable.DataApi.deleteDataItems(mGoogleApiClient, uri.build()).await();
 
-                                Asset asset = createAssetFromFile(getFilenameToUpload());
 
-                                PutDataMapRequest dataMap = PutDataMapRequest.create(Util.GAC_PATH_SENSOR_DATA);
-                                dataMap.getDataMap().putString(Util.SENSOR_FILE_NAME, fileName);
-                                dataMap.getDataMap().putString(Util.SENT_TIMESTAMP, "" + System.currentTimeMillis());
-                                dataMap.getDataMap().putAsset(Util.SENSOR_FILE, asset);
+                                Uri.Builder uri = new Uri.Builder()
+                                        .scheme(PutDataRequest.WEAR_URI_SCHEME)
+                                        .authority(Util.getLocalNodeId(mGoogleApiClient))
+                                        .path(Util.GAC_PATH_SENSOR_DATA);
+                                PendingResult pr = Wearable.DataApi.getDataItem(mGoogleApiClient, uri.build());
 
-                                //dataMap.getDataMap().putInt(COUNT_KEY, count++);
-                                PutDataRequest request = dataMap.asPutDataRequest();
-                                PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
-                                        .putDataItem(mGoogleApiClient, request);
+                                Result result = pr.await(3, TimeUnit.SECONDS);
+                                DataApi.DataItemResult r = (DataApi.DataItemResult) result;
 
-                                // TODO check that on not connected it isn't called every sec
-                                // TODO check that there's no out of memory (closed streams)
+                                //if (r != null) //&& result.getStatus().equals(CommonStatusCodes.SUCCESS))
+                                    transfer(fileName);
 
+
+
+                                //Wearable.DataApi.deleteDataItems(mGoogleApiClient, uri.build()).await();
 
 
                             }
@@ -210,6 +221,20 @@ public class TransferDataAsAssets extends Service implements
             }
 
 
+        }
+
+        private void transfer(String fileName) {
+            Asset asset = createAssetFromFile(getFilenameToUpload());
+
+            PutDataMapRequest dataMap = PutDataMapRequest.create(Util.GAC_PATH_SENSOR_DATA);
+            dataMap.getDataMap().putString(Util.SENSOR_FILE_NAME, fileName);
+            dataMap.getDataMap().putString(Util.SENT_TIMESTAMP, "" + System.currentTimeMillis());
+            dataMap.getDataMap().putAsset(Util.SENSOR_FILE, asset);
+
+            //dataMap.getDataMap().putInt(COUNT_KEY, count++);
+            PutDataRequest request = dataMap.asPutDataRequest();
+            Wearable.DataApi
+                    .putDataItem(mGoogleApiClient, request).await(10, TimeUnit.SECONDS);
         }
 
         private Asset createAssetFromFile(String fileName) {
@@ -256,8 +281,8 @@ public class TransferDataAsAssets extends Service implements
 
             Log.d(TAG, "called queueDataTransfer");
 
-            if(transferedAsset)
-                    return;
+            if (transferedAsset)
+                return;
 
             Message msg = new Message();
             Bundle b = new Bundle();

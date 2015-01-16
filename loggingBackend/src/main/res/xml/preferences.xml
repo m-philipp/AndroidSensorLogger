@@ -83,7 +83,7 @@
 				android:title="@string/pref_sensor_activate"/>
 
 			<ListPreference
-				android:defaultValue="3"
+				android:defaultValue="2"
 				android:entries="@array/pref_sampling_rate_titles"
 				android:entryValues="@array/pref_sampling_rate_values"
                 android:dependency="sensor_activate"

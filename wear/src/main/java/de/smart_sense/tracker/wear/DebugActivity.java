@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -24,6 +25,10 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import java.io.File;
+import java.io.FilenameFilter;
+
+import de.smart_sense.tracker.libs.TransferDataAsAssets;
 import de.smart_sense.tracker.libs.Util;
 import de.smart_sense.tracker.libs.WearableMessageSenderService;
 import de.smart_sense.tracker.libs.data_save.SensorDataSavingService;
@@ -95,6 +100,28 @@ public class DebugActivity extends Activity implements
                 .putDataItem(mGoogleApiClient, request);
     }
 
+    public void onDeleteData(View v){
+
+        Util.checkDirs();
+
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + File.separator + Util.fileDir);
+        for(String filename : dir.list()) {
+
+            Log.d(TAG, "original filename: " + filename);
+
+            String absFileName = dir.getAbsolutePath() + File.separator + filename;
+
+            Log.d(TAG, "deleting: " + absFileName);
+
+            File f = new File(absFileName);
+            f.setWritable(true);
+            if (f.delete()) {
+                Log.d(TAG, f.getName() + " is deleted!");
+            } else {
+                Log.d(TAG, f.getName() + " Delete operation is failed.");
+            }
+        }
+    }
 
 
     public void onStartStopLoggingService(View v){
@@ -142,6 +169,19 @@ public class DebugActivity extends Activity implements
             Intent sensorDataSavingServiceIntent = new Intent(this, WearableMessageSenderService.class);
             sensorDataSavingServiceIntent.setAction(WearableMessageSenderService.ACTION_START_SERVICE);
             this.startService(sensorDataSavingServiceIntent);
+        }
+    }
+
+    public void onStartStopTransferDataService(View v){
+        Log.d(TAG, "onStartStopTransferDataService");
+        if(isTransferDataAsAssetsServiceRunning(this)) {
+            Intent transferDataAsAssetsServiceIntent = new Intent(this, TransferDataAsAssets.class);
+            transferDataAsAssetsServiceIntent.setAction(TransferDataAsAssets.ACTION_TRANSFER);
+            this.startService(transferDataAsAssetsServiceIntent);
+        } else {
+            Intent transferDataAsAssetsServiceIntent = new Intent(this, TransferDataAsAssets.class);
+            transferDataAsAssetsServiceIntent.setAction(TransferDataAsAssets.ACTION_STOP_SERVICE);
+            this.startService(transferDataAsAssetsServiceIntent);
         }
     }
 
@@ -236,6 +276,33 @@ public class DebugActivity extends Activity implements
         }
 
 
+        String prefs = "";
+
+        prefs += (PREFERENCES_NAME + ": " + sharedPrefs.getString(PREFERENCES_NAME, "") + "\n");
+        prefs += (PREFERENCES_ANNOTATION_NAME + ": " + sharedPrefs.getString(PREFERENCES_ANNOTATION_NAME, "") + "\n");
+        prefs += (PREFERENCES_ANONYMIZE + ": " + sharedPrefs.getBoolean(PREFERENCES_ANONYMIZE, false) + "\n");
+        prefs += (PREFERENCES_LAST_ANNOTATION + ": " + sharedPrefs.getString(PREFERENCES_LAST_ANNOTATION, "") + "\n");
+        prefs += (PREFERENCES_START_ON_BOOT + ": " + sharedPrefs.getBoolean(PREFERENCES_START_ON_BOOT, false) + "\n");
+        prefs += (PREFERENCES_SENSOR_ACTIVATE + ": " + sharedPrefs.getBoolean(PREFERENCES_SENSOR_ACTIVATE, false) + "\n");
+        prefs += (PREFERENCES_SAMPLING_RATE + ": " + sharedPrefs.getString(PREFERENCES_SAMPLING_RATE, "") + "\n");
+        prefs += (PREFERENCES_WEAR_TEMP_LOGGING + ": " + sharedPrefs.getBoolean(PREFERENCES_WEAR_TEMP_LOGGING, false) + "\n");
+        prefs += (PREFERENCES_WEAR_TEMP_LOGGING_DURATION + ": " + sharedPrefs.getString(PREFERENCES_WEAR_TEMP_LOGGING_DURATION, "") + "\n");
+
+        prefs += (PREFERENCES_ACCELEROMETER + ": " + sharedPrefs.getBoolean(PREFERENCES_ACCELEROMETER, false) + "\n");
+        prefs += (PREFERENCES_GYROSCOPE + ": " + sharedPrefs.getBoolean(PREFERENCES_GYROSCOPE, false) + "\n");
+        prefs += (PREFERENCES_MAGNETIC_FIELD + ": " + sharedPrefs.getBoolean(PREFERENCES_MAGNETIC_FIELD, false) + "\n");
+        prefs += (PREFERENCES_AMBIENT_LIGHT + ": " + sharedPrefs.getBoolean(PREFERENCES_AMBIENT_LIGHT, false) + "\n");
+        prefs += (PREFERENCES_PROXIMITY + ": " + sharedPrefs.getBoolean(PREFERENCES_PROXIMITY, false) + "\n");
+        prefs += (PREFERENCES_TEMPERATURE + ": " + sharedPrefs.getBoolean(PREFERENCES_TEMPERATURE, false) + "\n");
+        prefs += (PREFERENCES_HUMIDITY + ": " + sharedPrefs.getBoolean(PREFERENCES_HUMIDITY, false) + "\n");
+        prefs += (PREFERENCES_PRESSURE + ": " + sharedPrefs.getBoolean(PREFERENCES_PRESSURE, false) + "\n");
+        prefs += (PREFERENCES_ROTATION + ": " + sharedPrefs.getBoolean(PREFERENCES_ROTATION, false) + "\n");
+        prefs += (PREFERENCES_GRAVITY + ": " + sharedPrefs.getBoolean(PREFERENCES_GRAVITY, false) + "\n");
+        prefs += (PREFERENCES_LINEAR_ACCELEROMETER + ": " + sharedPrefs.getBoolean(PREFERENCES_LINEAR_ACCELEROMETER, false) + "\n");
+        prefs += (PREFERENCES_STEPS + ": " + sharedPrefs.getBoolean(PREFERENCES_STEPS, false) + "\n");
+
+        t = (TextView) findViewById(R.id.textViewSettings);
+        t.setText(prefs);
 
 
     }

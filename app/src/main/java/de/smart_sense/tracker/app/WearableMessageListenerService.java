@@ -30,9 +30,11 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.smart_sense.tracker.app.assetConsumer.AssetConsumer;
 import de.smart_sense.tracker.libs.Util;
 import de.smart_sense.tracker.libs.WearableMessageSenderService;
 import de.smart_sense.tracker.libs.data_save.SensorDataSavingService;
+import de.smart_sense.tracker.libs.data_zip_upload.ZipUploadService;
 
 import static de.smart_sense.tracker.libs.WearableMessageSenderService.sendMessage;
 
@@ -94,6 +96,13 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
                 if (event.getDataItem().getUri().getPath().equals(Util.GAC_PATH_SENSOR_DATA)) {
 
+
+                    Intent mServiceIntent = new Intent(this, AssetConsumer.class);
+                    mServiceIntent.setAction(AssetConsumer.ACTION_START_SERVICE);
+                    this.startService(mServiceIntent);
+
+
+                    /*
                     Log.d(TAG, "trying to extract asset");
 
                     DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
@@ -120,6 +129,7 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     mGoogleApiClient.disconnect();
 
                     Log.d(TAG, "SensorDataFileName: " + fileName);
+                    */
                 }
             }
         }

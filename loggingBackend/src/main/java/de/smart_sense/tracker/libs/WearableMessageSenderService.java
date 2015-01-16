@@ -266,8 +266,11 @@ public class WearableMessageSenderService extends Service implements
                                 dataMap.putString(Util.SENT_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
 
                                 PutDataRequest request = putDataMapRequest.asPutDataRequest();
-                                PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
-                                        .putDataItem(mGoogleApiClient, request);
+
+                                Wearable.DataApi
+                                        .putDataItem(mGoogleApiClient, request).await();
+                                // PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
+                                //        .putDataItem(mGoogleApiClient, request);
 
                             }
 

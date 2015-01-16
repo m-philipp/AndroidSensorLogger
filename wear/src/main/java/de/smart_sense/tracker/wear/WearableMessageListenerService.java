@@ -200,12 +200,9 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     editor.putString(Util.PREFERENCES_SAMPLING_RATE, dataString);
 
 
-                    dataString = dataItem.getDataMap().getString(Util.PREFERENCES_SAMPLING_RATE);
-                    Log.d(TAG, "sampling rate = " + dataString);
-                    editor.putString(Util.PREFERENCES_SAMPLING_RATE, dataString);
 
-
-                    editor.commit();
+                    if(editor.commit() == false)
+                        Log.d(TAG, "couldn't write Settings");
 
                     updateLoggingState(this, sharedPrefs);
 

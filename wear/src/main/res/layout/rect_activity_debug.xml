@@ -123,12 +123,12 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
                     tools:context=".StartScreen">
 
                     <TextView
-                        android:id="@+id/textView7"
+                        android:id="@+id/textView54"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/messageSender_service"
@@ -146,6 +146,34 @@
                         android:layout_weight="1"
                         android:textColor="#ff6000"
                         android:onClick="onStartStopMessageSenderService" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    tools:context=".StartScreen">
+
+                    <TextView
+                        android:id="@+id/textView547"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/transferData_service"
+                        style="@style/TextAppearance.Wearable.Small"
+                        android:layout_weight="9"/>
+
+                    <TextView
+                        android:id="@+id/transferData_service_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="10dp"
+                        style="@style/TextAppearance.Wearable.Small"
+                        android:text="@string/service_stopped"
+                        android:gravity="right"
+                        android:layout_weight="1"
+                        android:textColor="#ff6000"
+                        android:onClick="onStartStopTransferDataService" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -245,7 +273,38 @@
                     android:onClick="onSendDataObjectToPhone"
                     android:text="@string/onSendObjectToPhone"/>
 
+                <TextView
+                    android:id="@+id/delete_data"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:text="@string/deleteSensorData"
+                    style="@style/TextAppearance.Wearable.Small"
+                    />
 
+                <Button
+                    android:id="@+id/deleteSensorData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:onClick="onDeleteData"
+                    android:text="@string/onDeleteData"/>
+
+                <TextView
+                    android:id="@+id/textViewSettings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_activity_test"
+                    style="@style/TextAppearance.Wearable.Small"
+                    android:layout_weight="9"/>
+                <TextView
+                    android:id="@+id/textViewSettingsContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" "
+                    style="@style/TextAppearance.Wearable.Small"
+                    android:layout_weight="9"/>
 
             </LinearLayout>
         </LinearLayout>
