@@ -103,6 +103,7 @@ public class Util {
     public static final String ACTION_ANNOTATE = "de.smart_sense.tracker.libs.Util.ACTION_ANNOTATE";
     public static final String ACTION_OPEN_START_ACTIVITY = "de.smart_sense.tracker.libs.Util.ACTION_OPEN_START_ACTIVITY";
     public static final String ACTION_PERIODIC_ALARM = "de.smart_sense.tracker.app.myReceiver.periodic";
+    public static final String PREFERENCES_VERSION = "version";
 
 
     public static boolean isSensorDataSavingServiceRunning(Context context) {

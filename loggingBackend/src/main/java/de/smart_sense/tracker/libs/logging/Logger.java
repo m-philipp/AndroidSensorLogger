@@ -8,6 +8,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -246,6 +247,12 @@ public class Logger extends Handler implements SensorEventListener {
                 dataString.append(event.values[1]);
                 dataString.append(" ");
                 dataString.append(event.values[2]);
+                dataString.append(" ");
+                dataString.append(event.values[3]);
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    dataString.append(" ");
+                    dataString.append(event.values[4]);
+                }
                 break;
             case Sensor.TYPE_GRAVITY:
                 dataString.append(Sensor.TYPE_GRAVITY);

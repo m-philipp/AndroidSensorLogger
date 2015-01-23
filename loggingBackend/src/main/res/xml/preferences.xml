@@ -41,7 +41,7 @@
 			android:title="@string/pref_start_on_close"/>
 
 		<CustomSwitchPreference
-			android:defaultValue="false"
+			android:defaultValue="true"
 			android:key="start_on_boot"
             android:enabled="true"
 			android:summary="@string/pref_description_start_on_boot"
@@ -55,6 +55,16 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/pref_title_annotation_name"/>
+
+        <EditTextPreference
+            android:defaultValue="@string/pref_default_version"
+            android:inputType="text"
+            android:enabled="false"
+            android:key="version"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_version"/>
 
 		<!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
 			 dismiss it. -->
@@ -83,7 +93,7 @@
 				android:title="@string/pref_sensor_activate"/>
 
 			<ListPreference
-				android:defaultValue="2"
+				android:defaultValue="1"
 				android:entries="@array/pref_sampling_rate_titles"
 				android:entryValues="@array/pref_sampling_rate_values"
                 android:dependency="sensor_activate"
@@ -98,7 +108,7 @@
             android:title="@string/pref_header_temp_logging">
 
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="wear_temp_logging"
                 android:disableDependentsState="true"
                 android:title="@string/pref_wear_temp_logging"/>

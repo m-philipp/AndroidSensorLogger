@@ -55,4 +55,6 @@
     <string name="cancel">Abbrechen</string>
     <string name="dialog_sure_toggle">Loggingmodus verändern?</string>
     <string name="confirm_toggle">bestätigen</string>
+    <string name="pref_title_version">Version</string>
+    <string name="pref_default_version">0</string>
 </resources>
