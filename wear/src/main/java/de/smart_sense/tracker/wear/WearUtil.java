@@ -21,7 +21,11 @@ public class WearUtil {
 
 
 
+
     public static void updateLoggingState(Context context , SharedPreferences sharedPrefs) {
+        updateLoggingState(context, sharedPrefs, false);
+    }
+    public static void updateLoggingState(Context context , SharedPreferences sharedPrefs, Boolean startWithAnnotation) {
 
         Log.d(TAG, "update Logging State");
 
@@ -33,14 +37,14 @@ public class WearUtil {
             // currently in temp_logging timespan?
             if (System.currentTimeMillis() - lastAnnotation < loggingDuration * 1000) {
 
-                startBackgroundLogging(context);
+                startBackgroundLogging(context, startWithAnnotation);
                 return;
 
             }
             // temp logging off?
             else if (!sharedPrefs.getBoolean(Util.PREFERENCES_WEAR_TEMP_LOGGING, false)) {
 
-                startBackgroundLogging(context);
+                startBackgroundLogging(context, startWithAnnotation);
                 return;
 
             }
@@ -53,6 +57,9 @@ public class WearUtil {
 
 
     public static void startBackgroundLogging(Context context) {
+        startBackgroundLogging(context, false);
+    }
+    public static void startBackgroundLogging(Context context, Boolean startWithAnnotation) {
 
         Log.d(TAG, "starting Background Logging ...");
 
@@ -61,7 +68,11 @@ public class WearUtil {
         context.startService(loggingServiceIntent);
 
         Intent sensorDataSavingServiceIntent = new Intent(context, SensorDataSavingService.class);
-        sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
+        if(startWithAnnotation)
+            sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE_WITH_ANNOTATION);
+        else
+            sensorDataSavingServiceIntent.setAction(SensorDataSavingService.ACTION_START_SERVICE);
+
         context.startService(sensorDataSavingServiceIntent);
 
     }

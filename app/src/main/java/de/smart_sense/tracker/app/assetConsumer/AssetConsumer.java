@@ -47,6 +47,7 @@ public class AssetConsumer extends Service {
     private AssetConsumer ac;
     private AssetSaveThread ast;
 
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
@@ -58,6 +59,7 @@ public class AssetConsumer extends Service {
 
         ac = this;
 
+
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     }
@@ -65,14 +67,14 @@ public class AssetConsumer extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand called ...");
 
-/*
-        if(intent == null){
-			return START_STICKY;
-		} //Caused by: java.lang.NullPointerException at de.smart_sense.tracker.libs.data_zip_upload.ZipUploadService.onStartCommand(ZipUploadService.java:52) // HERE
-*/
+
 
         if (intent == null || intent.getAction().equals(ACTION_START_SERVICE)) {
-            Log.d(TAG, "onStartCommand with: " + ACTION_START_SERVICE + " called");
+            Log.d(TAG, "onStartCommand with: " + ACTION_START_SERVICE + " called.    (Intent == null) = " + (intent == null));
+
+            Log.d(TAG, "assetThreadRunning = " + assetThreadRunning);
+
+            Log.d(TAG, "(ast == null) = " + (ast == null));
 
             if (!assetThreadRunning) {
                 Log.d(TAG, "start Asset Consumer Thread");
@@ -80,6 +82,11 @@ public class AssetConsumer extends Service {
                 ast.start();
                 ast.consume();
                 assetThreadRunning = true;
+            } else {
+                if (ast != null && ast.isAlive()){
+                    Log.d(TAG, "ast was alive!");
+                    ast.consume();
+                }
             }
 
         }
@@ -165,12 +172,14 @@ public class AssetConsumer extends Service {
                             Result result = pr.await(3, TimeUnit.SECONDS);
 
                             if (result == null) {
+                                Log.d(TAG, "failed to get Data Item");
                                 mGoogleApiClient.disconnect();
                                 assetThreadStopped();
                                 Looper.myLooper().quit();
                                 return;
                             }
 
+                            Log.d(TAG, "got Data Item");
                             DataApi.DataItemResult r = (DataApi.DataItemResult) result;
                             DataItem di = r.getDataItem();
                             if (di != null) {
@@ -196,9 +205,11 @@ public class AssetConsumer extends Service {
 
                                 mGoogleApiClient.disconnect();
 
-                                assetThreadStopped();
-                                Looper.myLooper().quit();
+
                             }
+
+                            assetThreadStopped();
+                            Looper.myLooper().quit();
                             }
                         }
 
@@ -256,7 +267,7 @@ public class AssetConsumer extends Service {
             Log.d(TAG, "trying to Save File form Asset");
 
             if (asset == null) {
-                throw new IllegalArgumentException("Asset must be non-null");
+                return false; // throw new IllegalArgumentException("Asset must be non-null");
             }
             if (!mGoogleApiClient.isConnected())
                 return false;
@@ -319,7 +330,7 @@ public class AssetConsumer extends Service {
 
         public synchronized void consume() {
 
-            Log.d(TAG, "called zip");
+            Log.d(TAG, "called consume");
 
             Message msg = new Message();
             Bundle b = new Bundle();

@@ -44,8 +44,7 @@ import static de.smart_sense.tracker.wear.WearUtil.*;
 /**
  * Listens for a message telling it to start the Wearable MainActivity.
  */
-public class WearableMessageListenerService extends WearableListenerService implements
-        GoogleApiClient.OnConnectionFailedListener {
+public class WearableMessageListenerService extends WearableListenerService {
 
 
     SharedPreferences sharedPrefs;
@@ -87,6 +86,17 @@ public class WearableMessageListenerService extends WearableListenerService impl
             this.startService(mServiceIntent);
 
         }
+        // TODO check if code makes sense here instead in Annotate.java
+        /* else if (event.getPath().equals(Util.GAC_PATH_ANNOTATED)) {
+
+            Log.d(TAG, "Received GAC_PATH: " + Util.GAC_PATH_ANNOTATED);
+
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putString(Util.PREFERENCES_LAST_ANNOTATION, String.valueOf(System.currentTimeMillis()));
+            editor.commit();
+            updateLoggingState(this, sharedPrefs, true);
+
+        } */
     }
 
     @Override
@@ -106,6 +116,14 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
                 String eventUri = event.getDataItem().getUri().toString();
                 if (eventUri.contains(Util.GAC_PATH_PREFERENCES)) {
+
+
+                    Long lastWatchAnnotaion = 0L;
+                    String lsString = sharedPrefs.getString(Util.PREFERENCES_LAST_ANNOTATION, "0");
+                    if(lsString != null)
+                        lastWatchAnnotaion  = Long.parseLong(lsString);
+
+
 
                     SharedPreferences.Editor editor = sharedPrefs.edit();
                     DataMapItem dataItem = DataMapItem.fromDataItem(event.getDataItem());
@@ -128,9 +146,15 @@ public class WearableMessageListenerService extends WearableListenerService impl
                     Log.d(TAG, "temp logging duration = " + dataString);
                     editor.putString(Util.PREFERENCES_WEAR_TEMP_LOGGING_DURATION, dataString);
 
+
+                    // only update last annotation if it's newer
                     dataString = dataItem.getDataMap().getString(Util.PREFERENCES_LAST_ANNOTATION);
                     Log.d(TAG, "last annotation = " + dataString);
-                    editor.putString(Util.PREFERENCES_LAST_ANNOTATION, dataString);
+                    Long lastSmartphoneAnnotation = 0L;
+                    if(dataString != null)
+                        lastSmartphoneAnnotation = Long.parseLong(dataString);
+                    if(lastWatchAnnotaion < lastSmartphoneAnnotation)
+                        editor.putString(Util.PREFERENCES_LAST_ANNOTATION, dataString);
 
 
 
@@ -237,11 +261,6 @@ public class WearableMessageListenerService extends WearableListenerService impl
 
     }
 
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e(TAG, "Failed to connect to Google Api Client");
-    }
 
 
 

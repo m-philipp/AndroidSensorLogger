@@ -159,31 +159,31 @@
 				android:title="@string/pref_sensor_magneticField"/>
 
 			<CustomSwitchPreference
-				android:defaultValue="true"
+				android:defaultValue="false"
 				android:dependency="sensor_activate"
 				android:key="ambientLight"
 				android:title="@string/pref_sensor_ambientLight"/>
 
 			<CustomSwitchPreference
-				android:defaultValue="true"
+				android:defaultValue="false"
 				android:dependency="sensor_activate"
 				android:key="proximity"
 				android:title="@string/pref_sensor_proximity"/>
 
 			<CustomSwitchPreference
-				android:defaultValue="true"
+				android:defaultValue="false"
 				android:dependency="sensor_activate"
 				android:key="temperature"
 				android:title="@string/pref_sensor_temperature"/>
 
 			<CustomSwitchPreference
-				android:defaultValue="true"
+				android:defaultValue="false"
 				android:dependency="sensor_activate"
 				android:key="humidity"
 				android:title="@string/pref_sensor_humidity"/>
 
 			<CustomSwitchPreference
-				android:defaultValue="true"
+				android:defaultValue="false"
 				android:dependency="sensor_activate"
 				android:key="pressure"
 				android:title="@string/pref_sensor_pressure"/>

@@ -78,10 +78,12 @@ public class WearableMessageSenderService extends Service implements
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand called ...");
 
+        /*
         if (mGoogleApiClient.isConnected())
             onConnected(null);
         else
             mGoogleApiClient.connect();
+*/
 
         if (intent != null) {
             final String action = intent.getAction();
@@ -150,6 +152,9 @@ public class WearableMessageSenderService extends Service implements
 
     @Override
     public void onDestroy() {
+
+        Log.d(TAG, "onDestroy");
+
         if (mGoogleApiClient.isConnected())
             mGoogleApiClient.disconnect();
 
@@ -271,6 +276,12 @@ public class WearableMessageSenderService extends Service implements
                                         .putDataItem(mGoogleApiClient, request).await();
                                 // PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
                                 //        .putDataItem(mGoogleApiClient, request);
+
+
+
+
+                                // TODO CHECK !!!
+                                //mGoogleApiClient.disconnect();
 
                             }
 

@@ -38,10 +38,10 @@ public class Logger extends Handler implements SensorEventListener {
 
     private int logging_frequency; //SensorManager.SENSOR_DELAY_FASTEST;
 
-    private Context context;
+    private LoggingService context;
 
 
-    public Logger(Looper looper, Service context) {
+    public Logger(Looper looper, LoggingService context) {
         super(looper);
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -79,7 +79,8 @@ public class Logger extends Handler implements SensorEventListener {
 
             //Toast.makeText(context, "register Sensor Listener.", Toast.LENGTH_SHORT).show();
 
-            logging_frequency = Integer.parseInt(sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "0"));
+            //logging_frequency = Integer.parseInt(sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "0"));
+
             registerListeners();
         } else if (msg.what == MESSAGE_STOP) {
             Log.i(TAG, "Logger stopped");
@@ -88,6 +89,8 @@ public class Logger extends Handler implements SensorEventListener {
             //Toast.makeText(context, "unregister Sensor Listener.", Toast.LENGTH_SHORT).show();
 
             mSensorManager.unregisterListener(this);
+
+            context.loggingStarted = false;
 
 
         }
@@ -100,8 +103,11 @@ public class Logger extends Handler implements SensorEventListener {
         // TODO evtl. check if getDefaultSensor() == null
 
         logging_frequency = Integer.parseInt(sharedPrefs.getString(Util.PREFERENCES_SAMPLING_RATE, "2"));
+        Log.d(TAG, "logging_frequency: " + logging_frequency);
 
         int maxBatchReportLatency = 1000;
+
+        context.loggingStarted = true;
 
         if (accelerometerSensor != null && sharedPrefs.getBoolean(Util.PREFERENCES_ACCELEROMETER, false))
             mSensorManager.registerListener(this, accelerometerSensor, logging_frequency, maxBatchReportLatency, this);
@@ -136,7 +142,6 @@ public class Logger extends Handler implements SensorEventListener {
     }
 
     private Long i = 0L;
-    private String sensorData = "";
 
     public void onSensorChanged(SensorEvent event) {
 
@@ -144,13 +149,6 @@ public class Logger extends Handler implements SensorEventListener {
             return;
         }
 
-        /*
-        try {
-            Thread.sleep( 5000 );
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        */
 
         if (i % 1000 == 0) {
             Log.d(TAG, "sensorEvent " + i);
@@ -162,6 +160,12 @@ public class Logger extends Handler implements SensorEventListener {
 
         i++;
 
+
+        Log.v(TAG, "Sensor: " + event.sensor.getName());
+        Log.v(TAG, getString(event));
+
+        if(SensorDataSavingService.sensorEvents.size() > SensorDataSavingService.QUEUE_MAX)
+            return;
 
         SensorDataSavingService.sensorEvents.add(getString(event));
 

@@ -22,6 +22,8 @@ import com.google.android.gms.wearable.Wearable;
 import de.smart_sense.tracker.libs.Util;
 import de.smart_sense.tracker.libs.data_save.SensorDataSavingService;
 
+import static de.smart_sense.tracker.wear.WearUtil.updateLoggingState;
+
 public class Annotate extends Activity implements
 		DelayedConfirmationView.DelayedConfirmationListener,
 		GoogleApiClient.OnConnectionFailedListener {
@@ -126,11 +128,22 @@ public class Annotate extends Activity implements
 
         sendMessageToCompanion(Util.GAC_PATH_ANNOTATED);
 
+
+
+        if(sharedPrefs.getBoolean(Util.PREFERENCES_WEAR_TEMP_LOGGING, false)) {
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putString(Util.PREFERENCES_LAST_ANNOTATION, String.valueOf(System.currentTimeMillis()));
+            editor.commit();
+
+            updateLoggingState(this, sharedPrefs, true);
+        }
+        // TODO make this (evtl.) an else part
         Intent sendIntent = new Intent(SensorDataSavingService.BROADCAST_ANNOTATION);
         sendIntent.putExtra(SensorDataSavingService.EXTRA_ANNOTATION_NAME, sharedPrefs.getString(Util.PREFERENCES_ANNOTATION_NAME, "smoking"));
         sendBroadcast(sendIntent);
 
 
+        // show confirmation screen
         Intent intent = new Intent(this, ConfirmationActivity.class);
         intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE,
                 ConfirmationActivity.SUCCESS_ANIMATION);

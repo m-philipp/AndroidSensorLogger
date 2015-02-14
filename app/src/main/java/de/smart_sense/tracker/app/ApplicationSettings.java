@@ -54,6 +54,7 @@ public class ApplicationSettings extends PreferenceActivity {
     private static final String TAG = "de.smart_sense.tracker.app.ApplicationSettings";
 
     private static HashMap<String, Boolean> activeSensors = new HashMap<String, Boolean>();
+    private static HashMap<String, Float> sensorsEnergyConsumption = new HashMap<String, Float>();
 
     public static String versionName = "0.0";
     public static int versionNumber = 0;
@@ -67,75 +68,90 @@ public class ApplicationSettings extends PreferenceActivity {
         Sensor s = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (s == null)
             activeSensors.put("accelerometer", false);
-        else
+        else {
             activeSensors.put("accelerometer", true);
+            sensorsEnergyConsumption.put("accelerometer", s.getPower());
+        }
 
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         if (s == null)
             activeSensors.put("gyroscope", false);
-        else
+        else {
             activeSensors.put("gyroscope", true);
+            sensorsEnergyConsumption.put("gyroscope", s.getPower());
+        }
 
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         if (s == null)
             activeSensors.put("magneticField", false);
-        else
+        else {
             activeSensors.put("magneticField", true);
-
+            sensorsEnergyConsumption.put("magneticField", s.getPower());
+        }
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if (s == null)
             activeSensors.put("ambientLight", false);
-        else
+        else{
             activeSensors.put("ambientLight", true);
-
+            sensorsEnergyConsumption.put("ambientLight", s.getPower());
+        }
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         if (s == null)
             activeSensors.put("proximity", false);
-        else
+        else{
             activeSensors.put("proximity", true);
-
+            sensorsEnergyConsumption.put("proximity", s.getPower());
+        }
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         if (s == null)
             activeSensors.put("temperature", false);
-        else
+        else{
             activeSensors.put("temperature", true);
-
+            sensorsEnergyConsumption.put("temperature", s.getPower());
+        }
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
         if (s == null)
             activeSensors.put("humidity", false);
-        else
+        else{
             activeSensors.put("humidity", true);
-
+            sensorsEnergyConsumption.put("humidity", s.getPower());
+        }
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         if (s == null)
             activeSensors.put("pressure", false);
-        else
+        else{
             activeSensors.put("pressure", true);
-
+            sensorsEnergyConsumption.put("pressure", s.getPower());
+        }
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         if (s == null)
             activeSensors.put("rotation", false);
-        else
+        else{
             activeSensors.put("rotation", true);
-
+            sensorsEnergyConsumption.put("rotation", s.getPower());
+        }
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         if (s == null)
             activeSensors.put("gravity", false);
-        else
+        else{
             activeSensors.put("gravity", true);
-
+            sensorsEnergyConsumption.put("gravity", s.getPower());
+        }
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         if (s == null)
             activeSensors.put("linearAccelerometer", false);
-        else
+        else{
             activeSensors.put("linearAccelerometer", true);
-
+            sensorsEnergyConsumption.put("linearAccelerometer", s.getPower());
+        }
         s = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         if (s == null)
             activeSensors.put("steps", false);
         else
+        {
             activeSensors.put("steps", true);
-
+            sensorsEnergyConsumption.put("steps", s.getPower());
+        }
 
 		/*
 		SensorManager mgr = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -173,20 +189,34 @@ public class ApplicationSettings extends PreferenceActivity {
 
             addPreferencesFromResource(R.xml.preferences);
 
+
             EditTextPreference etp = (EditTextPreference) findPreference("version");
             etp.setText(versionName);
 
             if (!activeSensors.get("accelerometer")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("accelerometer");
-                csp.setEnabled(false);
-                csp.setChecked(false);
+                csp.setSummary("nicht vorhanden");
+                //csp.setEnabled(false);
+                //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("accelerometer");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("accelerometer")) + "mA");
+            }
+
+
             if (!activeSensors.get("gyroscope")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("gyroscope");
                 csp.setSummary("nicht vorhanden");
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("gyroscope");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("gyroscope")) + "mA");
+            }
+
+
 
             if (!activeSensors.get("magneticField")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("magneticField");
@@ -194,6 +224,12 @@ public class ApplicationSettings extends PreferenceActivity {
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("magneticField");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("magneticField")) + "mA");
+            }
+
+
 
             if (!activeSensors.get("ambientLight")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("ambientLight");
@@ -201,6 +237,12 @@ public class ApplicationSettings extends PreferenceActivity {
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("ambientLight");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("ambientLight")) + "mA");
+            }
+
+
 
             if (!activeSensors.get("proximity")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("proximity");
@@ -208,6 +250,12 @@ public class ApplicationSettings extends PreferenceActivity {
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("proximity");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("proximity")) + "mA");
+            }
+
+
 
             if (!activeSensors.get("temperature")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("temperature");
@@ -215,6 +263,12 @@ public class ApplicationSettings extends PreferenceActivity {
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("temperature");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("temperature")) + "mA");
+            }
+
+
 
             if (!activeSensors.get("humidity")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("humidity");
@@ -222,6 +276,12 @@ public class ApplicationSettings extends PreferenceActivity {
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("humidity");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("humidity")) + "mA");
+            }
+
+
 
             if (!activeSensors.get("pressure")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("pressure");
@@ -229,6 +289,12 @@ public class ApplicationSettings extends PreferenceActivity {
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("pressure");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("pressure")) + "mA");
+            }
+
+
 
             if (!activeSensors.get("rotation")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("rotation");
@@ -236,6 +302,12 @@ public class ApplicationSettings extends PreferenceActivity {
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("rotation");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("rotation")) + "mA");
+            }
+
+
 
             if (!activeSensors.get("gravity")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("gravity");
@@ -243,6 +315,12 @@ public class ApplicationSettings extends PreferenceActivity {
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("gravity");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("gravity")) + "mA");
+            }
+
+
 
             if (!activeSensors.get("linearAccelerometer")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("linearAccelerometer");
@@ -250,6 +328,12 @@ public class ApplicationSettings extends PreferenceActivity {
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("linearAccelerometer");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("linearAccelerometer")) + "mA");
+            }
+
+
 
             if (!activeSensors.get("steps")) {
                 CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("steps");
@@ -257,6 +341,12 @@ public class ApplicationSettings extends PreferenceActivity {
                 //csp.setEnabled(false);
                 //csp.setChecked(false);
             }
+            else{
+                CustomSwitchPreference csp = (CustomSwitchPreference) findPreference("steps");
+                csp.setSummary(String.format("%.2f", sensorsEnergyConsumption.get("steps")) + "mA");
+            }
+
+
 
 
             //findPreference("accelerometer").setEnabled(false);//Disabling

@@ -25,6 +25,7 @@ public class SensorDataSavingService extends Service {
 
     public static final String ACTION_SAVE_DATA = "de.smart_sense.tracker.libs.data_save.action.saveData";
     public static final String ACTION_START_SERVICE = "de.smart_sense.tracker.libs.data_save.action.startLogging";
+    public static final String ACTION_START_SERVICE_WITH_ANNOTATION = "de.smart_sense.tracker.libs.data_save.action.startLoggingWithAnnotation";
     public static final String ACTION_STOP_SERVICE = "de.smart_sense.tracker.libs.data_save.action.stopLogging";
 
 
@@ -42,6 +43,7 @@ public class SensorDataSavingService extends Service {
 
     private static final String TAG = "de.smart_sense.tracker.libs.data_save.SensorDataSavingService";
     public static ConcurrentLinkedQueue<String> sensorEvents = new ConcurrentLinkedQueue<String>();
+    public static final int QUEUE_MAX = 100000;
 
     private PlainFileWriter plainFileWriter;
     private boolean pfwRunning = false;
@@ -100,7 +102,7 @@ public class SensorDataSavingService extends Service {
                     String via = intent.getExtras().getString(Util.ILITIT_EXTRA_VIA, "");
 
                     String dataString = "";
-                    if(via.equals("lighter"))
+                    if (via.equals("lighter"))
                         dataString = Util.formatLogString(timestamp, "Annotation", "lighter", String.valueOf(latitude), String.valueOf(longitude));
                     else
                         dataString = Util.formatLogString(timestamp, "Annotation", "ui", String.valueOf(latitude), String.valueOf(longitude));
@@ -134,8 +136,8 @@ public class SensorDataSavingService extends Service {
         intent.setAction(Util.ACTION_PERIODIC_ALARM);
         sendBroadcast(intent);
     }
-    
-    
+
+
     private Long getTimestamp(Intent intent) {
         Long timestamp = null;
         try {
@@ -167,7 +169,16 @@ public class SensorDataSavingService extends Service {
                 saveData(intent);
                 // send message to the handler with the current message handler
 
-            } else if (ACTION_START_SERVICE.equals(action)) {
+            } else if (ACTION_START_SERVICE.equals(action) || ACTION_START_SERVICE_WITH_ANNOTATION.equals(action)) {
+
+                if (ACTION_START_SERVICE_WITH_ANNOTATION.equals(action)) {
+                    Log.d(TAG, "start with annotation");
+                    String dataString = Util.formatLogString("Annotation",
+                            sharedPrefs.getString(Util.PREFERENCES_ANNOTATION_NAME, "smoking"),
+                            "watch_ui");
+                    sensorEvents.add(dataString);
+                }
+
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
                 if (!pfwRunning && !plainFileWriter.isAlive()) {
                     pfwRunning = true;
@@ -176,7 +187,7 @@ public class SensorDataSavingService extends Service {
                 }
             } else if (ACTION_STOP_SERVICE.equals(action)) {
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
-                if(pfwRunning) {
+                if (pfwRunning) {
                     plainFileWriter.requestStop();
                     //pfwRunning = false;
                 }

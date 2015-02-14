@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.nfc.Tag;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
@@ -34,7 +35,7 @@ public abstract class LoggingService extends Service {
     private Looper serviceLooper;
 
 
-    private boolean loggingStarted = false;
+    public boolean loggingStarted = false;
 
     public static final String ACTION_START_LOGGING = "de.smart_sense.tracker.action.startLogging";
     public static final String ACTION_STOP_LOGGING = "de.smart_sense.tracker.action.stopLogging";
@@ -55,30 +56,26 @@ public abstract class LoggingService extends Service {
 
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
 
-
-
                 startRecording();
 
             } else if (ACTION_STOP_LOGGING.equals(action)) {
 
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
                 stopRecording();
-                return START_NOT_STICKY;
+
+                // TODO !!!
+                // return START_NOT_STICKY;
 
             }
         } else {
-
             Log.d(TAG, "Called onStartCommand. intent == null");
             startRecording();
-
         }
         return START_STICKY;
     }
 
     public IBinder onBind(Intent i) {
-
         return null;
-
     }
 
     public void onDestroy() {
@@ -92,6 +89,8 @@ public abstract class LoggingService extends Service {
 
         if(thread != null)
             thread.quit();
+
+        thread = null;
     }
 
 
@@ -103,6 +102,8 @@ public abstract class LoggingService extends Service {
     }
 
     private void setup() {
+        Log.d(TAG, "setup");
+
         Notification n = getNotificationIntent();
 
 
@@ -129,8 +130,10 @@ public abstract class LoggingService extends Service {
 
     private synchronized void startRecording() {
 
+        Log.d(TAG,"startRecording called");
         if(!loggingStarted) {
-            loggingStarted = true;
+            Log.d(TAG, "sending start Recording Message");
+            // loggingStarted = true;
             setup();
             serviceHandler.sendEmptyMessage(Logger.MESSAGE_START);
         }
@@ -138,9 +141,10 @@ public abstract class LoggingService extends Service {
 
 
     private synchronized void stopRecording() {
-
+        Log.d(TAG,"stopRecording called");
         if (loggingStarted) {
-            loggingStarted = false;
+            // loggingStarted = false;
+            Log.d(TAG, "sending stop Recording Message");
             serviceHandler.sendEmptyMessage(Logger.MESSAGE_STOP);
         }
 

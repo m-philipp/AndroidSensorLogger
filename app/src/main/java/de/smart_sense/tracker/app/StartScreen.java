@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -281,10 +282,18 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
 
         if (isLoggingServiceRunning(c) && isSensorDataSavingServiceRunning(c)) {
             ToggleButton tb = (ToggleButton) findViewById(R.id.toggleLogging);
+            tb.setEnabled(false);
             tb.setChecked(true);
+
+            Button b = (Button) findViewById(R.id.annotate_smoking);
+            b.setEnabled(true);
         } else {
             ToggleButton tb = (ToggleButton) findViewById(R.id.toggleLogging);
+            tb.setEnabled(false);
             tb.setChecked(false);
+
+            Button b = (Button) findViewById(R.id.annotate_smoking);
+            b.setEnabled(false);
         }
 
         t = (TextView) findViewById(R.id.num_uploaded);

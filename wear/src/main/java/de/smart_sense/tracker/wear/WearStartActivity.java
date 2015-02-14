@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import de.smart_sense.tracker.libs.*;
@@ -164,6 +165,14 @@ public class WearStartActivity extends StartActivity {
             //Log.d(TAG, "uiUpdate said not running");
             t.setText(getResources().getText(R.string.stopped));
             t.setTextColor(getResources().getColor(R.color.my_red));
+        }
+
+        if(sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, true)){
+            Button b = (Button) findViewById(R.id.startAnnotateSmoking);
+            b.setEnabled(true);
+        } else {
+            Button b = (Button) findViewById(R.id.startAnnotateSmoking);
+            b.setEnabled(false);
         }
 
     }

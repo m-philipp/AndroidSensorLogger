@@ -59,8 +59,12 @@ public class Zipper extends Thread {
 
                             //SystemClock.sleep(2000);
 
-                            if (!Util.isExternalStorageWritable())
-                                return; // TODO cry for some help...
+                            if (!Util.isExternalStorageWritable()){
+                                // TODO cry for some help...
+                                zus.zipperStopped();
+                                Looper.myLooper().quit();
+                                return;
+                            }
                             Util.checkDirs();
 
                             Log.i(TAG, "processing ZIPPPPING Message.");
