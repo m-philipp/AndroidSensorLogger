@@ -26,6 +26,7 @@ import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 
@@ -44,10 +45,11 @@ import static de.smart_sense.tracker.wear.WearUtil.*;
 /**
  * Listens for a message telling it to start the Wearable MainActivity.
  */
+
 public class WearableMessageListenerService extends WearableListenerService {
 
 
-    SharedPreferences sharedPrefs;
+    private SharedPreferences sharedPrefs;
 
     private static final String TAG = "de.smart_sense.tracker.wear.WearableMessageListenerService";
 
@@ -239,10 +241,21 @@ public class WearableMessageListenerService extends WearableListenerService {
 
 
 
+    @Override
+    public void onPeerConnected(Node peer){
+        Log.d(TAG, "onPeerConnected called with node: " + peer.getDisplayName());
+    }
+
+    @Override
+    public void onPeerDisconnected(Node peer){
+        Log.d(TAG, "onPeerDisconnected called with node: " + peer.getDisplayName());
+    }
 
     private void deleteLogFile(String filename) {
 
         // TODO do this in another thread.
+        // TODO errors ?
+
 
         Util.checkDirs();
         Log.d(TAG, "original filename: " + filename);

@@ -110,6 +110,7 @@
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="wear_temp_logging"
+                android:dependency="sensor_activate"
                 android:disableDependentsState="true"
                 android:title="@string/pref_wear_temp_logging"/>
 

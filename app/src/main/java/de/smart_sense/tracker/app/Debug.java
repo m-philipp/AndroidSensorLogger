@@ -26,6 +26,9 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import de.smart_sense.tracker.app.bluetoothLogger.BluetoothScannerService;
 import de.smart_sense.tracker.app.logging.AppLoggingService;
 import de.smart_sense.tracker.app.markdownViewer.AboutScreen;
@@ -107,7 +110,11 @@ public class Debug extends Activity implements
     public void onSendMessageToWearable(View v) {
         // TODO
         sendMessageToCompanion(Util.GAC_PATH_TEST_ACTIVITY);
+
+
     }
+
+
 
     public void sendImplicitIntent(View v) {
         Intent openIntent = new Intent();
@@ -323,11 +330,13 @@ public class Debug extends Activity implements
     }
 
     private void sendMessageToCompanion(final String path) {
+
         Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
                 new ResultCallback<NodeApi.GetConnectedNodesResult>() {
                     @Override
                     public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
                         for (final Node node : getConnectedNodesResult.getNodes()) {
+                            Log.d(TAG, "send Message to Node: " + node.getDisplayName());
                             Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path,
                                     new byte[0]).setResultCallback(getSendMessageResultCallback());
                         }

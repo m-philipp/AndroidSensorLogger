@@ -314,6 +314,7 @@ public class DebugActivity extends Activity implements
                     @Override
                     public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
                         for (final Node node : getConnectedNodesResult.getNodes()) {
+                            Log.d(TAG, "send Message to Node: " + node.getDisplayName());
                             Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), path,
                                     new byte[0]).setResultCallback(getSendMessageResultCallback());
                         }

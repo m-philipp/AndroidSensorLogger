@@ -30,7 +30,6 @@
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="com.package.name.MyActivity" />
 
                 <category android:name="de.smart_sense.tracker.app.StartScreen" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -116,7 +115,7 @@
             android:exported="true" />
         <!-- android:process=":background_logging_process" -->
 
-        <service android:name=".WearableMessageListenerService" >
+        <service android:name="de.smart_sense.tracker.app.WearableMessageListenerService" >
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>

@@ -5,11 +5,11 @@ android {
     buildToolsVersion '21.1.1'
 
     defaultConfig {
-        // applicationId "de.smart_sense.tracker"
+        //applicationId "de.smart_sense.tracker"
         minSdkVersion 19
         targetSdkVersion 19
-        versionCode 23
-        versionName "0.23"
+        versionCode 24
+        versionName "0.24"
     }
     buildTypes {
         release {

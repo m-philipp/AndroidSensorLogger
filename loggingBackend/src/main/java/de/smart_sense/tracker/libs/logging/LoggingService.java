@@ -30,9 +30,7 @@ import android.support.v4.app.NotificationCompat.WearableExtender;
  */
 public abstract class LoggingService extends Service {
 
-    private Logger serviceHandler;
-    private HandlerThread thread;
-    private Looper serviceLooper;
+    private Logger logger;
 
 
     public boolean loggingStarted = false;
@@ -56,20 +54,34 @@ public abstract class LoggingService extends Service {
 
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
 
-                startRecording();
+
+                if(!loggingStarted){
+                    setup();
+                    logger = new Logger(this);
+                    logger.start();
+                    logger.startLogging();
+                    loggingStarted = true;
+                }
 
             } else if (ACTION_STOP_LOGGING.equals(action)) {
 
                 Log.d(TAG, "Called onStartCommand. Given Action: " + intent.getAction());
-                stopRecording();
+                if(loggingStarted)
+                    logger.stopLogging();
+                else
+                    stopSelf();
 
-                // TODO !!!
-                // return START_NOT_STICKY;
+                return START_NOT_STICKY;
 
             }
         } else {
             Log.d(TAG, "Called onStartCommand. intent == null");
-            startRecording();
+            if(!loggingStarted){
+                logger = new Logger(this);
+                logger.start();
+                logger.startLogging();
+                loggingStarted = true;
+            }
         }
         return START_STICKY;
     }
@@ -82,15 +94,12 @@ public abstract class LoggingService extends Service {
 
         Log.d(TAG, "on Destroy called.");
 
-        stopForeground(true);
+        //stopForeground(true);
 
-        if(wl != null)
+        if(wl != null && wl.isHeld())
             wl.release();
 
-        if(thread != null)
-            thread.quit();
 
-        thread = null;
     }
 
 
@@ -105,8 +114,6 @@ public abstract class LoggingService extends Service {
         Log.d(TAG, "setup");
 
         Notification n = getNotificationIntent();
-
-
         startForeground(1337,  n);
 
 
@@ -115,6 +122,7 @@ public abstract class LoggingService extends Service {
         wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         wl.acquire();
 
+        /*
         // TODO
         thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_FOREGROUND);
         //thread = new HandlerThread("ServiceStartArguments", Process.THREAD_PRIORITY_MORE_FAVORABLE)m;
@@ -123,31 +131,16 @@ public abstract class LoggingService extends Service {
         thread.start();
         serviceLooper = thread.getLooper();
         serviceHandler = new Logger(serviceLooper, this);
+        */
     }
 
     protected abstract Notification getNotificationIntent();
 
 
-    private synchronized void startRecording() {
-
-        Log.d(TAG,"startRecording called");
-        if(!loggingStarted) {
-            Log.d(TAG, "sending start Recording Message");
-            // loggingStarted = true;
-            setup();
-            serviceHandler.sendEmptyMessage(Logger.MESSAGE_START);
-        }
-    }
 
 
-    private synchronized void stopRecording() {
-        Log.d(TAG,"stopRecording called");
-        if (loggingStarted) {
-            // loggingStarted = false;
-            Log.d(TAG, "sending stop Recording Message");
-            serviceHandler.sendEmptyMessage(Logger.MESSAGE_STOP);
-        }
-
+    public synchronized void loggerStopped() {
+        loggingStarted = false;
         stopSelf();
     }
 

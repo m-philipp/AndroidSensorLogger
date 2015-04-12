@@ -9,8 +9,8 @@ android {
         applicationId "de.smart_sense.tracker"
         minSdkVersion 20
         targetSdkVersion 20
-        versionCode 23
-        versionName "0.23"
+        versionCode 24
+        versionName "0.24"
     }
     buildTypes {
         release {

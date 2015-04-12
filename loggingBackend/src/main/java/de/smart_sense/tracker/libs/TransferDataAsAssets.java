@@ -182,6 +182,7 @@ public class TransferDataAsAssets extends Service implements
 
                                 transferedAsset = true;
 
+                                // TODO check for files greater than OOM
 
 
                                 Uri.Builder uri = new Uri.Builder()

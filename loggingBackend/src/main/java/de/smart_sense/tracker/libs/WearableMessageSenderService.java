@@ -72,6 +72,7 @@ public class WearableMessageSenderService extends Service implements
 
         smt = new SendMessageThread();
 
+        smt.start();
 
     }
 
@@ -90,7 +91,6 @@ public class WearableMessageSenderService extends Service implements
             if (ACTION_SEND_MESSAGE.equals(action)) {
 
                 Log.d(TAG, ACTION_SEND_MESSAGE);
-                startService();
 
                 smt.sendMessage(intent.getStringExtra(EXTRA_PATH),
                         intent.getStringExtra(EXTRA_MESSAGE_CONTENT_STRING));
@@ -98,21 +98,16 @@ public class WearableMessageSenderService extends Service implements
             } else if (ACTION_SEND_PREFERENCES.equals(action)) {
 
                 Log.d(TAG, ACTION_SEND_PREFERENCES);
-                startService();
                 smt.sendPreferences();
 
             } else if (ACTION_START_SERVICE.equals(action)) {
 
                 Log.d(TAG, ACTION_START_SERVICE);
-                startService();
 
             } else if (ACTION_STOP_SERVICE.equals(action)) {
 
                 Log.d(TAG, ACTION_STOP_SERVICE);
-                if (smtRunning) {
-                    smt.requestStop();
-                }
-                stopSelf();
+                stopService();
                 return START_NOT_STICKY;
 
             }
@@ -134,13 +129,12 @@ public class WearableMessageSenderService extends Service implements
 
     }
 
-
-    private void startService() {
-        if (!smtRunning && !smt.isAlive()) {
-            smt.start();
-            smtRunning = true;
-        }
+    private void stopService(){
+        if(smt != null && smt.isAlive())
+            smt.requestStop();
+        stopSelf();
     }
+
 
 
     @Override
@@ -183,6 +177,7 @@ public class WearableMessageSenderService extends Service implements
         public static final String MESSAGE_CONTENT = "de.smart_sense.tracker.libs.data_save.MESSAGE_CONTENT";
         public static final int MESSAGE_ACTION_SEND_MESSAGE = 0;
         public static final int MESSAGE_ACTION_TRANSFER_PREFERENCES = 1;
+        public static final int MESSAGE_ACTION_STOP_THREAD = 2;
 
 
         // Constructor for sending data objects to the data layer
@@ -283,10 +278,12 @@ public class WearableMessageSenderService extends Service implements
                                 // TODO CHECK !!!
                                 //mGoogleApiClient.disconnect();
 
+                                stopService();
+                                Looper.myLooper().quit();
                             }
 
 
-                        }
+                            }
                     };
                     notifyAll();
                 }

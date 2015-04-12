@@ -43,7 +43,7 @@ public class SensorDataSavingService extends Service {
 
     private static final String TAG = "de.smart_sense.tracker.libs.data_save.SensorDataSavingService";
     public static ConcurrentLinkedQueue<String> sensorEvents = new ConcurrentLinkedQueue<String>();
-    public static final int QUEUE_MAX = 100000;
+    public static final int QUEUE_MAX = 10000;
 
     private PlainFileWriter plainFileWriter;
     private boolean pfwRunning = false;

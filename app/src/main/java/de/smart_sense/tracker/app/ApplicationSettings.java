@@ -63,95 +63,8 @@ public class ApplicationSettings extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         SensorManager mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        Sensor s = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        if (s == null)
-            activeSensors.put("accelerometer", false);
-        else {
-            activeSensors.put("accelerometer", true);
-            sensorsEnergyConsumption.put("accelerometer", s.getPower());
-        }
-
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        if (s == null)
-            activeSensors.put("gyroscope", false);
-        else {
-            activeSensors.put("gyroscope", true);
-            sensorsEnergyConsumption.put("gyroscope", s.getPower());
-        }
-
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        if (s == null)
-            activeSensors.put("magneticField", false);
-        else {
-            activeSensors.put("magneticField", true);
-            sensorsEnergyConsumption.put("magneticField", s.getPower());
-        }
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        if (s == null)
-            activeSensors.put("ambientLight", false);
-        else{
-            activeSensors.put("ambientLight", true);
-            sensorsEnergyConsumption.put("ambientLight", s.getPower());
-        }
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        if (s == null)
-            activeSensors.put("proximity", false);
-        else{
-            activeSensors.put("proximity", true);
-            sensorsEnergyConsumption.put("proximity", s.getPower());
-        }
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-        if (s == null)
-            activeSensors.put("temperature", false);
-        else{
-            activeSensors.put("temperature", true);
-            sensorsEnergyConsumption.put("temperature", s.getPower());
-        }
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-        if (s == null)
-            activeSensors.put("humidity", false);
-        else{
-            activeSensors.put("humidity", true);
-            sensorsEnergyConsumption.put("humidity", s.getPower());
-        }
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        if (s == null)
-            activeSensors.put("pressure", false);
-        else{
-            activeSensors.put("pressure", true);
-            sensorsEnergyConsumption.put("pressure", s.getPower());
-        }
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        if (s == null)
-            activeSensors.put("rotation", false);
-        else{
-            activeSensors.put("rotation", true);
-            sensorsEnergyConsumption.put("rotation", s.getPower());
-        }
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        if (s == null)
-            activeSensors.put("gravity", false);
-        else{
-            activeSensors.put("gravity", true);
-            sensorsEnergyConsumption.put("gravity", s.getPower());
-        }
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        if (s == null)
-            activeSensors.put("linearAccelerometer", false);
-        else{
-            activeSensors.put("linearAccelerometer", true);
-            sensorsEnergyConsumption.put("linearAccelerometer", s.getPower());
-        }
-        s = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if (s == null)
-            activeSensors.put("steps", false);
-        else
-        {
-            activeSensors.put("steps", true);
-            sensorsEnergyConsumption.put("steps", s.getPower());
-        }
+        activeSensors = getSensors(mSensorManager);
 
 		/*
 		SensorManager mgr = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -169,6 +82,101 @@ public class ApplicationSettings extends PreferenceActivity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
+    }
+
+    private HashMap<String, Boolean> getSensors(SensorManager mSensorManager) {
+
+        HashMap<String, Boolean> foundSensors = new HashMap<String, Boolean>();
+
+        Sensor s = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if (s == null)
+            foundSensors.put("accelerometer", false);
+        else {
+            foundSensors.put("accelerometer", true);
+            sensorsEnergyConsumption.put("accelerometer", s.getPower());
+        }
+
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        if (s == null)
+            foundSensors.put("gyroscope", false);
+        else {
+            foundSensors.put("gyroscope", true);
+            sensorsEnergyConsumption.put("gyroscope", s.getPower());
+        }
+
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        if (s == null)
+            foundSensors.put("magneticField", false);
+        else {
+            foundSensors.put("magneticField", true);
+            sensorsEnergyConsumption.put("magneticField", s.getPower());
+        }
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if (s == null)
+            foundSensors.put("ambientLight", false);
+        else{
+            foundSensors.put("ambientLight", true);
+            sensorsEnergyConsumption.put("ambientLight", s.getPower());
+        }
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        if (s == null)
+            foundSensors.put("proximity", false);
+        else{
+            foundSensors.put("proximity", true);
+            sensorsEnergyConsumption.put("proximity", s.getPower());
+        }
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        if (s == null)
+            foundSensors.put("temperature", false);
+        else{
+            foundSensors.put("temperature", true);
+            sensorsEnergyConsumption.put("temperature", s.getPower());
+        }
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        if (s == null)
+            foundSensors.put("humidity", false);
+        else{
+            foundSensors.put("humidity", true);
+            sensorsEnergyConsumption.put("humidity", s.getPower());
+        }
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        if (s == null)
+            foundSensors.put("pressure", false);
+        else{
+            foundSensors.put("pressure", true);
+            sensorsEnergyConsumption.put("pressure", s.getPower());
+        }
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        if (s == null)
+            foundSensors.put("rotation", false);
+        else{
+            foundSensors.put("rotation", true);
+            sensorsEnergyConsumption.put("rotation", s.getPower());
+        }
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        if (s == null)
+            foundSensors.put("gravity", false);
+        else{
+            foundSensors.put("gravity", true);
+            sensorsEnergyConsumption.put("gravity", s.getPower());
+        }
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        if (s == null)
+            foundSensors.put("linearAccelerometer", false);
+        else{
+            foundSensors.put("linearAccelerometer", true);
+            sensorsEnergyConsumption.put("linearAccelerometer", s.getPower());
+        }
+        s = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        if (s == null)
+            foundSensors.put("steps", false);
+        else
+        {
+            foundSensors.put("steps", true);
+            sensorsEnergyConsumption.put("steps", s.getPower());
+        }
+
+        return foundSensors;
     }
 
 

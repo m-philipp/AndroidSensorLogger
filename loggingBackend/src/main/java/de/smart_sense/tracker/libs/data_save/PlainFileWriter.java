@@ -97,6 +97,8 @@ public class PlainFileWriter extends Thread {
         File file;
         FileOutputStream out = null;
 
+        // TODO check that file doesn't get too big.
+
         try {
             file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + File.separator + Util.fileDir, getFilename());
             out = new FileOutputStream(file, true);

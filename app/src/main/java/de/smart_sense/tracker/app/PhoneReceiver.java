@@ -68,10 +68,11 @@ public class PhoneReceiver extends BroadcastReceiver {
                 sendPrefsIntent.setAction(WearableMessageSenderService.ACTION_SEND_PREFERENCES);
                 context.startService(sendPrefsIntent);
 
+                /*
                 Intent stopIntent = new Intent(context, WearableMessageSenderService.class);
                 stopIntent.setAction(WearableMessageSenderService.ACTION_STOP_SERVICE);
                 context.startService(stopIntent);
-
+                */
 
                 Intent mServiceIntent = new Intent(context, AssetConsumer.class);
                 mServiceIntent.setAction(AssetConsumer.ACTION_START_SERVICE);
