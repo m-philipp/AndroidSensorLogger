@@ -23,7 +23,7 @@ import de.smart_sense.tracker.libs.Util;
 public class PlainFileWriter extends Thread {
 
     // private static final String TAG = PlainFileWriter.class.getSimpleName();
-    private static final String TAG = "de.smart_sense.tracker.libs.data_save.PlainFileWriter";
+    private static final String TAG = PlainFileWriter.class.getName();
 
 
     public static final String MESSAGE_TYPE_ACTION = "de.smart_sense.tracker.libs.data_save.MESSAGE_TYPE_ACTION";

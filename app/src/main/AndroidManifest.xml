@@ -115,7 +115,7 @@
             android:exported="true" />
         <!-- android:process=":background_logging_process" -->
 
-        <service android:name="de.smart_sense.tracker.app.WearableMessageListenerService" >
+        <service android:name=".WearableMessageListenerService" >
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
@@ -144,6 +144,15 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
+        <activity
+            android:name=".settingsManagment.Settings"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".StartScreen" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.smart_sense.tracker.app.StartScreen" />
+        </activity>
     </application>
 
 </manifest>

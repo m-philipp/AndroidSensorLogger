@@ -51,7 +51,7 @@ public class ApplicationSettings extends PreferenceActivity {
 	final static String ACTION_PREFS_SENSOR = "de.smart_sense.tracker.action.prefs_sensor";
     */
 
-    private static final String TAG = "de.smart_sense.tracker.app.ApplicationSettings";
+    private static final String TAG = ApplicationSettings.class.getName();
 
     private static HashMap<String, Boolean> activeSensors = new HashMap<String, Boolean>();
     private static HashMap<String, Float> sensorsEnergyConsumption = new HashMap<String, Float>();

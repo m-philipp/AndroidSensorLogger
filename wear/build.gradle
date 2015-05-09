@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 20
-    buildToolsVersion '21.1.1'
+    buildToolsVersion '22.0.1'
 
     defaultConfig {
         applicationId "de.smart_sense.tracker"

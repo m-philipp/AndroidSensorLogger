@@ -21,4 +21,9 @@
         android:title="@string/title_activity_about"
         android:orderInCategory="400"
         android:showAsAction="never" />
+    <item
+        android:id="@+id/action_newSettings"
+        android:title="@string/title_activity_newSettings"
+        android:orderInCategory="400"
+        android:showAsAction="never" />
 </menu>

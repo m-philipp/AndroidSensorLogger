@@ -17,6 +17,7 @@ import android.widget.ToggleButton;
 import de.smart_sense.tracker.app.markdownViewer.AboutScreen;
 import de.smart_sense.tracker.app.markdownViewer.HelpScreen;
 import de.smart_sense.tracker.app.markdownViewer.IntroductionScreen;
+import de.smart_sense.tracker.app.settingsManagment.Settings;
 import de.smart_sense.tracker.libs.StartActivity;
 import de.smart_sense.tracker.libs.Util;
 import de.smart_sense.tracker.libs.WearableMessageSenderService;
@@ -29,7 +30,8 @@ import static de.smart_sense.tracker.libs.Util.isSensorDataSavingServiceRunning;
 public class StartScreen extends StartActivity implements MyDialogFragment.NoticeDialogListener {
 
 
-    private static final String TAG = "de.smart_sense.tracker.app.StartScreen";
+    private static final String TAG = ApplicationSettings.class.getName();
+
 
     private AlarmManager alarmMgr;
 
@@ -70,7 +72,6 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         });
 
 
-
     }
 
     private void alarmManagerSetup() {
@@ -82,11 +83,10 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         periodicAlarmIntent.setAction(Util.ACTION_PERIODIC_ALARM);
         PendingIntent periodicAlarmPendingIntent = PendingIntent.getBroadcast(this, 0, periodicAlarmIntent, 0);
 
-        if(alarmMgr == null){
+        if (alarmMgr == null) {
             Log.d(TAG, "AlarmManager was null");
             alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
-        }
-        else {
+        } else {
             Log.d(TAG, "AlarmManager was not null.");
         }
 
@@ -108,10 +108,10 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         checkIntent(intent);
     }
 
-    private void checkIntent(Intent i){
-        if(i != null &&
+    private void checkIntent(Intent i) {
+        if (i != null &&
                 i.getAction() != null &&
-                i.getAction().equals(Util.ACTION_ANNOTATE)){
+                i.getAction().equals(Util.ACTION_ANNOTATE)) {
 
             //Toast.makeText(this, "Annotate from Intent", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "annotate ACTION");
@@ -153,7 +153,6 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -179,6 +178,9 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         } else if (id == R.id.action_introduction) {
             Intent intent = new Intent(this, IntroductionScreen.class);
             startActivity(intent);
+        } else if (id == R.id.action_newSettings) {
+            Intent intent = new Intent(this, Settings.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -196,7 +198,6 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
     }
 
 
-
     public void annotate(View v) {
         Bundle b = new Bundle();
         b.putString(MyDialogFragment.ARG_MESSAGE, getString(R.string.dialog_sure_annotate));
@@ -210,14 +211,14 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
     }
 
 
-
-    public void onDialogPositiveClick(int i){
-        if(i == DIALOG_ANNOTATE)
+    public void onDialogPositiveClick(int i) {
+        if (i == DIALOG_ANNOTATE)
             annotate();
-        else if(i == DIALOG_TOGGLE)
+        else if (i == DIALOG_TOGGLE)
             confirmedToggleClick();
-    };
+    }
 
+    ;
 
 
     public void triggerManualDataUpload(View v) {
@@ -234,7 +235,6 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
     }
 
 
-
     SharedPreferences.OnSharedPreferenceChangeListener listener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -244,7 +244,7 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
                     Log.d(TAG, "sensor_activate status: " + sharedPrefs.getBoolean("sensor_activate", false));
 
 
-                    if(key.equals("sensor_activate")) {
+                    if (key.equals("sensor_activate")) {
                         // start/stop the Logging Service
                         if (sharedPrefs.getBoolean("sensor_activate", false)) {
 
@@ -273,7 +273,7 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         t.setText(getString(R.string.annotate) + " " + sharedPrefs.getString(Util.PREFERENCES_ANNOTATION_NAME, "smoking"));
 
         t = (TextView) findViewById(R.id.amaount_of_data_to_upload);
-        t.setText(sharedPrefs.getString("amount_of_logged_data", "0.0") +  " MB");
+        t.setText(sharedPrefs.getString("amount_of_logged_data", "0.0") + " MB");
 
         t = (TextView) findViewById(R.id.id_sensor_event);
         t.setText(Long.toString(sharedPrefs.getLong("sensor_events_logged", 0L) / 1000) + " k");
@@ -297,11 +297,10 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         }
 
         t = (TextView) findViewById(R.id.num_uploaded);
-        t.setText( sharedPrefs.getInt("uploadedData", 0) +  " Dateien");
+        t.setText(sharedPrefs.getInt("uploadedData", 0) + " Dateien");
 
 
     }
-
 
 
     public void onToggleClicked(View view) {
@@ -316,6 +315,7 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         mdf.show(getFragmentManager(), TAG);
 
     }
+
     public void confirmedToggleClick() {
 
         if (!sharedPrefs.getBoolean(Util.PREFERENCES_SENSOR_ACTIVATE, false)) {
@@ -330,7 +330,6 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
     }
 
 
-
     protected void sendPreferencesToCompanion() {
 
         Log.d(TAG, "starting Message Sender ...");
@@ -340,9 +339,6 @@ public class StartScreen extends StartActivity implements MyDialogFragment.Notic
         this.startService(messageSenderIntent);
 
     }
-
-
-
 
 
 }
